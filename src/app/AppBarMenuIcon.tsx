@@ -17,15 +17,16 @@ import { withRouter } from 'react-router'
  * @param  {[type]} options.parent  [description]
  * @return {[type]}                 [description]
  */
-const AppBarMenuIcon = ({paths, submenu, parent, onItemClick,router, dispatch}) => {
-  if (paths.current.level > 0) {
+const AppBarMenuIcon = ({paths, submenu, parent, router, dispatch, workbooks}) => {
+  if (paths.current.level > 1) {
     if (parent) {
       return (<Link to={parent.pathname}><IconButton><ArrowBack /></IconButton></Link>);
     }
     return (<Link to="/main/home"><IconButton><ArrowBack /></IconButton></Link>);
-  } else {
-    const onItemClick = (path) => () => dispatch(router.push(path));
- 
+  }
+
+  const onItemClick = (path) => () => dispatch(router.push(path));
+
     return (
       <IconMenu
         iconButtonElement={
@@ -35,12 +36,14 @@ const AppBarMenuIcon = ({paths, submenu, parent, onItemClick,router, dispatch}) 
         anchorOrigin={{horizontal: 'left', vertical: 'top'}}
         >
 
-        {submenu.map((item) => (
-           <MenuItem key={item.id} primaryText={item.name} onTouchTap={onItemClick(item.pathname)} />
+        {submenu.filter((item) => (item.display)).map((item) => (
+           <MenuItem key={'menu_' + item.id} primaryText={item.name} onTouchTap={onItemClick(item.pathname)} />
         ))}
-
+        {workbooks.map((item) => (
+           <MenuItem key={'workbook_' + item.id} primaryText={item.title} onTouchTap={onItemClick('/main/workbook/'+item.id)} />
+        ))}
       </IconMenu>);
-  }
+ 
 };
 
 /**
@@ -51,14 +54,14 @@ const mapStateToProp = (state, ownProps) => {
   return {
     paths: state.navigation.paths, // object containing state information about navigation
     submenu: state.navigation.paths.current.childrenIds.map((id) => (state.navigation.tree[id + ''])), // get children of current path
-    parent: state.navigation.paths.parent // for convenience we introduce the parent as a property as a default back button destination
+    parent: state.navigation.paths.parent, // for convenience we introduce the parent as a property as a default back button destination
+    workbooks: state.workbookIds.map((id) => (state.workbooks[id+'']))
   };
 };
 
 const dispatchToProp = (dispatch) => {
   return {
     dispatch
-    //onItemClick: (path) => () => dispatch(push(path))
   }
 };
 export default connect(mapStateToProp,dispatchToProp)(withRouter(AppBarMenuIcon));

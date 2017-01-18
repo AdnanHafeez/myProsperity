@@ -1,12 +1,12 @@
 import {
 	SHOW_FLASH_MESSAGE,
-	HIDE_FLASH_MESSAGE,
-	TAB_CHANGE_INDEX,
-	ORIENTATION_CHANGE,
-	WINDOW_RESIZE
+	HIDE_FLASH_MESSAGE
 } from '../actions'
 
-import {deviceReducer} from 'local-t2-device-redux';
+import {deviceReducer, deviceActions} from 'local-t2-device-redux';
+const {	TAB_CHANGE_INDEX,
+	ORIENTATION_CHANGE,
+	WINDOW_RESIZE} = deviceActions;
 import * as objectAssign from 'object-assign';
 /*
 * This is default view data which germane to the app ui only 

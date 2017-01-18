@@ -2,8 +2,10 @@ import {wbData} from '../data/workbook';
 import { normalize, schema } from 'normalizr';
 console.log(wbData);
 const example = new schema.Entity('examples');
+const goal = new schema.Entity('goals');
 const workbook = new schema.Entity('workbooks',{
-  examples: [example]
+  examples: [example],
+  goals: [goal]
 });
 const workBookListSchema = new schema.Array(workbook);
 const normalizedData = normalize(wbData, workBookListSchema);
@@ -18,5 +20,9 @@ export const workbookIds = (state = normalizedData.result, action) => {
 }
 
 export const examples = (state = normalizedData.entities.examples,action) => {
+  return state;
+}
+
+export const goals = (state = normalizedData.entities.goals,action) => {
   return state;
 }

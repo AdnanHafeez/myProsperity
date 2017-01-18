@@ -30,7 +30,7 @@ import * as objectAssign from 'object-assign';
  */
 
 const manifest = {
-  '1002': (state) => (objectAssign(state, {workbooks: undefined}))
+  '1003': (state) => (objectAssign(state, {workbooks: undefined}))
 };
 
 /**
@@ -154,7 +154,10 @@ export default class AppProvider extends React.Component<MyProps, MyState> {
      * This is important if you are hosting multiple apps on the same origin.
      * Otherwise databases from other apps will overlap and cause strange behavior
      */
-    persistStore(store, {keyPrefix: 'reduxPresistAdModuleAnger'}, () => {
+    persistStore(store, {
+                          keyPrefix: 'reduxPersistProsperityWorkbook',
+                          blacklist: []
+                        }, () => {
       /**
        * We wait until the state is hydrated before rendering the ui
        */

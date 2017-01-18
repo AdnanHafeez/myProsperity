@@ -10,7 +10,7 @@ import {deviceReducer} from 'local-t2-device-redux';
 import {navigationReducer} from 'local-t2-navigation-redux';
 import {appReducer} from 'local-t2-app-redux';
 import * as objectAssign from 'object-assign';
-import {workbooks,workbookIds,examples} from './workbook';
+import {workbooks,workbookIds, examples, goals} from './workbook';
 /*
 * The data below could come from a rest server
 */
@@ -75,9 +75,15 @@ function user (state = defaultUser, action) {
 function migrations (state = {}, action) {
   return state;
 }
-function goals(state: any = {},action: any){
-  return state;
-};
+
+export const getMax = function(array){
+  return Math.max.apply(null,array);
+}
+
+export const nextId = (array) => {
+  return getMax(array) + 1;
+}
+
 const appHub = combineReducers({
   app: appReducer,
   migrations,
@@ -92,7 +98,8 @@ const appHub = combineReducers({
   navigation: navigationReducer,
   workbooks,
   workbookIds,
-  examples
+  examples,
+  goals
 });
 
 export default appHub;

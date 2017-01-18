@@ -4,7 +4,10 @@ export const HIDE_FLASH_MESSAGE = 'HIDE_FLASH_MESSAGE';
 export const QUESTION_ANSWERED = 'QUESTION_ANSWERED';
 export const FORM_FIELD_CHANGE = 'FORM_FIELD_CHANGE';
 export const FORM_SUBMITTED = 'FORM_SUBMITTED';
-
+export const GOAL_SUBMITTED = 'T2.GOAL_SUBMITTED';
+export const GOAL_DELETED = 'T2.GOAL_DELETED';
+export const GOAL_UPDATED = 'T2.GOAL_UPDATED';
+//export {nextId} from '../reducers';
 export const fieldChange = (field) => {
   return {
     type: FORM_FIELD_CHANGE,
@@ -26,11 +29,37 @@ export const showFlashMessage = (text) => {
     text
   };
 };
-export const hideFlashMessage = (text) => {
+export const hideFlashMessage = () => {
   return {
     type: HIDE_FLASH_MESSAGE
   };
 };
+
+export const goalDeleted = () => {
+  return {
+    type: GOAL_DELETED
+  };
+}
+
+export const goalSubmittedWithId = (text,id) => {
+  return {
+    type: GOAL_SUBMITTED,
+    text,
+    id
+  };
+}
+export const goalSubmitted= (text) => {
+  return function(dispatch,getState){
+    //dispatch(goalSubmittedWithId(text, nextId(getState.goalIds)));
+  }
+};
+export const goalUpdated= (id,text) => {
+  return {
+    type: GOAL_UPDATED,
+    text,
+    id
+  };
+}
 
 export const questionAnswered = (answers) => {
   return {

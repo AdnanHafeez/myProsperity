@@ -3,6 +3,12 @@ import * as ReactDOM from 'react-dom';
 import {Card, CardActions, CardTitle, CardText} from 'material-ui/Card';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Link } from 'react-router';
+const clarkSignature = require('../assets/clark_sig.png');
+const styles = {
+  container: {
+    display: 'block'
+  }
+};
 
 interface MyProps {
   appBarTitle(msg: string): any;
@@ -25,17 +31,36 @@ export default class HomePage extends React.Component<MyProps, MyState> {
     return (
       <div>
         <Card>
-          <CardTitle title="Anger Module" subtitle="Resource Guide" />
+          <CardTitle title="Message From the Director" subtitle="My Prosperity Plan Workbook" />
           <CardText>
-          Anger is one of the main concerns of service members returning from
-          deployment. Problems can range from irritability to rage. Most of the
-          time things calm down by themselves, but if you are finding that some
-          level of anger is interfering with your successful adjustment to work
-          or with your relationships, then it is something you should pay
-          attention to. This program can help. Take an assessment to get feedback
-          on how you are doing or jump into the workshops to learn about how to
-          manage anger. Check out the videos of others who are dealing with anger
-          and explore the e-library for in-depth information.
+          <div style={styles.container as any}>
+<h2>Message from Director of Healthcare Operations</h2>
+        <p>The individual and collective well being of OUR PEOPLE (Service Members, Civilians, Contract Employees) and our Families is our foundation.</p>
+    <h3> –Challenge is Good – </h3>
+        <p>This Prosperity Plan Workbook is a tool to help you specify goals and to develop a 
+        plan to reach those goals—you decide. The objective is to maximize your potential 
+        personally, professionally, spiritually, and in your relationships. We all have 
+        challenges—we should and can still prosper. This Workbook also helps your leadership 
+        to support and assist you in reaching your goals.</p>
+        <p>This workbook includes goal sheets for the following domains: Personal, Professional, 
+        Relationship, and Spiritual. Listed within each domain are suggested categories and examples 
+        or each category. Use these categories or feel free to develop your own. Reviewing your 
+        workbook regularly and tracking your goals is key. You are encouraged to discuss your 
+        Prosperity Plan with your Family, Friends, and Leaders. This will assist you in developing, 
+        pursuing, and tracking your goals in each of these domains. It is our expectation that each 
+        of us will prosper.</p>
+
+        <p>Just because you identify goals and develop a plan does not ensure success. Hard work, dedication, perseverance, support and assistance from Family, Friends, Coworkers, and Leaders can help you accomplish your goals. Changes in your life may necessitate adding, deleting, or modifying certain goals. Honesty with yourself will be your best guide in choosing and adjusting your goals wisely.</p>
+        <p>Leaders may use the Prosperity Plan Workbook to assist those they are privileged to lead in developing, specifying, pursuing and achieving their goals. Our Workbook can be a teaching/coaching/mentoring tool to challenge and guide each of us to prosper personally, professionally, spiritually, and in our relationships.</p>
+
+        <p>Accomplish our mission/Take care of each other/Take care of our Families are interrelated and inseparable.</p>
+    <p>
+    <img src={clarkSignature} alt="Major General Clark Signature" />
+    </p>
+    <p>JEFFREY B. CLARK </p>
+    <p>Major General,</p>
+    <p>Medical Corps United States Army</p>
+          </div>
           </CardText>
           <CardActions>
             <RaisedButton containerElement={<Link to="/main/home" />} primary={true} label="Get Started!" />

@@ -1,7 +1,8 @@
-import Intro from '../Intro.tsx';
+import Intro from '../Intro';
 
 export default {
-  path: 'intro',
+  path: 'message',
+  name: 'message',
   getComponent (nextState, cb) {
     cb(null, Intro);
   }

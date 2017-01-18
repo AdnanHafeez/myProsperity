@@ -6,9 +6,7 @@ import {GridList, GridTile} from 'material-ui/GridList';
 import Subheader from 'material-ui/Subheader';
 import { Link, browserHistory } from 'react-router';
 import { connect } from 'react-redux';
-import { toggleT2AppFromMyList, showFlashMessage } from './actions';
-import { List, Map } from 'immutable';
-import AppButtonIcon from './AppButtonIcon';
+import {showFlashMessage } from './actions';
 import { push } from 'react-router-redux';
 
 const styles = {
@@ -20,18 +18,11 @@ const styles = {
 
   },
   container: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around'
+    display: 'block'
   }
 };
 
-const categories = [
-  {id: 1, title: 'Videos', path: '/main/videos', featured: true, img: require('../images/film-596011_640.png')},
-  {id: 2, title: 'Assessments', path: '/main/assessment', featured: false, img: require('../images/2000px-Checklist_Noun_project_5166.svg.png')},
-  {id: 3, title: 'Anger Library', path: '/main/library', featured: false, img: require('../images/2000px-Book_font_awesome.svg.png')},
-  {id: 4, title: 'Resources', path: '/main/resources', featured: false, img: require('../images/Sharing-icon.svg.png')}
-];
+
 interface MyProps {
   appBarTitle(msg: string): any;
   device: any;
@@ -49,39 +40,26 @@ class HomePage extends React.Component<MyProps, MyState> {
   }
 
   componentWillMount () {
-    this.props.appBarTitle && this.props.appBarTitle('Home');
+    this.props.appBarTitle && this.props.appBarTitle('S.M.A.R.T. Goals');
   }
 
   render () {
     var {flashMessage, appBarTitle, onTileClick, device} = this.props;
 
-    var cols = categories.length;
-    if (device.size === 'small') {
-      cols = 2;
-    }
 
     return (
     <div style={styles.container as any}>
-      <GridList
-        style={styles.gridList}
-        cols={cols}
-        cellHeight={250}
-      >
-
-        {categories.map((tile) => (
-          <Link cols={1} key={tile.id} to={tile.path}>
-            <GridTile
-              key={tile.id}
-               {...tile}
-              title={tile.title}
-              titlePosition='bottom'
-              style={{backgroundColor: 'grey'}}
-            >
-            <img src={tile.img} />
-            </GridTile>
-          </Link>
-        ))}
-      </GridList>
+      <div>
+      <h1>This is my workbook</h1>
+              <h4>These are my choices</h4>
+      <p>
+      <b>Be Specific</b> – Exactly what do you want to achieve? Create sub-goals to your overall goal and address who, what, when, where and why. Use action verbs within your goals (i.e., Create, Design, Develop, Implement, etc.).</p>
+      <p><b>Make It Measureable</b> – Ensure you can track the progress and measure the outcome.</p>
+      <p><b>Achievable</b> – Your goals should be within your control where you can attain them. Vague (“Boiling the Ocean”) and unattainable goals may lead to disappointment.</p>
+      <p><b>Realistic</b> – Make sure what you are trying to achieve is practical and relevant. Review and update your goals as needed.</p>
+      <p><b>Timeline</b> – A goal should be grounded within a time frame. If you want to lose 10 pounds, by when do you want to achieve this goal?
+      </p>
+      </div>
     </div>);
   }
 
