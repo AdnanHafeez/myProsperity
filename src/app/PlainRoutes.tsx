@@ -15,7 +15,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import {persistStore, autoRehydrate} from 'redux-persist';
-import {appSaga, registerPromise} from 'local-t2-app-redux';
+import {registerPromise} from 'local-t2-app-redux';
 import { syncHistoryWithStore, routerMiddleware } from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
 import {navigationCreateMiddleware} from 'local-t2-navigation-redux';
@@ -63,7 +63,7 @@ const store = createStore(
     persistEnhancer as any// TODO remove "as any"
   );
 
-sagaMiddleware.run(appSaga); // saga middleware will not run until this operation  is called
+//sagaMiddleware.run(appSaga); // saga middleware will not run until this operation  is called
 
 const history = syncHistoryWithStore(hashHistory, store);
 

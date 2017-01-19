@@ -7,7 +7,11 @@ export const FORM_SUBMITTED = 'FORM_SUBMITTED';
 export const GOAL_SUBMITTED = 'T2.GOAL_SUBMITTED';
 export const GOAL_DELETED = 'T2.GOAL_DELETED';
 export const GOAL_UPDATED = 'T2.GOAL_UPDATED';
-//export {nextId} from '../reducers';
+export const GOAL_CREATE = 'T2.GOAL_CREATE';
+export const GOAL_EDIT = 'T2.GOAL_EDIT';
+
+import {nextId} from '../reducers';
+
 export const fieldChange = (field) => {
   return {
     type: FORM_FIELD_CHANGE,
@@ -41,6 +45,19 @@ export const goalDeleted = () => {
   };
 }
 
+export const goalCreate = () => {
+  return {
+    type: GOAL_CREATE
+  };
+}
+
+export const goalEdit = (id) => {
+  return {
+    type: GOAL_CREATE,
+    id
+  };
+}
+
 export const goalSubmittedWithId = (text,id) => {
   return {
     type: GOAL_SUBMITTED,
@@ -50,7 +67,7 @@ export const goalSubmittedWithId = (text,id) => {
 }
 export const goalSubmitted= (text) => {
   return function(dispatch,getState){
-    //dispatch(goalSubmittedWithId(text, nextId(getState.goalIds)));
+    dispatch(goalSubmittedWithId(text, nextId(Object.keys(getState.goals))));
   }
 };
 export const goalUpdated= (id,text) => {

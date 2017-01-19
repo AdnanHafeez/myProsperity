@@ -1,7 +1,7 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-
+import GoalDialog from './GoalDialog';
 import {connect} from 'react-redux';
 
 const styles = {
@@ -39,6 +39,7 @@ class Workbook extends React.Component<MyProps, MyState> {
         {examples.map((item) => (
            <div key={'example_' + item.id}>{item.title}</div>
         ))}
+        <GoalDialog />
       </div>
     );
   }

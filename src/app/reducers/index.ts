@@ -1,7 +1,5 @@
 import {combineReducers} from 'redux';
 import {view} from './view';
-import {videos, videoIds} from './videos';
-import assessment from './assessment';
 import {reducer as formReducer} from 'redux-form';
 import {routerReducer} from 'react-router-redux';
 import {REHYDRATE} from 'redux-persist/constants';
@@ -31,19 +29,6 @@ interface GoalTreeInterface {
   [propName: string]: GoalInterface;
 }
 
-let goalIds: string[] = ['1','2'];
-let defaultGoals: GoalTreeInterface = {
-  '1': {
-    id: '1',
-    name: 'Test Goal #1',
-    date: 'asdaf'
-  },
-  '2': {
-    id: '2',
-    name: 'Test Goal #2',
-    date: 'asdaf'
-  }
-};
 
 /**
  * Redux State functions
@@ -87,9 +72,6 @@ export const nextId = (array) => {
 const appHub = combineReducers({
   app: appReducer,
   migrations,
-  videos,
-  videoIds,
-  assessment,
   form: formReducer,
   routing: routerReducer,
   user,
