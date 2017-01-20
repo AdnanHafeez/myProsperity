@@ -1,21 +1,46 @@
-interface ExampleInterface {
+export interface ExampleRawInterface {
   id: number;
   title: string;
   desc: string;
 }
-interface GoalInterface {
+export interface GoalRawInterface {
   id: number;
   title: string;
   desc: string;
 }
-interface workbook {
+export interface WorkbookRawInterface {
   id: number;
   title: string;
-  examples: ExampleInterface[];
-  goals: GoalInterface[];
+  examples: ExampleRawInterface[];
+  goals: GoalRawInterface[];
 }
 
-export const wbData: workbook[] = [
+export interface WorkbookRawInterface {
+  id: number;
+  title: string;
+  examples: ExampleRawInterface[];
+  goals: GoalRawInterface[];
+}
+
+export interface WorkbookReducerInterface {
+  id: number;
+  title: string;
+  examples: number[];
+  goals: number[];
+}
+
+export interface GoalReducerInterface {
+  id: number;
+  title: string;
+  desc: string;
+  reminder?: any;
+  date_created?: any;
+}
+
+export interface GoalFormItemInterface {
+  goal: string;
+}
+export const wbData: WorkbookRawInterface[] = [
         { id:1, title: 'Relationships', examples: [
             {id: 1,title: 'Community', desc: '(Lead, Organize, Support Agencies, Volunteer, Cultural Arts)'},
             {id: 2,title: 'Leisure', desc: '("Down Time," Activities, Sports, Vacations)"'},

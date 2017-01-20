@@ -8,7 +8,7 @@ import {deviceReducer} from 'local-t2-device-redux';
 import {navigationReducer} from 'local-t2-navigation-redux';
 import {appReducer} from 'local-t2-app-redux';
 import * as objectAssign from 'object-assign';
-import {workbooks,workbookIds, examples, goals} from './workbook';
+import {workbooks,workbookIds, examples, goals,loadedGoalId} from './workbook';
 /*
 * The data below could come from a rest server
 */
@@ -81,7 +81,8 @@ const appHub = combineReducers({
   workbooks,
   workbookIds,
   examples,
-  goals
+  goals,
+  loadedGoalId
 });
 
 export default appHub;

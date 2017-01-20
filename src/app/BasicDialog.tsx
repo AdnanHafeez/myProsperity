@@ -4,16 +4,17 @@ import * as ReactDOM from 'react-dom';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
-
-import GoalForm from './GoalForm';
+import {List, ListItem} from 'material-ui/List';
 
 interface MyProps {
+  title: string;
+  items: {id: any, title: string}[];
 }
 
 interface MyState {
 }
 
-export default class GoalDialog extends React.Component<MyProps, MyState> {
+export default class BasicDialog extends React.Component<MyProps, MyState> {
   state = {
     open: false,
   };
@@ -27,35 +28,30 @@ export default class GoalDialog extends React.Component<MyProps, MyState> {
   };
 
   render() {
+    const {title, items} = this.props;
     const actions = [
       <FlatButton
-        label="Cancel"
-        primary={true}
-        onTouchTap={this.handleClose}
-      />,
-      <FlatButton
-        label="Submit"
+        label="Close"
         primary={true}
         keyboardFocused={true}
         onTouchTap={this.handleClose}
       />,
     ];
 
-    const testSubmit = (values) => {
-      console.log(values);
-    }
     return (
       <div>
-        <RaisedButton label="Dialog" onTouchTap={this.handleOpen} />
+        <RaisedButton label={title} onTouchTap={this.handleOpen} />
         <Dialog
-          title="Dialog With Actions"
+          title={title}
           actions={actions}
           modal={false}
           open={this.state.open}
           onRequestClose={this.handleClose}
+          autoScrollBodyContent={true}
         >
-
-          <GoalForm onSubmit={testSubmit} />
+        <List>
+          {items.map((item) => (<ListItem key={item.id} primaryText={item.title} />))}
+        </List>
         </Dialog>
       </div>
     );
