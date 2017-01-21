@@ -10,7 +10,7 @@ const workbook = new schema.Entity('workbooks',{
   examples: [example],
   goals: [goal]
 });
-import {GOAL_SUBMITTED,GOAL_LOAD,GOAL_EDIT} from '../actions';
+import {GOAL_SUBMITTED,GOAL_LOAD,GOAL_EDIT,GOAL_DELETED} from '../actions';
 const workBookListSchema = new schema.Array(workbook);
 const normalizedData = normalize(wbData, workBookListSchema);
 console.log(normalizedData);
@@ -23,17 +23,33 @@ export const goalFactory = (id: number, title: string, desc: string = ''): GoalR
   }
 }
 
-export const workbooks = (state = normalizedData.entities.workbooks, action) => {
-  switch(action.type){
-    case GOAL_SUBMITTED:
-        if(typeof state[ action.workbookId + ''] === 'undefined'){
+function checkProperty(ob,prop){
+        if(typeof ob[ prop + ''] === 'undefined'){
           if(__DEVTOOLS__){
             console.log("Invalid workbook id submitted to reducer");
           }
+          return false;
+        }
+        return true;
+}
+export const workbooks = (state = normalizedData.entities.workbooks, action) => {
+  switch(action.type){
+    case GOAL_SUBMITTED:
+        if(!checkProperty(state,action.workbookId)){
           return state;
         }
         state[ action.workbookId + ''].goals.push(action.id);
         state = objectAssign({},state);
+        break;
+    case GOAL_DELETED:
+        if(!checkProperty(state,action.workbookId)){
+          return state;
+        }
+        let goalIdx = state[ action.workbookId + ''].goals.indexOf(action.id);
+        if(goalIdx > -1){
+           state[ action.workbookId + ''].goals.splice(goalIdx,1);
+           state = objectAssign({},state);
+        }
         break;
   }
   return state;
@@ -57,11 +73,15 @@ export const goals = (state = normalizedData.entities.goals,action) => {
         state[action.goal.id + ''] = action.goal;
         state = objectAssign({},state);
         break;
+    case GOAL_DELETED:
+      delete state[action.id + ''];
+      state = objectAssign({},state);
+      break;
   }
   return state;
 }
 
-export const loadedGoalId = (state = 0,action) => {
+export const loadedGoalId = (state = -1,action) => {
   switch(action.type){
     case GOAL_LOAD:
       state = action.id;

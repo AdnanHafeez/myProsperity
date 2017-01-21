@@ -10,9 +10,15 @@ export const GOAL_UPDATED = 'T2.GOAL_UPDATED';
 export const GOAL_CREATE = 'T2.GOAL_CREATE';
 export const GOAL_EDIT = 'T2.GOAL_EDIT';
 export const GOAL_LOAD= 'T2.GOAL_LOAD';
-import {WorkbookReducerInterface, GoalReducerInterface, GoalFormItemInterface} from '../data/workbook';
+export const NOTE_LOAD = 'T2.NOTE_LOAD';
+export const NOTE_EDIT = 'T2.NOTE_EDIT';
+export const NOTE_CREATE = 'T2.NOTE_CREATE';
+export const NOTE_DELETE = 'T2.NOTE_DELETE';
+
+import {WorkbookReducerInterface, GoalReducerInterface, GoalFormItemInterface, NoteFormItemInterface, NoteReducerInterface} from '../data/workbook';
 import {nextId} from '../reducers';
 import {goalFactory} from '../reducers/workbook';
+import {noteFactory} from '../reducers/note';
 export const fieldChange = (field) => {
   return {
     type: FORM_FIELD_CHANGE,
@@ -40,12 +46,6 @@ export const hideFlashMessage = () => {
   };
 };
 
-export const goalDeleted = () => {
-  return {
-    type: GOAL_DELETED
-  };
-}
-
 export const goalCreate = () => {
   return {
     type: GOAL_CREATE
@@ -59,11 +59,43 @@ export const goalLoad = (id: number) => {
   }
 }
 
-export const goalLoadBlank = (id: number) => {
-  return function(dispatch,getState){
-    dispatch(goalLoad(nextId(Object.keys(getState().goals))));
+export const noteLoad = (id: number) => {
+  return {
+    type: NOTE_LOAD,
+    id
   }
 }
+
+export const noteEdit = (id, note: NoteFormItemInterface): {type:string, note: NoteReducerInterface} => {
+  return {
+    type: NOTE_EDIT,
+    note: noteFactory(id,note.note)
+  };
+}
+
+export const noteDelete = (id): {type:string, id: number} => {
+  return {
+    type: NOTE_DELETE,
+    id
+  };
+}
+
+
+export const noteAdd = (note: NoteReducerInterface): {type:string, note: NoteReducerInterface} => {
+  return {
+    type: NOTE_CREATE,
+    note: note
+  };
+}
+
+export const noteCreate = (note: NoteFormItemInterface) => {
+  return function(dispatch,getState){
+    let newNote = noteFactory(nextId(Object.keys(getState().notes)),note.note);
+    dispatch(
+      noteAdd(newNote)
+    );
+  }
+};
 
 export const goalEdit = (workbookId,goalId, goal: GoalFormItemInterface): {type:string, goal: GoalReducerInterface, workbookId: number} => {
   return {
@@ -72,7 +104,6 @@ export const goalEdit = (workbookId,goalId, goal: GoalFormItemInterface): {type:
     workbookId
   };
 }
-
 export const goalSubmittedWithId = (workbookId,text,id) => {
   return {
     type: GOAL_SUBMITTED,
@@ -86,6 +117,7 @@ export const goalSubmitted= (workbookId: number, text: string) => {
     dispatch(goalSubmittedWithId(workbookId, text, nextId(Object.keys(getState().goals))));
   }
 };
+
 export const goalUpdated= (id,text) => {
   return {
     type: GOAL_UPDATED,
@@ -94,6 +126,13 @@ export const goalUpdated= (id,text) => {
   };
 }
 
+export const goalDeleted = (workbookId, id) => {
+   return {
+     type: GOAL_DELETED,
+     id,
+     workbookId
+   }
+}
 export const questionAnswered = (answers) => {
   return {
     type: QUESTION_ANSWERED,

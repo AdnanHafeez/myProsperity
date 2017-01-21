@@ -40,6 +40,16 @@ export interface GoalReducerInterface {
 export interface GoalFormItemInterface {
   goal: string;
 }
+
+export interface NoteFormItemInterface {
+  note: string;
+}
+
+export interface NoteReducerInterface {
+  id: number;
+  text: string;
+}
+
 export const wbData: WorkbookRawInterface[] = [
         { id:1, title: 'Relationships', examples: [
             {id: 1,title: 'Community', desc: '(Lead, Organize, Support Agencies, Volunteer, Cultural Arts)'},

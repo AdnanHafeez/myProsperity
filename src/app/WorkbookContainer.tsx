@@ -1,6 +1,6 @@
 import Workbook from './Workbook';
 import { connect } from 'react-redux';
-import {goalLoad} from './actions';
+import {goalLoad, goalDeleted} from './actions';
 import {WorkbookReducerInterface, GoalReducerInterface, GoalFormItemInterface} from './data/workbook';
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -13,7 +13,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const dispatchToProps = (dispatch) => {
   return {
-    goalClick: (goal: GoalReducerInterface) => dispatch(goalLoad(goal.id))
+    goalClick: (goal: GoalReducerInterface) => dispatch(goalLoad(goal.id)),
+    goalDelete: (workbookId,goalId: number) => dispatch(goalDeleted(workbookId,goalId))
   }
 }
 

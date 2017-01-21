@@ -14,12 +14,12 @@ const renderTaskField = ({input, label, meta: {touched, error}}) => {
     );
 }
 
-let GoalForm = (props) => {
-  const {handleSubmit, load, pristine, reset, submitting ,goal} = props;
+let NoteForm = (props) => {
+  const {handleSubmit, load, pristine, reset, submitting ,note} = props;
 
   return (<form onSubmit={handleSubmit}>
  
-      <Field name="goal" component={renderTaskField} />
+      <Field name="note" component={renderTaskField} />
       <RaisedButton type="submit" label="Save" />
     </form>
   );
@@ -27,21 +27,19 @@ let GoalForm = (props) => {
 
 
 
-GoalForm = reduxForm({
-  form: 'goalsForm'
-})((GoalForm  as any));
+NoteForm = reduxForm({
+  form: 'notesForm'
+})((NoteForm  as any));
 
 
 export default connect(state => {
-  let data = {goal: ''};
-  if(state.loadedGoalId > 0){
-    data = {goal: state.goals[state.loadedGoalId + ''].title};
+  let data = {note: ''};
+  if(state.loadedNoteId > 0){
+    data = {note: state.notes[state.loadedNoteId + ''].text};
   }
   return {
     initialValues: data
 
   }
 })
-(GoalForm) as any;
-
-//export default GoalForm;
+(NoteForm) as any;

@@ -8,8 +8,6 @@ import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 import ArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
 import { Link } from 'react-router';
 import Divider from 'material-ui/Divider';
-import {push} from 'react-router-redux';
-import { withRouter } from 'react-router'
 /**
  * AppBarMenuIcon provides the left icon in the top navigation bar
  * @param  {[type]} options.paths   [description]
@@ -17,7 +15,7 @@ import { withRouter } from 'react-router'
  * @param  {[type]} options.parent  [description]
  * @return {[type]}                 [description]
  */
-const AppBarMenuIcon = ({paths, submenu, parent, router, dispatch, workbooks}) => {
+const AppBarMenuIcon = ({paths, submenu, parent, workbooks}) => {
   if (paths.current.level > 1) {
     if (parent) {
       return (<Link to={parent.pathname}><IconButton><ArrowBack /></IconButton></Link>);
@@ -25,7 +23,7 @@ const AppBarMenuIcon = ({paths, submenu, parent, router, dispatch, workbooks}) =
     return (<Link to="/main/home"><IconButton><ArrowBack /></IconButton></Link>);
   }
 
-  const onItemClick = (path) => () => dispatch(router.push(path));
+  
 
     return (
       <IconMenu
@@ -37,11 +35,12 @@ const AppBarMenuIcon = ({paths, submenu, parent, router, dispatch, workbooks}) =
         >
 
         {submenu.filter((item) => (item.display)).map((item) => (
-           <MenuItem key={'menu_' + item.id} primaryText={item.name} onTouchTap={onItemClick(item.pathname)} />
+           <MenuItem key={'menu_' + item.id} primaryText={item.name} containerElement={<Link to={item.pathname} />} />
         ))}
         {workbooks.map((item) => (
-           <MenuItem key={'workbook_' + item.id} primaryText={item.title} onTouchTap={onItemClick('/main/workbook/'+item.id)} />
+           <MenuItem key={'workbook_' + item.id} primaryText={item.title} containerElement={<Link to={'/main/workbook/'+item.id} />}  />
         ))}
+        <MenuItem key={'notes_landing'} primaryText="Notes" containerElement={<Link to={'/main/notes'} />}  />
       </IconMenu>);
  
 };
@@ -61,8 +60,7 @@ const mapStateToProp = (state, ownProps) => {
 
 const dispatchToProp = (dispatch) => {
   return {
-    dispatch
   }
 };
-export default connect(mapStateToProp,dispatchToProp)(withRouter(AppBarMenuIcon));
+export default connect(mapStateToProp,dispatchToProp)(AppBarMenuIcon);
 

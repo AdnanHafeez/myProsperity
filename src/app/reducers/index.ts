@@ -9,6 +9,7 @@ import {navigationReducer} from 'local-t2-navigation-redux';
 import {appReducer} from 'local-t2-app-redux';
 import * as objectAssign from 'object-assign';
 import {workbooks,workbookIds, examples, goals,loadedGoalId} from './workbook';
+import {notes, noteIds, loadedNoteId} from './note';
 /*
 * The data below could come from a rest server
 */
@@ -66,7 +67,8 @@ export const getMax = function(array){
 }
 
 export const nextId = (array) => {
-  return getMax(array) + 1;
+  let nextId = array.length ? getMax(array) + 1 : 1;
+  return nextId;
 }
 
 const appHub = combineReducers({
@@ -82,7 +84,10 @@ const appHub = combineReducers({
   workbookIds,
   examples,
   goals,
-  loadedGoalId
+  loadedGoalId,
+  notes,
+  noteIds,
+  loadedNoteId
 });
 
 export default appHub;

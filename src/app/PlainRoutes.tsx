@@ -55,9 +55,10 @@ const persistEnhancer = compose(migration, autoRehydrate());
 const store = createStore(
     appHub as any, // app reducer // TODO remove "as any"
     applyMiddleware(
-            routerMiddleware(browserHistory),
             thunkMiddleware,
             sagaMiddleware,
+            routerMiddleware(browserHistory),
+            
             navigationCreateMiddleware(navigationConfig)
           ),
     persistEnhancer as any// TODO remove "as any"

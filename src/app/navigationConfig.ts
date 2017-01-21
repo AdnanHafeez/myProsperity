@@ -15,7 +15,7 @@ export default {
     routes: ['/main/home'],
     level: 1,
     pathname: '/main/home',
-    childrenIds: ['4','5'],
+    childrenIds: ['4','5','6'],
     display: true
   },
   '4': {
@@ -33,6 +33,15 @@ export default {
     routes: [new RegExp('/main/workbook/[0-9]+')],
     level: 2,
     pathname: '/main/workbook',
+    childrenIds: [],
+    display: false
+  },
+  '6': {
+    id: '6',
+    name: 'Notes',
+    routes: ['/main/notes'],
+    level: 2,
+    pathname: '/main/notes',
     childrenIds: [],
     display: false
   }

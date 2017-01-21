@@ -14,6 +14,7 @@ export default {
         require('./homeRoute.js').default,
         require('./directorMessageRoute.js').default,
         require('./workbookRoute.js').default,
+        require('./notesRoute.js').default,
         require('./debugRoute.js').default
       ]);
     });

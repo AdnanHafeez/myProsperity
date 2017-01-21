@@ -10,7 +10,7 @@ import AppBar from 'material-ui/AppBar';
 
 import OnlineStatusBarIcon from './OnlineStatusContainer';
 import AppSnackBar from './AppSnackBar';
-import AppBarMenuIcon from './AppBarMenuIcon';
+import AppBarMenuIcon from './AppBarMenuIconDrawer';
 import { connect } from 'react-redux';
 
 import {push, replace} from 'react-router-redux';
