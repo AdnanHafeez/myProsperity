@@ -60,7 +60,7 @@ export const wbData: WorkbookRawInterface[] = [
             {id: 6,title: 'Marital',desc: '(Anniversaries, Couples’ Retreats, Dating)'},
             {id: 7, title: 'Work',desc: '(SAY THANK YOU, Challenge, Communicate, Support, Compassion)'}
           ],
-          goals: [{id: 1,title: 'Whale Washing', desc: ''}]
+          goals: []
         },
         { id:2, title: 'Professional', examples: [
             {id: 8, title: 'Achievments & Awards', desc: '(Civilian and Military Awards)'},

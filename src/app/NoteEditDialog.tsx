@@ -33,13 +33,7 @@ class NoteEditDialog extends React.Component<MyProps, MyState> {
         label="Cancel"
         primary={true}
         onTouchTap={handleClose}
-      />,
-      <FlatButton
-        label="Submit"
-        primary={true}
-        keyboardFocused={true}
-        onTouchTap={handleClose}
-      />,
+      />
     ];
 
     return (

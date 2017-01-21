@@ -47,7 +47,7 @@ class GoalEditDialog extends React.Component<MyProps, MyState> {
       <div>
     
         <Dialog
-          title="Dialog With Actions"
+          title="Edit Goal"
           actions={actions}
           modal={false}
           open={open}

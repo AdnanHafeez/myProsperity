@@ -63,7 +63,7 @@ export const examples = (state = normalizedData.entities.examples,action) => {
   return state;
 }
 
-export const goals = (state = normalizedData.entities.goals,action) => {
+export const goals = (state = normalizedData.entities.goals || {},action) => {
   switch(action.type){
     case GOAL_SUBMITTED:
         state[action.id + ''] = goalFactory(action.id, action.text);

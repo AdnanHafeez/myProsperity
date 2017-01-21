@@ -60,7 +60,7 @@ class GoalCreateDialog extends React.Component<MyProps, MyState> {
           </FloatingActionButton>
 
           <Dialog
-            title="Dialog With Actions"
+            title="Create a Goal"
             actions={actions}
             modal={false}
             open={open}
