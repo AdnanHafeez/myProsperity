@@ -7,7 +7,7 @@ import * as ReactDOM from 'react-dom';
 
 import Paper from 'material-ui/Paper';
 import AppBar from 'material-ui/AppBar';
-
+import Toggle from 'material-ui/Toggle';
 import OnlineStatusBarIcon from './OnlineStatusContainer';
 import AppSnackBar from './AppSnackBar';
 import AppBarMenuIcon from './AppBarMenuIconDrawer';
@@ -18,6 +18,7 @@ import { withRouter } from 'react-router';
 import {UpdateDialogContainer} from 'local-t2-app-redux/lib/components';
 
 import {deviceActions} from 'local-t2-device-redux';
+import {userLogin,userLogout} from './actions';
 var {windowResize} = deviceActions;
 
 const styles = {
@@ -37,6 +38,8 @@ interface MyProps {
   dispatch(arg: any): any;
   device: any;
   children: any;
+  isAuthed: boolean;
+  authToggle(isAuthed: boolean): any;
 }
 
 interface MyState {
@@ -83,14 +86,14 @@ class Main extends React.Component<MyProps, MyState>{
   }
 
   render () {
-    console.log(this.props);
+    var {isAuthed, authToggle} = this.props;
     return (
         <div style={styles.wrapper}>
             <AppBar
                 title={this.state.title}
                 titleStyle={{textAlign: 'center'}}
                 iconElementLeft={<AppBarMenuIcon/>}
-                iconElementRight={<OnlineStatusBarIcon />}
+                iconElementRight={<Toggle toggled={!isAuthed} onToggle={() => authToggle(isAuthed)} />}
                  />
                 <div style={styles.content as any}>{React.cloneElement(this.props.children, { appBarTitle: this.handleTitle })}</div>
           <UpdateDialogContainer />
@@ -102,11 +105,19 @@ class Main extends React.Component<MyProps, MyState>{
  
 export default connect(
   (state) => ({
-    device: state.device
+    device: state.device,
+    isAuthed: state.user.isAuthenticated
   }),
   (dispatch, ownProps) => {
     return {
-      dispatch: dispatch
+      dispatch: dispatch,
+      authToggle: (authed) => {
+        if(authed){
+          dispatch(userLogout());
+        } else {
+          dispatch(userLogin());
+        }
+      }
     };
   }
   )(Main);

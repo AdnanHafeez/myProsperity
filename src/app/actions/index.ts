@@ -14,15 +14,30 @@ export const NOTE_LOAD = 'T2.NOTE_LOAD';
 export const NOTE_EDIT = 'T2.NOTE_EDIT';
 export const NOTE_CREATE = 'T2.NOTE_CREATE';
 export const NOTE_DELETE = 'T2.NOTE_DELETE';
+export const USER_LOGOUT = 'T2.USER_LOGOUT';
+export const USER_LOGIN = 'T2.USER_LOGIN';
 
 import {WorkbookReducerInterface, GoalReducerInterface, GoalFormItemInterface, NoteFormItemInterface, NoteReducerInterface} from '../data/workbook';
 import {nextId} from '../reducers';
 import {goalFactory} from '../reducers/workbook';
 import {noteFactory} from '../reducers/note';
+
 export const fieldChange = (field) => {
   return {
     type: FORM_FIELD_CHANGE,
     field
+  };
+};
+
+export const userLogout = () => {
+  return {
+    type: USER_LOGOUT
+  };
+};
+
+export const userLogin = () => {
+  return {
+    type: USER_LOGIN
   };
 };
 

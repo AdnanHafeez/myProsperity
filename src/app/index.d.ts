@@ -12,6 +12,8 @@ declare module 'local-t2-navigation-redux' {
 declare module 'redux-persist' {
   export const persistStore: any;
   export const autoRehydrate: any;
+  export const createTransform: any;
+  export const createPersistor: any;
 }
 
 declare module 'redux-persist/constants' {

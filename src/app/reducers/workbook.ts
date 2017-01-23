@@ -2,7 +2,7 @@ import {wbData} from '../data/workbook';
 import { normalize, schema } from 'normalizr';
 import * as objectAssign from 'object-assign';
 import {GoalReducerInterface} from '../data/workbook';
-
+import {REHYDRATE} from 'redux-persist/constants'
 console.log(wbData);
 const example = new schema.Entity('examples');
 const goal = new schema.Entity('goals');
@@ -10,7 +10,7 @@ const workbook = new schema.Entity('workbooks',{
   examples: [example],
   goals: [goal]
 });
-import {GOAL_SUBMITTED,GOAL_LOAD,GOAL_EDIT,GOAL_DELETED} from '../actions';
+import {GOAL_SUBMITTED,GOAL_LOAD,GOAL_EDIT,GOAL_DELETED,USER_LOGIN,USER_LOGOUT} from '../actions';
 const workBookListSchema = new schema.Array(workbook);
 const normalizedData = normalize(wbData, workBookListSchema);
 console.log(normalizedData);
@@ -65,6 +65,16 @@ export const examples = (state = normalizedData.entities.examples,action) => {
 
 export const goals = (state = normalizedData.entities.goals || {},action) => {
   switch(action.type){
+    case REHYDRATE:
+       var incoming = action.payload.myReducer
+      // TODO if (incoming) return {...state, ...incoming, specialKey: processSpecial(incoming.specialKey)}
+       break;
+    case USER_LOGIN:
+      // TODO
+      break;
+    case USER_LOGOUT:
+      // TODO
+      break;
     case GOAL_SUBMITTED:
         state[action.id + ''] = goalFactory(action.id, action.text);
         state = objectAssign({},state);

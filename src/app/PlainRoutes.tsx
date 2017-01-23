@@ -14,7 +14,7 @@ import {Router, hashHistory, browserHistory} from 'react-router';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
-import {persistStore, autoRehydrate} from 'redux-persist';
+import {persistStore, autoRehydrate, createTransform, createPersistor} from 'redux-persist';
 import {registerPromise} from 'local-t2-app-redux';
 import { syncHistoryWithStore, routerMiddleware } from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
@@ -23,6 +23,8 @@ import navigationConfig from './navigationConfig';
 import createMigration from 'redux-persist-migrate';
 import appHub from './reducers';
 import * as objectAssign from 'object-assign';
+import createEncryptor from 'redux-persist-transform-encrypt';
+import {userLogout} from './actions';
 //console.log(reduxPersMigrate);
 //{createMigration}
 /**
@@ -49,19 +51,46 @@ const sagaMiddleware = createSagaMiddleware();
 let reducerKey = 'migrations'; // name of the migration
 
 const migration = createMigration(manifest, reducerKey);
-const persistEnhancer = compose(migration, autoRehydrate());
+// const persistEnhancer = compose(migration, autoRehydrate());
+
+
+const encryptorTransform = createEncryptor({
+  secretKey: 'my-super-secret-key',
+  whitelist: ['goals']
+});
+
+const securityFilterTransform = createTransform(
+  // transform state coming from redux on its way to being serialized and stored
+  (inboundState, key) => {
+
+    console.log('Inbound: ' + key);
+    // console.log(inboundState);
+    return inboundState;
+  },
+  // transform state coming from storage, on its way to be rehydrated into redux
+  (outboundState, key) =>  {
+    console.log('Outbound: ' + key);
+    return outboundState;
+    //return outboundState;
+  },
+  // configuration options
+//  {whitelist: ['goals','workbooks']}
+);
 
 // State of app is persisted and made availabe via the call below
 const store = createStore(
-    appHub as any, // app reducer // TODO remove "as any"
-    applyMiddleware(
+    appHub() as any, // app reducer // TODO remove "as any"
+    undefined,
+    compose(
+          applyMiddleware(
             thunkMiddleware,
             sagaMiddleware,
             routerMiddleware(browserHistory),
-            
             navigationCreateMiddleware(navigationConfig)
           ),
-    persistEnhancer as any// TODO remove "as any"
+          migration,
+          autoRehydrate()
+        )
   );
 
 //sagaMiddleware.run(appSaga); // saga middleware will not run until this operation  is called
@@ -141,12 +170,12 @@ interface MyState {
  rehydrated: any;
 }
 
-export default class AppProvider extends React.Component<MyProps, MyState> {
+class AppProvider extends React.Component<MyProps, MyState> {
 
   constructor (props) {
     super(props);
     this.props = props;
-    this.state = { rehydrated: false };
+    this.state = { rehydrated: true, authenticated: true };
   }
 
   componentWillMount () { // only called on first load or hard browser refresh
@@ -155,17 +184,48 @@ export default class AppProvider extends React.Component<MyProps, MyState> {
      * This is important if you are hosting multiple apps on the same origin.
      * Otherwise databases from other apps will overlap and cause strange behavior
      */
-    persistStore(store, {
-                          keyPrefix: 'reduxPersistProsperityWorkbook',
-                          blacklist: []
-                        }, () => {
-      /**
-       * We wait until the state is hydrated before rendering the ui
-       */
-      setTimeout(() => {
-        this.setState({ rehydrated: true });
-      }, 300); // 300 ms is just for effect so using can see "loading" graphic
-    });
+ 
+
+   
+
+    const persistDec = persistStore(store, {
+                          keyPrefix: 'decryptworkbook',
+                          whitelist: ['user'],
+                        }, 
+                        () => {
+                          if((store as any).getState().user.isAuthenticated){
+
+                          } else {
+                            this.setState({ rehydrated: true });
+                          }
+                          if((store as any).getState().user.isAuthenticated){
+                            const persistEnc = persistStore(store, {
+                                                keyPrefix: 'encryptworkbook',
+                                                blacklist: ['user']
+                                                //transforms: [encryptorTransform,securityFilterTransform]
+                                              }, 
+                                              () => {
+                                                /**
+                                                 * We wait until the state is hydrated before rendering the ui
+                                                 */
+                                                this.setState({ rehydrated: true });
+                                              });
+                          }
+
+                        }
+                  );
+    /*
+    setTimeout(() => {
+      console.log("Experiment //TODO REMOVE ME");
+      persistTest.pause();
+
+
+
+    },10000); */
+  }
+
+  componentWillUpdate(nextProps){
+    console.log("root component will update");
   }
 
   render () {
@@ -174,8 +234,12 @@ export default class AppProvider extends React.Component<MyProps, MyState> {
     }
     return (
       <Provider store={store}>
-        <Router history={history} routes={rootRoute} />
+        <Router  history={history} routes={rootRoute} />
       </Provider>
     );
   }
 }
+
+
+
+export default AppProvider

@@ -35,6 +35,10 @@ class Workbook extends React.Component<MyProps, MyState> {
     var {workbook} = this.props;
     this.props.appBarTitle && this.props.appBarTitle(workbook.title);
   }
+  componentWillUpdate(nextProps) {
+    var {workbook} = nextProps;
+    this.props.appBarTitle && this.props.appBarTitle(workbook.title);
+  }
   render () {
     var {workbook, isOnline, examples, goals, goalClick, goalDelete} = this.props;
 

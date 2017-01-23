@@ -10,6 +10,7 @@ import {appReducer} from 'local-t2-app-redux';
 import * as objectAssign from 'object-assign';
 import {workbooks,workbookIds, examples, goals,loadedGoalId} from './workbook';
 import {notes, noteIds, loadedNoteId} from './note';
+import {USER_LOGIN, USER_LOGOUT} from '../actions'
 /*
 * The data below could come from a rest server
 */
@@ -18,7 +19,11 @@ const defaultUser = {
   loaded: 0,
   role: 'anonymous',
   firstname: '',
-  lastname: ''
+  lastname: '',
+  isAuthenticated: true,
+  pin: '',
+  firstQuestionAnwser: '',
+  secondQuestionAnwser: '' // etc, etc //TODO implement pin lock system
 };
 
 interface GoalInterface {
@@ -46,14 +51,13 @@ interface GoalTreeInterface {
 function user (state = defaultUser, action) {
   switch (action.type) {
     case REHYDRATE:
-      if (state.loaded === 0) {
-        if (typeof action.payload.user !== 'undefined') {
-          return objectAssign({},action.payload.user);
-        }
-        return objectAssign({},state,{loaded: 1});
-      }
       break;
-
+    case USER_LOGIN:
+      state = objectAssign({},state,{isAuthenticated: true});
+      break;
+    case USER_LOGOUT:
+      state = objectAssign({},state,{isAuthenticated: false});
+      break;
   }
   return state;
 }
@@ -90,4 +94,20 @@ const appHub = combineReducers({
   loadedNoteId
 });
 
-export default appHub;
+const rootReducer = (state, action) => {
+  if (action.type === USER_LOGOUT) {
+      /*
+      state.workbooks = undefined
+      state.goals = undefined
+      state.notes = undefined
+       */
+  }
+
+  return appHub(state, action)
+}
+
+const persisterReducer = (peristor = {test: 'test'}) => {
+    console.log(peristor);
+    return rootReducer;
+}
+export default persisterReducer;
