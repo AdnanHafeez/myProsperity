@@ -10,7 +10,7 @@ import {appReducer} from 'local-t2-app-redux';
 import * as objectAssign from 'object-assign';
 import {workbooks,workbookIds, examples, goals,loadedGoalId} from './workbook';
 import {notes, noteIds, loadedNoteId} from './note';
-import {USER_LOGIN, USER_LOGOUT} from '../actions'
+import {USER_LOGIN, USER_LOGOUT, ENCRYPTED_DB_PAUSED} from '../actions'
 /*
 * The data below could come from a rest server
 */
@@ -95,12 +95,12 @@ const appHub = combineReducers({
 });
 
 const rootReducer = (state, action) => {
-  if (action.type === USER_LOGOUT) {
-      /*
-      state.workbooks = undefined
-      state.goals = undefined
-      state.notes = undefined
-       */
+  
+  if (action.type === ENCRYPTED_DB_PAUSED) {
+      state.workbooks = undefined;
+      state.goals = undefined;
+      state.notes = undefined;
+      state.noteIds = undefined;
   }
 
   return appHub(state, action)

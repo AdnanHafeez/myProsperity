@@ -16,11 +16,18 @@ export const NOTE_CREATE = 'T2.NOTE_CREATE';
 export const NOTE_DELETE = 'T2.NOTE_DELETE';
 export const USER_LOGOUT = 'T2.USER_LOGOUT';
 export const USER_LOGIN = 'T2.USER_LOGIN';
+export const ENCRYPTED_DB_PAUSED = 'T2.ENCRYPTED_DB_PAUSED';
 
 import {WorkbookReducerInterface, GoalReducerInterface, GoalFormItemInterface, NoteFormItemInterface, NoteReducerInterface} from '../data/workbook';
 import {nextId} from '../reducers';
 import {goalFactory} from '../reducers/workbook';
 import {noteFactory} from '../reducers/note';
+
+export const encryptedDbPaused = () => {
+  return {
+    type: ENCRYPTED_DB_PAUSED
+  };
+};
 
 export const fieldChange = (field) => {
   return {

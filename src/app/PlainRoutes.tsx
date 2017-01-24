@@ -14,7 +14,7 @@ import {Router, hashHistory, browserHistory} from 'react-router';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
-import {persistStore, autoRehydrate, createTransform, createPersistor} from 'redux-persist';
+import {persistStore, autoRehydrate, createTransform, createPersistor, getStoredState} from 'redux-persist';
 import {registerPromise} from 'local-t2-app-redux';
 import { syncHistoryWithStore, routerMiddleware } from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
@@ -24,7 +24,8 @@ import createMigration from 'redux-persist-migrate';
 import appHub from './reducers';
 import * as objectAssign from 'object-assign';
 import createEncryptor from 'redux-persist-transform-encrypt';
-import {userLogout} from './actions';
+import {userLogout,encryptedDbPaused} from './actions';
+import localForage from 'localForage';
 //console.log(reduxPersMigrate);
 //{createMigration}
 /**
@@ -32,7 +33,7 @@ import {userLogout} from './actions';
  */
 
 const manifest = {
-  '1003': (state) => (objectAssign(state, {workbooks: undefined}))
+  '1006': (state) => (objectAssign(state, {workbooks: undefined}))
 };
 
 /**
@@ -97,7 +98,7 @@ const store = createStore(
 
 const history = syncHistoryWithStore(hashHistory, store);
 
-if(__INCLUDE_SERVICE_WORKER__){ // __INCLUDE_SERVICE_WORKER__ and other __VAR_NAME__ variables are used by webpack durring the build process. See <root>/webpack-production.config.js
+if(__INCLUDE_SERVICE_WORKER__ && !__IS_CORDOVA_BUILD__){ // __INCLUDE_SERVICE_WORKER__ and other __VAR_NAME__ variables are used by webpack durring the build process. See <root>/webpack-production.config.js
   if ('serviceWorker' in navigator) {
     /**
      * Service workers are not supported currently in an iOS browsers
@@ -129,7 +130,7 @@ if (__DEVTOOLS__) { // Webpack defined variable for build process
 }
 document.addEventListener('deviceready', function(){
 
-  store.dispatch({type: 'CORDOVA_DEVICE_READY'});
+  //store.dispatch({type: 'CORDOVA_DEVICE_READY'});
 }, false);
 /**
  * This is the root route.
@@ -187,30 +188,52 @@ class AppProvider extends React.Component<MyProps, MyState> {
  
 
    
-
+    var persistIsPaused = false;
+    const whiteBlackList = ['user','device','navigation','routing','view','migrations','app'];
     const persistDec = persistStore(store, {
                           keyPrefix: 'decryptworkbook',
-                          whitelist: ['user'],
+                          storage: localForage,
+                          whitelist: whiteBlackList
                         }, 
                         () => {
-                          if((store as any).getState().user.isAuthenticated){
 
-                          } else {
-                            this.setState({ rehydrated: true });
-                          }
-                          if((store as any).getState().user.isAuthenticated){
-                            const persistEnc = persistStore(store, {
-                                                keyPrefix: 'encryptworkbook',
-                                                blacklist: ['user']
-                                                //transforms: [encryptorTransform,securityFilterTransform]
-                                              }, 
-                                              () => {
-                                                /**
-                                                 * We wait until the state is hydrated before rendering the ui
-                                                 */
-                                                this.setState({ rehydrated: true });
-                                              });
-                          }
+                          this.setState({ rehydrated: true });
+                          
+                          const encPersistConfig = {
+                                      keyPrefix: 'encryptworkbook',
+                                      blacklist: whiteBlackList,
+                                      debounce: 33
+                                      //transforms: [encryptorTransform,securityFilterTransform]
+                          };
+                          
+                          const encPersist = createPersistor(store, encPersistConfig);
+
+                          encPersist.pause();
+                          persistIsPaused = true;
+
+
+                          store.subscribe(() => {
+                              if((store as any).getState().user.isAuthenticated){
+                                  if(persistIsPaused){
+                                     getStoredState(encPersistConfig,(err,restoredState)=>{
+                                         if(err){
+                                          console.log(err);
+                                         } else {
+                                           encPersist.rehydrate(restoredState);
+                                           encPersist.resume();
+                                           persistIsPaused = false;
+                                         }
+                                     })
+                                  }
+                              }else{
+                                  encPersist.pause();
+                                  if(!persistIsPaused){
+                                    persistIsPaused = true;
+                                    store.dispatch(encryptedDbPaused());
+                                  }
+                              }
+                          });
+                          
 
                         }
                   );

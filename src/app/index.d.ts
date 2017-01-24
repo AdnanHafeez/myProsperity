@@ -14,6 +14,7 @@ declare module 'redux-persist' {
   export const autoRehydrate: any;
   export const createTransform: any;
   export const createPersistor: any;
+  export const getStoredState: any;
 }
 
 declare module 'redux-persist/constants' {
@@ -40,6 +41,7 @@ declare const createMigration: any;
 
 declare const __INCLUDE_SERVICE_WORKER__: any;
 declare const __DEVTOOLS__: any;
+declare const __IS_CORDOVA_BUILD__: any;
 
 declare interface Navigator {
   serviceWorker: any;

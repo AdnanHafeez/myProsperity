@@ -24,10 +24,11 @@ const config = {
     // http://dev.topheman.com/make-your-react-production-minified-version-with-webpack/
     new webpack.DefinePlugin({
       'process.env': {
-        'NODE_ENV': JSON.stringify('cordova')
+        'NODE_ENV': JSON.stringify('production')
       },
-      '__DEVTOOLS__': true,
-      '__INCLUDE_SERVICE_WORKER__': true
+      '__DEVTOOLS__': false,
+      '__INCLUDE_SERVICE_WORKER__': false,
+      '__IS_CORDOVA_BUILD__': true
     }),
     new webpack.optimize.CommonsChunkPlugin({
       children: true, // Look for common dependencies in all children,
@@ -57,25 +58,6 @@ const config = {
     }),
     // Allows error warnings but does not stop compiling.
     new webpack.NoErrorsPlugin(),
-    new SWPrecacheWebpackPlugin(
-      {
-        cacheId: 'ad-anger-pwa-cache2',
-        filename: 'ad-service-worker.js',
-        maximumFileSizeToCacheInBytes: 104857600, // 100Mb
-        staticFileGlobs: [
-          'build/manifest.json',
-          'build/**/*.{html,css,js}',
-          'build/static/**/*.{png,jpg,jpeg,svg,gif,json}'
-        ],
-        runtimeCaching: [
-          {
-            handler: 'cacheFirst',
-            urlPattern: /dynamic\/[\w_-]+\.(gif|jpg|jpeg|png|svg)$/i
-          }
-        ],
-        'stripPrefix': 'build/'
-      }
-    ),
     new PathRewriterPlugin()
   ],
   module: {
