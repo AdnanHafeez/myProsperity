@@ -79,8 +79,10 @@ const securityFilterTransform = createTransform(
 );
 
 // State of app is persisted and made availabe via the call below
+
+
 const store = createStore(
-    appHub() as any, // app reducer // TODO remove "as any"
+    appHub as any, // app reducer // TODO remove "as any"
     undefined,
     compose(
           applyMiddleware(
@@ -93,6 +95,7 @@ const store = createStore(
           autoRehydrate()
         )
   );
+
 
 //sagaMiddleware.run(appSaga); // saga middleware will not run until this operation  is called
 
@@ -192,19 +195,19 @@ class AppProvider extends React.Component<MyProps, MyState> {
     const whiteBlackList = ['user','device','navigation','routing','view','migrations','app'];
     const persistDec = persistStore(store, {
                           keyPrefix: 'decryptworkbook',
-                          storage: localForage,
-                          whitelist: whiteBlackList
+                          storage: localForage
                         }, 
                         () => {
 
                           this.setState({ rehydrated: true });
-                          
+                          /*
                           const encPersistConfig = {
                                       keyPrefix: 'encryptworkbook',
-                                      blacklist: whiteBlackList,
-                                      debounce: 33
+                                      blacklist: whiteBlackList
+
                                       //transforms: [encryptorTransform,securityFilterTransform]
                           };
+
                           
                           const encPersist = createPersistor(store, encPersistConfig);
 
@@ -221,6 +224,8 @@ class AppProvider extends React.Component<MyProps, MyState> {
                                          } else {
                                            encPersist.rehydrate(restoredState);
                                            encPersist.resume();
+              
+                                           
                                            persistIsPaused = false;
                                          }
                                      })
@@ -233,7 +238,7 @@ class AppProvider extends React.Component<MyProps, MyState> {
                                   }
                               }
                           });
-                          
+                            */
 
                         }
                   );

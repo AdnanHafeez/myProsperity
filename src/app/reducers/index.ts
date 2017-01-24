@@ -105,9 +105,18 @@ const rootReducer = (state, action) => {
 
   return appHub(state, action)
 }
-
-const persisterReducer = (peristor = {test: 'test'}) => {
+/*
+const persisterReducer = (peristor) => {
     console.log(peristor);
-    return rootReducer;
-}
-export default persisterReducer;
+    return (state, action) => {
+      if (action.type === ENCRYPTED_DB_PAUSED) {
+          state.workbooks = undefined;
+          state.goals = undefined;
+          state.notes = undefined;
+          state.noteIds = undefined;
+      }
+
+      return appHub(state, action)
+    }
+}*/
+export default rootReducer;
