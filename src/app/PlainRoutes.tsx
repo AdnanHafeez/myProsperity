@@ -16,7 +16,7 @@ import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import {persistStore, autoRehydrate, createTransform, createPersistor, getStoredState} from 'redux-persist';
 import {registerPromise} from 'local-t2-app-redux';
-import { syncHistoryWithStore, routerMiddleware } from 'react-router-redux';
+import { syncHistoryWithStore, routerMiddleware, push} from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
 import {navigationCreateMiddleware} from 'local-t2-navigation-redux';
 import navigationConfig from './navigationConfig';
@@ -26,6 +26,7 @@ import * as objectAssign from 'object-assign';
 import createEncryptor from 'redux-persist-transform-encrypt';
 import {userLogout,encryptedDbPaused} from './actions';
 import localForage from 'localForage';
+import {securityStore,securityRoutes} from './SecurityProvider';
 //console.log(reduxPersMigrate);
 //{createMigration}
 /**
@@ -170,8 +171,8 @@ interface MyProps {
 }
 
 interface MyState {
- [propName: string]: any;
  rehydrated: any;
+ locked: any;
 }
 
 class AppProvider extends React.Component<MyProps, MyState> {
@@ -179,7 +180,7 @@ class AppProvider extends React.Component<MyProps, MyState> {
   constructor (props) {
     super(props);
     this.props = props;
-    this.state = { rehydrated: true, authenticated: true };
+    this.state = { rehydrated: false, locked: true };
   }
 
   componentWillMount () { // only called on first load or hard browser refresh
@@ -189,67 +190,36 @@ class AppProvider extends React.Component<MyProps, MyState> {
      * Otherwise databases from other apps will overlap and cause strange behavior
      */
  
-
+    if(this.state.locked){
+        securityStore.dispatch(push('/'));
+    }
    
     var persistIsPaused = false;
-    const whiteBlackList = ['user','device','navigation','routing','view','migrations','app'];
+    
     const persistDec = persistStore(store, {
-                          keyPrefix: 'decryptworkbook',
+                          keyPrefix: 'workbookencrypted',
                           storage: localForage
                         }, 
                         () => {
 
-                          this.setState({ rehydrated: true });
-                          /*
-                          const encPersistConfig = {
-                                      keyPrefix: 'encryptworkbook',
-                                      blacklist: whiteBlackList
-
-                                      //transforms: [encryptorTransform,securityFilterTransform]
-                          };
-
-                          
-                          const encPersist = createPersistor(store, encPersistConfig);
-
-                          encPersist.pause();
-                          persistIsPaused = true;
-
-
-                          store.subscribe(() => {
-                              if((store as any).getState().user.isAuthenticated){
-                                  if(persistIsPaused){
-                                     getStoredState(encPersistConfig,(err,restoredState)=>{
-                                         if(err){
-                                          console.log(err);
-                                         } else {
-                                           encPersist.rehydrate(restoredState);
-                                           encPersist.resume();
-              
-                                           
-                                           persistIsPaused = false;
-                                         }
-                                     })
-                                  }
-                              }else{
-                                  encPersist.pause();
-                                  if(!persistIsPaused){
-                                    persistIsPaused = true;
-                                    store.dispatch(encryptedDbPaused());
-                                  }
-                              }
-                          });
-                            */
+                          this.setState({ rehydrated: true } as any);
 
                         }
                   );
-    /*
-    setTimeout(() => {
-      console.log("Experiment //TODO REMOVE ME");
-      persistTest.pause();
+      /*
+      setTimeout(() => {
+          this.setState({ locked: false } as any);
+      },2000);
 
 
-
-    },10000); */
+      setTimeout(() => {
+          this.setState({ locked: true } as any);
+          securityStore.dispatch(push('/'));
+      },3000);
+      setTimeout(() => {
+          this.setState({ locked: false } as any);
+      },5000); */
+   
   }
 
   componentWillUpdate(nextProps){
@@ -260,8 +230,15 @@ class AppProvider extends React.Component<MyProps, MyState> {
     if (!this.state.rehydrated) {
       return <BlankPage><SplashPage/></BlankPage>;
     }
+    if(this.state.locked){
+      return (
+        <Provider key='dec_store' store={securityStore}>
+          <Router  routes={securityRoutes} />
+        </Provider>
+      );
+    }
     return (
-      <Provider store={store}>
+      <Provider key='enc_store' store={store}>
         <Router  history={history} routes={rootRoute} />
       </Provider>
     );
