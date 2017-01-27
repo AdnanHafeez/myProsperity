@@ -82,6 +82,7 @@ const securityFilterTransform = createTransform(
 // State of app is persisted and made availabe via the call below
 
 
+
 const store = createStore(
     appHub as any, // app reducer // TODO remove "as any"
     undefined,
@@ -132,10 +133,16 @@ if (__DEVTOOLS__) { // Webpack defined variable for build process
     console.log(store.getState()); // list entire state of app in js console. Essential for debugging.
   });
 }
-document.addEventListener('deviceready', function(){
 
-  //store.dispatch({type: 'CORDOVA_DEVICE_READY'});
-}, false);
+if(__IS_CORDOVA_BUILD__){
+  document.addEventListener('deviceready', function(){
+
+    //store.dispatch({type: 'CORDOVA_DEVICE_READY'});
+  }, false);
+}
+
+
+
 /**
  * This is the root route.
  * Like any route is used to bind Components to a route.
@@ -206,6 +213,16 @@ class AppProvider extends React.Component<MyProps, MyState> {
 
                         }
                   );
+    const securityPersist = persistStore(securityStore, {
+                          keyPrefix: 'decryptedpersistor',
+                          storage: localForage
+                        }, 
+                        () => {
+
+                         
+
+                        }
+                  );
       /*
       setTimeout(() => {
           this.setState({ locked: false } as any);
@@ -233,7 +250,7 @@ class AppProvider extends React.Component<MyProps, MyState> {
     if(this.state.locked){
       return (
         <Provider key='dec_store' store={securityStore}>
-          <Router  routes={securityRoutes} />
+          <Router history={hashHistory} routes={securityRoutes} />
         </Provider>
       );
     }

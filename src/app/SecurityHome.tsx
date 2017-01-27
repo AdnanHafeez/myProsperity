@@ -54,6 +54,11 @@ class SecurityHome extends React.Component<MyProps, MyState> {
             <FlatButton label="Login" type="submit" />
          </form>
          </div>
+         <br />
+         <br />
+         <Link to={'security/forgotpin'}>Forgot Pin</Link>
+         <br />
+         <br />
          <FlatButton label="Forgot Pin" containerElement={<Link to={'security/forgotpin'} />} />
       </div>
     );

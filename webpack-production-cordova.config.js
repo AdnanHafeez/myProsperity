@@ -2,7 +2,6 @@ const webpack = require('webpack');
 const path = require('path');
 const buildPath = path.resolve(__dirname, 'cordova/www');
 const nodeModulesPath = path.resolve(__dirname, 'node_modules');
-const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 const PathRewriterPlugin = require('webpack-path-rewriter');
@@ -29,32 +28,6 @@ const config = {
       '__DEVTOOLS__': false,
       '__INCLUDE_SERVICE_WORKER__': false,
       '__IS_CORDOVA_BUILD__': true
-    }),
-    new webpack.optimize.CommonsChunkPlugin({
-      children: true, // Look for common dependencies in all children,
-      minChunks: 2 // How many times a dependency must come up before being extracted
-    }),
-
-    // This plugin looks for similar chunks and files
-    // and merges them for better caching by the user
-    new webpack.optimize.DedupePlugin(),
-
-    // This plugins optimizes chunks and modules by
-    // how much they are used in your app
-    new webpack.optimize.OccurenceOrderPlugin(),
-
-    // This plugin prevents Webpack from creating chunks
-    // that would be too small to be worth loading separately
-    new webpack.optimize.MinChunkSizePlugin({
-      minChunkSize: 51200 // ~50kb
-    }),
-
-    // Minify the bundle
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        // suppresses warnings, usually from module minification
-        warnings: true
-      }
     }),
     // Allows error warnings but does not stop compiling.
     new webpack.NoErrorsPlugin(),

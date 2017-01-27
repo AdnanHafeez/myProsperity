@@ -8,7 +8,6 @@ import * as ReactDOM from 'react-dom';
 import Paper from 'material-ui/Paper';
 import AppBar from 'material-ui/AppBar';
 import Toggle from 'material-ui/Toggle';
-import OnlineStatusBarIcon from './OnlineStatusContainer';
 import AppSnackBar from './AppSnackBar';
 import AppBarMenuIcon from './AppBarMenuIconDrawer';
 import { connect } from 'react-redux';

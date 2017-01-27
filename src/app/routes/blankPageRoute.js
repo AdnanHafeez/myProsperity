@@ -6,7 +6,6 @@ export default  {
 		cb(null,BlankPage);
 	},
   	getChildRoutes(partialNextState, cb) {
-console.log('blank page called 2')
       	cb(null, [
         	require('./introRoute.js'),
       	])

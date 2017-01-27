@@ -31,6 +31,7 @@ interface GoalInterface {
   name: string;
   date: string;
 }
+
 interface GoalTreeInterface {
   [propName: string]: GoalInterface;
 }

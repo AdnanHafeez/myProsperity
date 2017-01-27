@@ -6,11 +6,13 @@ export default {
     cb(null, Main);
   },
   getChildRoutes (partialNextState, cb) {
-    require.ensure([], function (require) {
+    //require.ensure([], function (require) {
       cb(null, [
         require('./indexRoute.js').default,
         require('./homeRoute.js').default,
+        require('./forgotPinRoute.js').default,
+        require('./setPinRoute.js').default
       ]);
-    });
+    //});
   }
 };

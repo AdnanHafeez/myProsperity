@@ -8,7 +8,7 @@ export default {
   },
   name: 'main',
   getChildRoutes (partialNextState, cb) {
-    require.ensure([], function (require) {
+    //require.ensure([], function (require) {
       cb(null, [
         require('./introRoute.js').default,
         require('./homeRoute.js').default,
@@ -17,6 +17,6 @@ export default {
         require('./notesRoute.js').default,
         require('./debugRoute.js').default
       ]);
-    });
+    //});
   }
 };
