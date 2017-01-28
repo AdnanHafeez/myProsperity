@@ -16,19 +16,20 @@ import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import {persistStore, autoRehydrate, createTransform, createPersistor, getStoredState} from 'redux-persist';
 import {registerPromise} from 'local-t2-app-redux';
-import { syncHistoryWithStore, routerMiddleware, push} from 'react-router-redux';
+import { syncHistoryWithStore, routerMiddleware, push,replace} from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
 import {navigationCreateMiddleware} from 'local-t2-navigation-redux';
 import navigationConfig from './navigationConfig';
 import createMigration from 'redux-persist-migrate';
-import appHub from './reducers';
+import appReducer from './reducers';
+import {switchToAppProvider,switchToSecurityProvider} from './actions/security';
 import * as objectAssign from 'object-assign';
 import createEncryptor from 'redux-persist-transform-encrypt';
-import {userLogout,encryptedDbPaused} from './actions';
+import {userLogout,encryptedDbPaused,loadAppState} from './actions';
 import localForage from 'localForage';
 import {securityStore,securityRoutes} from './SecurityProvider';
-//console.log(reduxPersMigrate);
-//{createMigration}
+
+
 /**
  * Apply migrations that have yet to be run.
  */
@@ -83,26 +84,26 @@ const securityFilterTransform = createTransform(
 
 
 
-const store = createStore(
-    appHub as any, // app reducer // TODO remove "as any"
+const appStore = createStore(
+    appReducer as any, // app reducer // TODO remove "as any"
     undefined,
     compose(
           applyMiddleware(
             thunkMiddleware,
             sagaMiddleware,
-            routerMiddleware(browserHistory),
+            routerMiddleware(hashHistory),
             navigationCreateMiddleware(navigationConfig)
-          ),
+          )/*,
           migration,
-          autoRehydrate()
+          autoRehydrate() */
         )
   );
 
 
 //sagaMiddleware.run(appSaga); // saga middleware will not run until this operation  is called
 
-const history = syncHistoryWithStore(hashHistory, store);
-
+const appHistory = syncHistoryWithStore(hashHistory, appStore);
+const securityHistory = syncHistoryWithStore(hashHistory, securityStore);
 if(__INCLUDE_SERVICE_WORKER__ && !__IS_CORDOVA_BUILD__){ // __INCLUDE_SERVICE_WORKER__ and other __VAR_NAME__ variables are used by webpack durring the build process. See <root>/webpack-production.config.js
   if ('serviceWorker' in navigator) {
     /**
@@ -115,7 +116,7 @@ if(__INCLUDE_SERVICE_WORKER__ && !__IS_CORDOVA_BUILD__){ // __INCLUDE_SERVICE_WO
      *
      * @see https://github.com/jlightfoot2/local-t2-app-redux/blob/master/src/lib/serviceWorker.js
      */
-    registerPromise(registrationPromise, store).then(function (res) {
+    registerPromise(registrationPromise, appStore).then(function (res) {
       if (__DEVTOOLS__) {
         console.log(res);
       }
@@ -129,8 +130,8 @@ if(__INCLUDE_SERVICE_WORKER__ && !__IS_CORDOVA_BUILD__){ // __INCLUDE_SERVICE_WO
 }
 
 if (__DEVTOOLS__) { // Webpack defined variable for build process
-  store.subscribe(() => {
-    console.log(store.getState()); // list entire state of app in js console. Essential for debugging.
+  appStore.subscribe(() => {
+    console.log(appStore.getState()); // list entire state of app in js console. Essential for debugging.
   });
 }
 
@@ -198,44 +199,73 @@ class AppProvider extends React.Component<MyProps, MyState> {
      */
  
     if(this.state.locked){
-        securityStore.dispatch(push('/'));
+        //securityStore.dispatch(push('/'));
     }
-   
-    var persistIsPaused = false;
+    const persistEncryptedConfig =  {
+                                      keyPrefix: 'workbookencrypted',
+                                      storage: localForage,
+                                      blacklist: ['mode']
+                                    };
+
     
-    const persistDec = persistStore(store, {
-                          keyPrefix: 'workbookencrypted',
-                          storage: localForage
-                        }, 
-                        () => {
 
-                          this.setState({ rehydrated: true } as any);
-
-                        }
-                  );
+    let listenForLock = true;
     const securityPersist = persistStore(securityStore, {
                           keyPrefix: 'decryptedpersistor',
-                          storage: localForage
+                          storage: localForage,
+                          blacklist: ['mode']
                         }, 
                         () => {
 
-                         
+                           this.setState({ rehydrated: true } as any);
 
                         }
                   );
-      /*
-      setTimeout(() => {
-          this.setState({ locked: false } as any);
-      },2000);
+    // ?? const persistor = createPersistor(store, persistConfig) ? Will this update from appStore in autorhydrate is removed
+      var persistor = createPersistor(appStore, persistEncryptedConfig);
+      persistor.pause();
+      var appIsActive = false;
+     
+      securityStore.subscribe(() => {
+          if((securityStore as any).getState().mode === 0 && listenForLock){
+            if(__DEVTOOLS__){
+              console.log('----------LOADING APP STORE---------');
+            }
+            listenForLock = false
 
+            getStoredState(persistEncryptedConfig).then((storedState) => {
+                appStore.dispatch(loadAppState(storedState));
+                
+                persistor.resume();
+                
+                listenForLock = true
+                appIsActive = true;
+                this.setState({ locked: false } as any);
 
-      setTimeout(() => {
-          this.setState({ locked: true } as any);
-          securityStore.dispatch(push('/'));
-      },3000);
-      setTimeout(() => {
-          this.setState({ locked: false } as any);
-      },5000); */
+            }).catch(function(err){
+                console.log(err);
+            });
+ 
+          }
+      });
+
+      appStore.subscribe(() => {
+          if ((appStore as any).getState().mode === 0 && appIsActive) {
+            if(__DEVTOOLS__){
+              console.log('----------LOADING SECURITY STORE---------');
+            }
+
+            
+            persistor.pause();
+            
+            
+            this.setState({ locked: true } as any);
+
+            appIsActive = false;
+            securityStore.dispatch(switchToSecurityProvider()); // securityState.mode == 1
+            securityStore.dispatch(push('/'));
+          }
+      });
    
   }
 
@@ -250,13 +280,13 @@ class AppProvider extends React.Component<MyProps, MyState> {
     if(this.state.locked){
       return (
         <Provider key='dec_store' store={securityStore}>
-          <Router history={hashHistory} routes={securityRoutes} />
+          <Router history={securityHistory} routes={securityRoutes} />
         </Provider>
       );
     }
     return (
-      <Provider key='enc_store' store={store}>
-        <Router  history={history} routes={rootRoute} />
+      <Provider key='enc_store' store={appStore}>
+        <Router  history={appHistory} routes={rootRoute} />
       </Provider>
     );
   }

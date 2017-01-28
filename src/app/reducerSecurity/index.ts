@@ -2,9 +2,8 @@ import {combineReducers} from 'redux';
 import {routerReducer} from 'react-router-redux';
 import {REHYDRATE} from 'redux-persist/constants';
 
-
 import * as objectAssign from 'object-assign';
-import {EDIT_QUESTION_1,EDIT_QUESTION_2,EDIT_PIN_FORM} from '../actions/security'
+import {EDIT_QUESTION_1,EDIT_QUESTION_2,EDIT_PIN_FORM, SWITCH_TO_APP_PROVIDER, SWITCH_TO_SECURITY_PROVIDER} from '../actions/security'
 /*
 * The data below could come from a rest server
 */
@@ -85,6 +84,18 @@ function pinQuestionIds(state = Object.keys(pinQuestionsDefault).map((key) => ke
   return state;
 }
 
+function mode(state = 1, action){
+  switch(action.type){
+    case SWITCH_TO_APP_PROVIDER:
+      state = 0;
+      break;
+    case SWITCH_TO_SECURITY_PROVIDER:
+      state = 1;
+      break;
+  }
+  return state;
+}
+
 function selectedPinQuestionIds(state =['QUESTION_OPT_NONE','QUESTION_OPT_NONE'], action){
   switch(action.type){
     case EDIT_PIN_FORM:
@@ -135,7 +146,9 @@ const securityReducer = combineReducers({
   pinQuestionIds,
   pinQuestions,
   selectedPinQuestionIds,
-  questionAnswers
+  questionAnswers,
+  mode,
+  routing: routerReducer
 });
 
 const rootReducer = (state, action) => {

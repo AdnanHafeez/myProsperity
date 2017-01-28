@@ -1,12 +1,25 @@
 export const EDIT_QUESTION_1 = 'T2.SECURITY.EDIT_QUESTION_1';
 export const EDIT_QUESTION_2 = 'T2.SECURITY.EDIT_QUESTION_2';
 export const EDIT_PIN_FORM = 'T2.SECURITY.EDIT_PIN_FORM';
-
+export const SWITCH_TO_APP_PROVIDER = 'T2.SECURITY.SWITCH_TO_APP_PROVIDER';
+export const SWITCH_TO_SECURITY_PROVIDER = 'T2.SECURITY.SWITCH_TO_SECURITY_PROVIDER';
 export const editQuestion = (type:string,questionId:string,answer: string) => {
   return {
     type,
     questionId,
     answer
+  }
+}
+
+export const switchToAppProvider = () => {
+  return {
+    type: SWITCH_TO_APP_PROVIDER
+  }
+}
+
+export const switchToSecurityProvider = () => {
+  return {
+    type: SWITCH_TO_SECURITY_PROVIDER
   }
 }
 

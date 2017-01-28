@@ -17,17 +17,38 @@ export const NOTE_DELETE = 'T2.NOTE_DELETE';
 export const USER_LOGOUT = 'T2.USER_LOGOUT';
 export const USER_LOGIN = 'T2.USER_LOGIN';
 export const ENCRYPTED_DB_PAUSED = 'T2.ENCRYPTED_DB_PAUSED';
+export const LOAD_APP_STATE = 'T2.LOAD_APP_STATE';
+export const SWITCH_TO_APP_PROVIDER = 'T2.APP.SWITCH_TO_APP_PROVIDER';
+export const SWITCH_TO_SECURITY_PROVIDER = 'T2.APP.SWITCH_TO_SECURITY_PROVIDER';
 
 import {WorkbookReducerInterface, GoalReducerInterface, GoalFormItemInterface, NoteFormItemInterface, NoteReducerInterface} from '../data/workbook';
 import {nextId} from '../reducers';
 import {goalFactory} from '../reducers/workbook';
 import {noteFactory} from '../reducers/note';
 
+export const turnAppOn = () => {
+  return {
+    type: SWITCH_TO_APP_PROVIDER
+  }
+}
+
+export const turnAppOff = () => {
+  return {
+    type: SWITCH_TO_SECURITY_PROVIDER
+  }
+}
 export const encryptedDbPaused = () => {
   return {
     type: ENCRYPTED_DB_PAUSED
   };
 };
+
+export const loadAppState = (storedState: any) => {
+  return {
+    type: LOAD_APP_STATE,
+    storedState
+  }
+}
 
 export const fieldChange = (field) => {
   return {

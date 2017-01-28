@@ -63,7 +63,7 @@ export const securityStore = createStore(
           applyMiddleware(
             thunkMiddleware,
             sagaMiddleware,
-            routerMiddleware(browserHistory),
+            routerMiddleware(hashHistory),
             navigationCreateMiddleware(navigationConfig)
           ),
           migration,

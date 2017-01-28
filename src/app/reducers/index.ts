@@ -10,7 +10,7 @@ import {appReducer} from 'local-t2-app-redux';
 import * as objectAssign from 'object-assign';
 import {workbooks,workbookIds, examples, goals,loadedGoalId} from './workbook';
 import {notes, noteIds, loadedNoteId} from './note';
-import {USER_LOGIN, USER_LOGOUT, ENCRYPTED_DB_PAUSED} from '../actions'
+import {USER_LOGIN, USER_LOGOUT, ENCRYPTED_DB_PAUSED, LOAD_APP_STATE, SWITCH_TO_SECURITY_PROVIDER} from '../actions'
 /*
 * The data below could come from a rest server
 */
@@ -67,6 +67,16 @@ function migrations (state = {}, action) {
   return state;
 }
 
+function mode(state = 0, action) {
+  switch(action.type){
+    case SWITCH_TO_SECURITY_PROVIDER:
+      state = 0;
+      break;
+  }
+  return state;
+}
+
+
 export const getMax = function(array){
   return Math.max.apply(null,array);
 }
@@ -92,16 +102,21 @@ const appHub = combineReducers({
   loadedGoalId,
   notes,
   noteIds,
-  loadedNoteId
+  loadedNoteId,
+  mode
 });
 
 const rootReducer = (state, action) => {
-  
+  // if (action.type === 'RESET') return action.stateFromLocalStorage
   if (action.type === ENCRYPTED_DB_PAUSED) {
       state.workbooks = undefined;
       state.goals = undefined;
       state.notes = undefined;
       state.noteIds = undefined;
+  } else if (action.type === LOAD_APP_STATE) {
+    console.log(action.storedState);
+    console.log(state);
+    return objectAssign({},state,action.storedState,{mode: 1});
   }
 
   return appHub(state, action)

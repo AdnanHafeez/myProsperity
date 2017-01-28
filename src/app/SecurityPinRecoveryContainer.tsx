@@ -95,7 +95,7 @@ class SecurityPinRecoveryContainer extends React.Component<MyProps, MyState> {
           </div>
           <div>
               <TextField 
-                    floatingLabelText={handleLabelLength(question1.title)} 
+                    floatingLabelText={question1.title} 
                     floatingLabelFixed={false}
                     fullWidth={true}
                     multiLine={false}
@@ -105,7 +105,7 @@ class SecurityPinRecoveryContainer extends React.Component<MyProps, MyState> {
           </div>
           <div>
             <TextField 
-                  floatingLabelText={handleLabelLength(question2.title)}  
+                  floatingLabelText={question2.title}  
                   floatingLabelFixed={false}
                   multiLine={false}
                   fullWidth={true}

@@ -17,7 +17,7 @@ import { withRouter } from 'react-router';
 import {UpdateDialogContainer} from 'local-t2-app-redux/lib/components';
 
 import {deviceActions} from 'local-t2-device-redux';
-import {userLogin,userLogout} from './actions';
+import {userLogin,userLogout,turnAppOff} from './actions';
 var {windowResize} = deviceActions;
 
 const styles = {
@@ -105,16 +105,16 @@ class Main extends React.Component<MyProps, MyState>{
 export default connect(
   (state) => ({
     device: state.device,
-    isAuthed: state.user.isAuthenticated
+    isAuthed: state.mode === 1
   }),
   (dispatch, ownProps) => {
     return {
       dispatch: dispatch,
       authToggle: (authed) => {
         if(authed){
-          dispatch(userLogout());
+          dispatch(turnAppOff());
         } else {
-          dispatch(userLogin());
+
         }
       }
     };

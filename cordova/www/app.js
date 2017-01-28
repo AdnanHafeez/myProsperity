@@ -28643,12 +28643,12 @@
 	var navigationConfig_1 = __webpack_require__(907);
 	var redux_persist_migrate_1 = __webpack_require__(908);
 	var reducers_1 = __webpack_require__(910);
+	var security_1 = __webpack_require__(1143);
 	var objectAssign = __webpack_require__(301);
-	var redux_persist_transform_encrypt_1 = __webpack_require__(1143);
-	var localForage_1 = __webpack_require__(1180);
-	var SecurityProvider_1 = __webpack_require__(1181);
-	//console.log(reduxPersMigrate);
-	//{createMigration}
+	var redux_persist_transform_encrypt_1 = __webpack_require__(1144);
+	var actions_1 = __webpack_require__(912);
+	var localForage_1 = __webpack_require__(1181);
+	var SecurityProvider_1 = __webpack_require__(1182);
 	/**
 	 * Apply migrations that have yet to be run.
 	 */
@@ -28688,10 +28688,12 @@
 	    //return outboundState;
 	});
 	// State of app is persisted and made availabe via the call below
-	var store = redux_1.createStore(reducers_1.default, // app reducer // TODO remove "as any"
-	undefined, redux_1.compose(redux_1.applyMiddleware(redux_thunk_1.default, sagaMiddleware, react_router_redux_1.routerMiddleware(react_router_1.browserHistory), local_t2_navigation_redux_1.navigationCreateMiddleware(navigationConfig_1.default)), migration, redux_persist_1.autoRehydrate()));
+	var appStore = redux_1.createStore(reducers_1.default, // app reducer // TODO remove "as any"
+	undefined, redux_1.compose(redux_1.applyMiddleware(redux_thunk_1.default, sagaMiddleware, react_router_redux_1.routerMiddleware(react_router_1.browserHistory), local_t2_navigation_redux_1.navigationCreateMiddleware(navigationConfig_1.default)) /*,
+	migration,
+	autoRehydrate() */));
 	//sagaMiddleware.run(appSaga); // saga middleware will not run until this operation  is called
-	var history = react_router_redux_1.syncHistoryWithStore(react_router_1.hashHistory, store);
+	var history = react_router_redux_1.syncHistoryWithStore(react_router_1.hashHistory, appStore);
 	if (false) {
 	    if ('serviceWorker' in navigator) {
 	        /**
@@ -28704,7 +28706,7 @@
 	         *
 	         * @see https://github.com/jlightfoot2/local-t2-app-redux/blob/master/src/lib/serviceWorker.js
 	         */
-	        local_t2_app_redux_1.registerPromise(registrationPromise, store).then(function (res) {
+	        local_t2_app_redux_1.registerPromise(registrationPromise, appStore).then(function (res) {
 	            if (__DEVTOOLS__) {
 	                console.log(res);
 	            }
@@ -28717,8 +28719,8 @@
 	    }
 	}
 	if (false) {
-	    store.subscribe(function () {
-	        console.log(store.getState()); // list entire state of app in js console. Essential for debugging.
+	    appStore.subscribe(function () {
+	        console.log(appStore.getState()); // list entire state of app in js console. Essential for debugging.
 	    });
 	}
 	if (true) {
@@ -28764,33 +28766,60 @@
 	         */
 	        var _this = this;
 	        if (this.state.locked) {
-	            SecurityProvider_1.securityStore.dispatch(react_router_redux_1.push('/'));
 	        }
-	        var persistIsPaused = false;
-	        var persistDec = redux_persist_1.persistStore(store, {
+	        var persistEncryptedConfig = {
 	            keyPrefix: 'workbookencrypted',
-	            storage: localForage_1.default
+	            storage: localForage_1.default,
+	            blacklist: ['mode']
+	        };
+	        var listenForLock = true;
+	        var securityPersist = redux_persist_1.persistStore(SecurityProvider_1.securityStore, {
+	            keyPrefix: 'decryptedpersistor',
+	            storage: localForage_1.default,
+	            blacklist: ['mode']
 	        }, function () {
 	            _this.setState({ rehydrated: true });
 	        });
-	        var securityPersist = redux_persist_1.persistStore(SecurityProvider_1.securityStore, {
-	            keyPrefix: 'decryptedpersistor',
-	            storage: localForage_1.default
-	        }, function () {
+	        // ?? const persistor = createPersistor(store, persistConfig) ? Will this update from appStore in autorhydrate is removed
+	        var persistor = redux_persist_1.createPersistor(appStore, persistEncryptedConfig);
+	        persistor.pause();
+	        var appIsActive = false;
+	        SecurityProvider_1.securityStore.subscribe(function () {
+	            if (SecurityProvider_1.securityStore.getState().mode === 0 && listenForLock) {
+	                if (false) {
+	                    console.log('----------LOADING APP STORE---------');
+	                }
+	                listenForLock = false;
+	                redux_persist_1.getStoredState(persistEncryptedConfig).then(function (storedState) {
+	                    appStore.dispatch(actions_1.loadAppState(storedState));
+	                    persistor.resume();
+	                    listenForLock = true;
+	                    appIsActive = true;
+	                    _this.setState({ locked: false });
+	                    /* ??maybe pesistStore is more ideal than createPersistor
+	                     persistStore(appStore, persistEncryptedConfig,
+	                                 () => {
+	                             listenForLock = true
+	                             this.setState({ locked: false } as any);
+	
+	                         }
+	                     );*/
+	                }).catch(function (err) {
+	                    console.log(err);
+	                });
+	            }
 	        });
-	        /*
-	        setTimeout(() => {
-	            this.setState({ locked: false } as any);
-	        },2000);
-	  
-	  
-	        setTimeout(() => {
-	            this.setState({ locked: true } as any);
-	            securityStore.dispatch(push('/'));
-	        },3000);
-	        setTimeout(() => {
-	            this.setState({ locked: false } as any);
-	        },5000); */
+	        appStore.subscribe(function () {
+	            if (appStore.getState().mode === 0 && appIsActive) {
+	                if (false) {
+	                    console.log('----------LOADING SECURITY STORE---------');
+	                }
+	                SecurityProvider_1.securityStore.dispatch(security_1.switchToSecurityProvider()); // securityState.mode == 1
+	                persistor.pause();
+	                _this.setState({ locked: true });
+	                appIsActive = false;
+	            }
+	        });
 	    };
 	    AppProvider.prototype.componentWillUpdate = function (nextProps) {
 	        console.log("root component will update");
@@ -28804,7 +28833,7 @@
 	            return (React.createElement(react_redux_1.Provider, { key: 'dec_store', store: SecurityProvider_1.securityStore },
 	                React.createElement(react_router_1.Router, { history: react_router_1.hashHistory, routes: SecurityProvider_1.securityRoutes })));
 	        }
-	        return (React.createElement(react_redux_1.Provider, { key: 'enc_store', store: store },
+	        return (React.createElement(react_redux_1.Provider, { key: 'enc_store', store: appStore },
 	            React.createElement(react_router_1.Router, { history: history, routes: rootRoute })));
 	    };
 	    return AppProvider;
@@ -55922,6 +55951,15 @@
 	    if (state === void 0) { state = {}; }
 	    return state;
 	}
+	function mode(state, action) {
+	    if (state === void 0) { state = 0; }
+	    switch (action.type) {
+	        case actions_1.SWITCH_TO_SECURITY_PROVIDER:
+	            state = 0;
+	            break;
+	    }
+	    return state;
+	}
 	exports.getMax = function (array) {
 	    return Math.max.apply(null, array);
 	};
@@ -55945,14 +55983,21 @@
 	    loadedGoalId: workbook_1.loadedGoalId,
 	    notes: note_1.notes,
 	    noteIds: note_1.noteIds,
-	    loadedNoteId: note_1.loadedNoteId
+	    loadedNoteId: note_1.loadedNoteId,
+	    mode: mode
 	});
 	var rootReducer = function (state, action) {
+	    // if (action.type === 'RESET') return action.stateFromLocalStorage
 	    if (action.type === actions_1.ENCRYPTED_DB_PAUSED) {
 	        state.workbooks = undefined;
 	        state.goals = undefined;
 	        state.notes = undefined;
 	        state.noteIds = undefined;
+	    }
+	    else if (action.type === actions_1.LOAD_APP_STATE) {
+	        console.log(action.storedState);
+	        console.log(state);
+	        return objectAssign({}, state, action.storedState, { mode: 1 });
 	    }
 	    return appHub(state, action);
 	};
@@ -56042,12 +56087,31 @@
 	exports.USER_LOGOUT = 'T2.USER_LOGOUT';
 	exports.USER_LOGIN = 'T2.USER_LOGIN';
 	exports.ENCRYPTED_DB_PAUSED = 'T2.ENCRYPTED_DB_PAUSED';
+	exports.LOAD_APP_STATE = 'T2.LOAD_APP_STATE';
+	exports.SWITCH_TO_APP_PROVIDER = 'T2.APP.SWITCH_TO_APP_PROVIDER';
+	exports.SWITCH_TO_SECURITY_PROVIDER = 'T2.APP.SWITCH_TO_SECURITY_PROVIDER';
 	var reducers_1 = __webpack_require__(910);
 	var workbook_1 = __webpack_require__(913);
 	var note_1 = __webpack_require__(922);
+	exports.turnAppOn = function () {
+	    return {
+	        type: exports.SWITCH_TO_APP_PROVIDER
+	    };
+	};
+	exports.turnAppOff = function () {
+	    return {
+	        type: exports.SWITCH_TO_SECURITY_PROVIDER
+	    };
+	};
 	exports.encryptedDbPaused = function () {
 	    return {
 	        type: exports.ENCRYPTED_DB_PAUSED
+	    };
+	};
+	exports.loadAppState = function (storedState) {
+	    return {
+	        type: exports.LOAD_APP_STATE,
+	        storedState: storedState
 	    };
 	};
 	exports.fieldChange = function (field) {
@@ -68251,13 +68315,57 @@
 
 /***/ },
 /* 1143 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	module.exports = __webpack_require__(1144);
+	"use strict";
+	exports.EDIT_QUESTION_1 = 'T2.SECURITY.EDIT_QUESTION_1';
+	exports.EDIT_QUESTION_2 = 'T2.SECURITY.EDIT_QUESTION_2';
+	exports.EDIT_PIN_FORM = 'T2.SECURITY.EDIT_PIN_FORM';
+	exports.SWITCH_TO_APP_PROVIDER = 'T2.SECURITY.SWITCH_TO_APP_PROVIDER';
+	exports.SWITCH_TO_SECURITY_PROVIDER = 'T2.SECURITY.SWITCH_TO_SECURITY_PROVIDER';
+	exports.editQuestion = function (type, questionId, answer) {
+	    return {
+	        type: type,
+	        questionId: questionId,
+	        answer: answer
+	    };
+	};
+	exports.switchToAppProvider = function () {
+	    return {
+	        type: exports.SWITCH_TO_APP_PROVIDER
+	    };
+	};
+	exports.switchToSecurityProvider = function () {
+	    return {
+	        type: exports.SWITCH_TO_SECURITY_PROVIDER
+	    };
+	};
+	exports.editQuestion1 = function (questionId, answer) {
+	    return exports.editQuestion(exports.EDIT_QUESTION_1, questionId, answer);
+	};
+	exports.editQuestion2 = function (questionId, answer) {
+	    return exports.editQuestion(exports.EDIT_QUESTION_2, questionId, answer);
+	};
+	exports.editPinForm = function (question1Id, answer1, question2Id, answer2) {
+	    return {
+	        type: exports.EDIT_PIN_FORM,
+	        question1Id: question1Id,
+	        question2Id: question2Id,
+	        answer1: answer1,
+	        answer2: answer2
+	    };
+	};
 
 
 /***/ },
 /* 1144 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(1145);
+
+
+/***/ },
+/* 1145 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -68268,11 +68376,11 @@
 	
 	var _reduxPersist = __webpack_require__(719);
 	
-	var _cryptoJs = __webpack_require__(1145);
+	var _cryptoJs = __webpack_require__(1146);
 	
 	var _cryptoJs2 = _interopRequireDefault(_cryptoJs);
 	
-	var _helpers = __webpack_require__(1179);
+	var _helpers = __webpack_require__(1180);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -68296,13 +68404,13 @@
 	};
 
 /***/ },
-/* 1145 */
+/* 1146 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1147), __webpack_require__(1148), __webpack_require__(1149), __webpack_require__(1150), __webpack_require__(1151), __webpack_require__(1152), __webpack_require__(1153), __webpack_require__(1154), __webpack_require__(1155), __webpack_require__(1156), __webpack_require__(1157), __webpack_require__(1158), __webpack_require__(1159), __webpack_require__(1160), __webpack_require__(1161), __webpack_require__(1162), __webpack_require__(1163), __webpack_require__(1164), __webpack_require__(1165), __webpack_require__(1166), __webpack_require__(1167), __webpack_require__(1168), __webpack_require__(1169), __webpack_require__(1170), __webpack_require__(1171), __webpack_require__(1172), __webpack_require__(1173), __webpack_require__(1174), __webpack_require__(1175), __webpack_require__(1176), __webpack_require__(1177), __webpack_require__(1178));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1148), __webpack_require__(1149), __webpack_require__(1150), __webpack_require__(1151), __webpack_require__(1152), __webpack_require__(1153), __webpack_require__(1154), __webpack_require__(1155), __webpack_require__(1156), __webpack_require__(1157), __webpack_require__(1158), __webpack_require__(1159), __webpack_require__(1160), __webpack_require__(1161), __webpack_require__(1162), __webpack_require__(1163), __webpack_require__(1164), __webpack_require__(1165), __webpack_require__(1166), __webpack_require__(1167), __webpack_require__(1168), __webpack_require__(1169), __webpack_require__(1170), __webpack_require__(1171), __webpack_require__(1172), __webpack_require__(1173), __webpack_require__(1174), __webpack_require__(1175), __webpack_require__(1176), __webpack_require__(1177), __webpack_require__(1178), __webpack_require__(1179));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -68319,7 +68427,7 @@
 	}));
 
 /***/ },
-/* 1146 */
+/* 1147 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory) {
@@ -69084,13 +69192,13 @@
 	}));
 
 /***/ },
-/* 1147 */
+/* 1148 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146));
+			module.exports = exports = factory(__webpack_require__(1147));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -69393,13 +69501,13 @@
 	}));
 
 /***/ },
-/* 1148 */
+/* 1149 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146));
+			module.exports = exports = factory(__webpack_require__(1147));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -69474,13 +69582,13 @@
 	}));
 
 /***/ },
-/* 1149 */
+/* 1150 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146));
+			module.exports = exports = factory(__webpack_require__(1147));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -69628,13 +69736,13 @@
 	}));
 
 /***/ },
-/* 1150 */
+/* 1151 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146));
+			module.exports = exports = factory(__webpack_require__(1147));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -69768,13 +69876,13 @@
 	}));
 
 /***/ },
-/* 1151 */
+/* 1152 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146));
+			module.exports = exports = factory(__webpack_require__(1147));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -70041,13 +70149,13 @@
 	}));
 
 /***/ },
-/* 1152 */
+/* 1153 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146));
+			module.exports = exports = factory(__webpack_require__(1147));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -70196,13 +70304,13 @@
 	}));
 
 /***/ },
-/* 1153 */
+/* 1154 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146));
+			module.exports = exports = factory(__webpack_require__(1147));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -70400,13 +70508,13 @@
 	}));
 
 /***/ },
-/* 1154 */
+/* 1155 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1153));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1154));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -70485,13 +70593,13 @@
 	}));
 
 /***/ },
-/* 1155 */
+/* 1156 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1147));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1148));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -70813,13 +70921,13 @@
 	}));
 
 /***/ },
-/* 1156 */
+/* 1157 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1147), __webpack_require__(1155));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1148), __webpack_require__(1156));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -70901,13 +71009,13 @@
 	}));
 
 /***/ },
-/* 1157 */
+/* 1158 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1147));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1148));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -71229,13 +71337,13 @@
 	}));
 
 /***/ },
-/* 1158 */
+/* 1159 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146));
+			module.exports = exports = factory(__webpack_require__(1147));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -71501,13 +71609,13 @@
 	}));
 
 /***/ },
-/* 1159 */
+/* 1160 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146));
+			module.exports = exports = factory(__webpack_require__(1147));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -71649,13 +71757,13 @@
 	}));
 
 /***/ },
-/* 1160 */
+/* 1161 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1152), __webpack_require__(1159));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1153), __webpack_require__(1160));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -71799,13 +71907,13 @@
 	}));
 
 /***/ },
-/* 1161 */
+/* 1162 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1152), __webpack_require__(1159));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1153), __webpack_require__(1160));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -71936,13 +72044,13 @@
 	}));
 
 /***/ },
-/* 1162 */
+/* 1163 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146));
+			module.exports = exports = factory(__webpack_require__(1147));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -72816,13 +72924,13 @@
 	}));
 
 /***/ },
-/* 1163 */
+/* 1164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1162));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1163));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -72899,13 +73007,13 @@
 	}));
 
 /***/ },
-/* 1164 */
+/* 1165 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1162));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1163));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -72962,13 +73070,13 @@
 	}));
 
 /***/ },
-/* 1165 */
+/* 1166 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1162));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1163));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -73083,13 +73191,13 @@
 	}));
 
 /***/ },
-/* 1166 */
+/* 1167 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1162));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1163));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -73142,13 +73250,13 @@
 	}));
 
 /***/ },
-/* 1167 */
+/* 1168 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1162));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1163));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -73187,13 +73295,13 @@
 	}));
 
 /***/ },
-/* 1168 */
+/* 1169 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1162));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1163));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -73241,13 +73349,13 @@
 	}));
 
 /***/ },
-/* 1169 */
+/* 1170 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1162));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1163));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -73290,13 +73398,13 @@
 	}));
 
 /***/ },
-/* 1170 */
+/* 1171 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1162));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1163));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -73335,13 +73443,13 @@
 	}));
 
 /***/ },
-/* 1171 */
+/* 1172 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1162));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1163));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -73385,13 +73493,13 @@
 	}));
 
 /***/ },
-/* 1172 */
+/* 1173 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1162));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1163));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -73420,13 +73528,13 @@
 	}));
 
 /***/ },
-/* 1173 */
+/* 1174 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1162));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1163));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -73491,13 +73599,13 @@
 	}));
 
 /***/ },
-/* 1174 */
+/* 1175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1150), __webpack_require__(1151), __webpack_require__(1161), __webpack_require__(1162));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1151), __webpack_require__(1152), __webpack_require__(1162), __webpack_require__(1163));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -73728,13 +73836,13 @@
 	}));
 
 /***/ },
-/* 1175 */
+/* 1176 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1150), __webpack_require__(1151), __webpack_require__(1161), __webpack_require__(1162));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1151), __webpack_require__(1152), __webpack_require__(1162), __webpack_require__(1163));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -74503,13 +74611,13 @@
 	}));
 
 /***/ },
-/* 1176 */
+/* 1177 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1150), __webpack_require__(1151), __webpack_require__(1161), __webpack_require__(1162));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1151), __webpack_require__(1152), __webpack_require__(1162), __webpack_require__(1163));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -74647,13 +74755,13 @@
 	}));
 
 /***/ },
-/* 1177 */
+/* 1178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1150), __webpack_require__(1151), __webpack_require__(1161), __webpack_require__(1162));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1151), __webpack_require__(1152), __webpack_require__(1162), __webpack_require__(1163));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -74844,13 +74952,13 @@
 	}));
 
 /***/ },
-/* 1178 */
+/* 1179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	;(function (root, factory, undef) {
 		if (true) {
 			// CommonJS
-			module.exports = exports = factory(__webpack_require__(1146), __webpack_require__(1150), __webpack_require__(1151), __webpack_require__(1161), __webpack_require__(1162));
+			module.exports = exports = factory(__webpack_require__(1147), __webpack_require__(1151), __webpack_require__(1152), __webpack_require__(1162), __webpack_require__(1163));
 		}
 		else if (typeof define === "function" && define.amd) {
 			// AMD
@@ -75039,7 +75147,7 @@
 	}));
 
 /***/ },
-/* 1179 */
+/* 1180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -75084,7 +75192,7 @@
 	};
 
 /***/ },
-/* 1180 */
+/* 1181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var require;var require;/* WEBPACK VAR INJECTION */(function(global) {/*!
@@ -77391,7 +77499,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 1181 */
+/* 1182 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -77405,7 +77513,7 @@
 	var local_t2_navigation_redux_1 = __webpack_require__(904);
 	var navigationConfig_1 = __webpack_require__(907);
 	var redux_persist_migrate_1 = __webpack_require__(908);
-	var reducerSecurity_1 = __webpack_require__(1182);
+	var reducerSecurity_1 = __webpack_require__(1183);
 	var sagaMiddleware = redux_saga_1.default();
 	//{createMigration}
 	/**
@@ -77439,13 +77547,13 @@
 
 
 /***/ },
-/* 1182 */
+/* 1183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var redux_1 = __webpack_require__(696);
 	var objectAssign = __webpack_require__(301);
-	var security_1 = __webpack_require__(1183);
+	var security_1 = __webpack_require__(1143);
 	var defaultUser = {
 	    stage: 0,
 	    loaded: 0,
@@ -77498,6 +77606,18 @@
 	    if (state === void 0) { state = Object.keys(pinQuestionsDefault).map(function (key) { return key; }); }
 	    return state;
 	}
+	function mode(state, action) {
+	    if (state === void 0) { state = 1; }
+	    switch (action.type) {
+	        case security_1.SWITCH_TO_APP_PROVIDER:
+	            state = 0;
+	            break;
+	        case security_1.SWITCH_TO_SECURITY_PROVIDER:
+	            state = 1;
+	            break;
+	    }
+	    return state;
+	}
 	function selectedPinQuestionIds(state, action) {
 	    if (state === void 0) { state = ['QUESTION_OPT_NONE', 'QUESTION_OPT_NONE']; }
 	    switch (action.type) {
@@ -77546,45 +77666,14 @@
 	    pinQuestionIds: pinQuestionIds,
 	    pinQuestions: pinQuestions,
 	    selectedPinQuestionIds: selectedPinQuestionIds,
-	    questionAnswers: questionAnswers
+	    questionAnswers: questionAnswers,
+	    mode: mode
 	});
 	var rootReducer = function (state, action) {
 	    return securityReducer(state, action);
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = rootReducer;
-
-
-/***/ },
-/* 1183 */
-/***/ function(module, exports) {
-
-	"use strict";
-	exports.EDIT_QUESTION_1 = 'T2.SECURITY.EDIT_QUESTION_1';
-	exports.EDIT_QUESTION_2 = 'T2.SECURITY.EDIT_QUESTION_2';
-	exports.EDIT_PIN_FORM = 'T2.SECURITY.EDIT_PIN_FORM';
-	exports.editQuestion = function (type, questionId, answer) {
-	    return {
-	        type: type,
-	        questionId: questionId,
-	        answer: answer
-	    };
-	};
-	exports.editQuestion1 = function (questionId, answer) {
-	    return exports.editQuestion(exports.EDIT_QUESTION_1, questionId, answer);
-	};
-	exports.editQuestion2 = function (questionId, answer) {
-	    return exports.editQuestion(exports.EDIT_QUESTION_2, questionId, answer);
-	};
-	exports.editPinForm = function (question1Id, answer1, question2Id, answer2) {
-	    return {
-	        type: exports.EDIT_PIN_FORM,
-	        question1Id: question1Id,
-	        question2Id: question2Id,
-	        answer1: answer1,
-	        answer2: answer2
-	    };
-	};
 
 
 /***/ },
@@ -80222,6 +80311,7 @@
 	var TextField_1 = __webpack_require__(1209);
 	var FlatButton_1 = __webpack_require__(868);
 	var react_router_1 = __webpack_require__(634);
+	var security_1 = __webpack_require__(1143);
 	var styles = {
 	    video: {
 	        width: '100%',
@@ -80260,9 +80350,10 @@
 	var stateToProps = function (state) {
 	    return {};
 	};
-	var dispatchToProps = function (state, ownProps) {
+	var dispatchToProps = function (dispatch, ownProps) {
 	    return {
 	        submitPin: function (event) {
+	            dispatch(security_1.switchToAppProvider());
 	            event.preventDefault();
 	        }
 	    };
@@ -81598,9 +81689,9 @@
 	                React.createElement("div", null,
 	                    React.createElement(TextField_1.default, { floatingLabelText: 'New Pin', hintText: 'My Secret Pin', multiLine: false, fullWidth: true, name: 'newPin', errorText: '', value: this.state.newPin, onChange: this.handleChange })),
 	                React.createElement("div", null,
-	                    React.createElement(TextField_1.default, { floatingLabelText: handleLabelLength(question1.title), floatingLabelFixed: false, fullWidth: true, multiLine: false, name: 'answer1', onFocus: this.handleFocus, errorText: '', value: this.state.answer1, onChange: this.handleChange })),
+	                    React.createElement(TextField_1.default, { floatingLabelText: question1.title, floatingLabelFixed: false, fullWidth: true, multiLine: false, name: 'answer1', onFocus: this.handleFocus, errorText: '', value: this.state.answer1, onChange: this.handleChange })),
 	                React.createElement("div", null,
-	                    React.createElement(TextField_1.default, { floatingLabelText: handleLabelLength(question2.title), floatingLabelFixed: false, multiLine: false, fullWidth: true, name: 'answer2', onFocus: this.handleFocus, errorText: '', value: this.state.answer2, onChange: this.handleChange })),
+	                    React.createElement(TextField_1.default, { floatingLabelText: question2.title, floatingLabelFixed: false, multiLine: false, fullWidth: true, name: 'answer2', onFocus: this.handleFocus, errorText: '', value: this.state.answer2, onChange: this.handleChange })),
 	                React.createElement("div", null,
 	                    React.createElement("div", null,
 	                        React.createElement(FlatButton_1.default, { label: "Submit", type: "submit" })),
@@ -81665,7 +81756,7 @@
 	var SelectField_1 = __webpack_require__(1221);
 	var TextField_1 = __webpack_require__(1209);
 	var MenuItem_1 = __webpack_require__(1245);
-	var security_1 = __webpack_require__(1183);
+	var security_1 = __webpack_require__(1143);
 	var FlatButton_1 = __webpack_require__(868);
 	var styles = {
 	    video: {
@@ -86456,9 +86547,9 @@
 	var NotFound = function () {
 	    return (React.createElement(MainSecurityContainer_1.default, null,
 	        React.createElement("div", null,
-	            React.createElement("h1", null, "Test Page Not Found"),
+	            React.createElement("h1", null, "Page Not Found"),
 	            React.createElement("p", null,
-	                React.createElement(react_router_1.Link, { to: '/main/home' }, "Home")))));
+	                React.createElement(react_router_1.Link, { to: '/' }, "Home")))));
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = NotFound;
@@ -86573,16 +86664,15 @@
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = react_redux_1.connect(function (state) { return ({
 	    device: state.device,
-	    isAuthed: state.user.isAuthenticated
+	    isAuthed: state.mode === 1
 	}); }, function (dispatch, ownProps) {
 	    return {
 	        dispatch: dispatch,
 	        authToggle: function (authed) {
 	            if (authed) {
-	                dispatch(actions_1.userLogout());
+	                dispatch(actions_1.turnAppOff());
 	            }
 	            else {
-	                dispatch(actions_1.userLogin());
 	            }
 	        }
 	    };

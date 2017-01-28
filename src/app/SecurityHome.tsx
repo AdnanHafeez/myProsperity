@@ -5,6 +5,7 @@ import BasicDialog from './BasicDialog';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import { Link } from 'react-router';
+import {switchToAppProvider} from './actions/security';
 
 const styles = {
   video: {
@@ -71,9 +72,10 @@ const stateToProps = (state) => {
   }
 }
 
-const dispatchToProps = (state,ownProps) => {
+const dispatchToProps = (dispatch,ownProps) => {
   return {
     submitPin: (event) => {
+      dispatch(switchToAppProvider());
       event.preventDefault();
     }  
   }
