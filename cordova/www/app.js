@@ -8195,15 +8195,11 @@
 	injectTapEventPlugin();
 	// Render the main app react component into the app div.
 	// For more details see: https://facebook.github.io/react/docs/top-level-api.html#react.render
-	if (true) {
-	    loadApp();
+	function onPageLoad() {
+	    document.addEventListener("deviceready", PlainRoutes_1.onCordovaDeviceReady, false);
 	}
-	else {
-	    loadApp();
-	}
-	function loadApp() {
-	    render(React.createElement(PlainRoutes_1.default, null), document.getElementById('app'));
-	}
+	onPageLoad();
+	render(React.createElement(PlainRoutes_1.default, null), document.getElementById('app'));
 
 
 /***/ },
@@ -28689,11 +28685,12 @@
 	});
 	// State of app is persisted and made availabe via the call below
 	var appStore = redux_1.createStore(reducers_1.default, // app reducer // TODO remove "as any"
-	undefined, redux_1.compose(redux_1.applyMiddleware(redux_thunk_1.default, sagaMiddleware, react_router_redux_1.routerMiddleware(react_router_1.browserHistory), local_t2_navigation_redux_1.navigationCreateMiddleware(navigationConfig_1.default)) /*,
+	undefined, redux_1.compose(redux_1.applyMiddleware(redux_thunk_1.default, sagaMiddleware, react_router_redux_1.routerMiddleware(react_router_1.hashHistory), local_t2_navigation_redux_1.navigationCreateMiddleware(navigationConfig_1.default)) /*,
 	migration,
 	autoRehydrate() */));
 	//sagaMiddleware.run(appSaga); // saga middleware will not run until this operation  is called
-	var history = react_router_redux_1.syncHistoryWithStore(react_router_1.hashHistory, appStore);
+	var appHistory = react_router_redux_1.syncHistoryWithStore(react_router_1.hashHistory, appStore);
+	var securityHistory = react_router_redux_1.syncHistoryWithStore(react_router_1.hashHistory, SecurityProvider_1.securityStore);
 	if (false) {
 	    if ('serviceWorker' in navigator) {
 	        /**
@@ -28718,7 +28715,7 @@
 	        });
 	    }
 	}
-	if (false) {
+	if (true) {
 	    appStore.subscribe(function () {
 	        console.log(appStore.getState()); // list entire state of app in js console. Essential for debugging.
 	    });
@@ -28750,6 +28747,22 @@
 	        ]
 	    }
 	];
+	exports.onCordovaDeviceReady = function () {
+	    console.log('cordova device ready');
+	    document.addEventListener("pause", onPause, false);
+	    document.addEventListener("resume", onResume, false);
+	    document.addEventListener("menubutton", onMenuKeyDown, false);
+	};
+	function onPause() {
+	    console.log('cordova pause');
+	}
+	function onResume() {
+	    console.log('cordova resume');
+	}
+	function onMenuKeyDown() {
+	    console.log('cordova onMenuKeyDown');
+	    // Handle the menubutton event
+	}
 	var AppProvider = (function (_super) {
 	    __extends(AppProvider, _super);
 	    function AppProvider(props) {
@@ -28785,25 +28798,17 @@
 	        persistor.pause();
 	        var appIsActive = false;
 	        SecurityProvider_1.securityStore.subscribe(function () {
-	            if (SecurityProvider_1.securityStore.getState().mode === 0 && listenForLock) {
-	                if (false) {
+	            if (SecurityProvider_1.securityStore.getState().mode === 0 && !appIsActive) {
+	                if (true) {
 	                    console.log('----------LOADING APP STORE---------');
 	                }
 	                listenForLock = false;
 	                redux_persist_1.getStoredState(persistEncryptedConfig).then(function (storedState) {
+	                    appIsActive = true;
 	                    appStore.dispatch(actions_1.loadAppState(storedState));
 	                    persistor.resume();
 	                    listenForLock = true;
-	                    appIsActive = true;
 	                    _this.setState({ locked: false });
-	                    /* ??maybe pesistStore is more ideal than createPersistor
-	                     persistStore(appStore, persistEncryptedConfig,
-	                                 () => {
-	                             listenForLock = true
-	                             this.setState({ locked: false } as any);
-	
-	                         }
-	                     );*/
 	                }).catch(function (err) {
 	                    console.log(err);
 	                });
@@ -28811,13 +28816,14 @@
 	        });
 	        appStore.subscribe(function () {
 	            if (appStore.getState().mode === 0 && appIsActive) {
-	                if (false) {
+	                if (true) {
 	                    console.log('----------LOADING SECURITY STORE---------');
 	                }
-	                SecurityProvider_1.securityStore.dispatch(security_1.switchToSecurityProvider()); // securityState.mode == 1
 	                persistor.pause();
 	                _this.setState({ locked: true });
 	                appIsActive = false;
+	                SecurityProvider_1.securityStore.dispatch(security_1.switchToSecurityProvider()); // securityState.mode == 1
+	                SecurityProvider_1.securityStore.dispatch(react_router_redux_1.push('/'));
 	            }
 	        });
 	    };
@@ -28831,10 +28837,10 @@
 	        }
 	        if (this.state.locked) {
 	            return (React.createElement(react_redux_1.Provider, { key: 'dec_store', store: SecurityProvider_1.securityStore },
-	                React.createElement(react_router_1.Router, { history: react_router_1.hashHistory, routes: SecurityProvider_1.securityRoutes })));
+	                React.createElement(react_router_1.Router, { history: securityHistory, routes: SecurityProvider_1.securityRoutes })));
 	        }
 	        return (React.createElement(react_redux_1.Provider, { key: 'enc_store', store: appStore },
-	            React.createElement(react_router_1.Router, { history: history, routes: rootRoute })));
+	            React.createElement(react_router_1.Router, { history: appHistory, routes: rootRoute })));
 	    };
 	    return AppProvider;
 	}(React.Component));
@@ -56261,7 +56267,7 @@
 	};
 	function checkProperty(ob, prop) {
 	    if (typeof ob[prop + ''] === 'undefined') {
-	        if (false) {
+	        if (true) {
 	            console.log("Invalid workbook id submitted to reducer");
 	        }
 	        return false;
@@ -57009,7 +57015,7 @@
 	};
 	function checkProperty(ob, prop) {
 	    if (typeof ob[prop + ''] === 'undefined') {
-	        if (false) {
+	        if (true) {
 	            console.log("Invalid workbook id submitted to reducer");
 	        }
 	        return false;
@@ -77538,8 +77544,8 @@
 	    }
 	];
 	exports.securityStore = redux_1.createStore(reducerSecurity_1.default, // app reducer // TODO remove "as any"
-	undefined, redux_1.compose(redux_1.applyMiddleware(redux_thunk_1.default, sagaMiddleware, react_router_redux_1.routerMiddleware(react_router_1.browserHistory), local_t2_navigation_redux_1.navigationCreateMiddleware(navigationConfig_1.default)), migration, redux_persist_1.autoRehydrate()));
-	if (false) {
+	undefined, redux_1.compose(redux_1.applyMiddleware(redux_thunk_1.default, sagaMiddleware, react_router_redux_1.routerMiddleware(react_router_1.hashHistory), local_t2_navigation_redux_1.navigationCreateMiddleware(navigationConfig_1.default)), migration, redux_persist_1.autoRehydrate()));
+	if (true) {
 	    exports.securityStore.subscribe(function () {
 	        console.log(exports.securityStore.getState()); // list entire state of app in js console. Essential for debugging.
 	    });
@@ -77552,6 +77558,7 @@
 
 	"use strict";
 	var redux_1 = __webpack_require__(696);
+	var react_router_redux_1 = __webpack_require__(899);
 	var objectAssign = __webpack_require__(301);
 	var security_1 = __webpack_require__(1143);
 	var defaultUser = {
@@ -77667,7 +77674,8 @@
 	    pinQuestions: pinQuestions,
 	    selectedPinQuestionIds: selectedPinQuestionIds,
 	    questionAnswers: questionAnswers,
-	    mode: mode
+	    mode: mode,
+	    routing: react_router_redux_1.routerReducer
 	});
 	var rootReducer = function (state, action) {
 	    return securityReducer(state, action);

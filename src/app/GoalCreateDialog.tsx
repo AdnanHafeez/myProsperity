@@ -12,6 +12,17 @@ import {goalSubmitted,goalEdit,goalLoad} from './actions';
 
 import {WorkbookReducerInterface} from './data/workbook';
 
+const style = {
+
+    floatingAction: {
+        margin: 0,
+        top: 'auto',
+        right: 20,
+        bottom: 20,
+        left: 'auto',
+        position: 'fixed'
+    }
+};
 
 interface GoalFormItemInterface {
   goal: string;
@@ -53,9 +64,7 @@ class GoalCreateDialog extends React.Component<MyProps, MyState> {
 
     return (
       <div>
-          <FloatingActionButton  onTouchTap={handleOpen} style={{
-                                        marginRight: 20,
-                                      }}>
+          <FloatingActionButton  onTouchTap={handleOpen} style={style.floatingAction as any}>
             <ContentAdd />
           </FloatingActionButton>
 

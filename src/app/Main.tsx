@@ -26,10 +26,7 @@ const styles = {
     margin: '0 auto 0 auto'
   },
   content: {
-    paddingTop: '10px',
-    display: 'flex',
-    flexFlow: 'row wrap',
-    justifyContent: 'center'
+    paddingTop: '10px'
   }
 };
 interface MyProps {

@@ -25,7 +25,7 @@ const config = {
       'process.env': {
         'NODE_ENV': JSON.stringify('production')
       },
-      '__DEVTOOLS__': false,
+      '__DEVTOOLS__': true,
       '__INCLUDE_SERVICE_WORKER__': false,
       '__IS_CORDOVA_BUILD__': true
     }),

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 const {render} = ReactDOM;
 import * as injectTapEventPlugin from 'react-tap-event-plugin';
-import Routes from './PlainRoutes'; // Our custom react component
+import Routes, {onCordovaDeviceReady} from './PlainRoutes'; // Our custom react component
 import './reducers';
 require('file?name=manifest.json!json-file!json!../www/manifest.json');
 require('../www/index.html');
@@ -16,13 +16,10 @@ injectTapEventPlugin();
 
 // Render the main app react component into the app div.
 // For more details see: https://facebook.github.io/react/docs/top-level-api.html#react.render
-
-if(__IS_CORDOVA_BUILD__){
-  loadApp()
-} else {
-  loadApp()
+function onPageLoad() {
+  document.addEventListener("deviceready", onCordovaDeviceReady, false);
 }
 
-function loadApp(){
-  render(<Routes />, document.getElementById('app'));
-}
+onPageLoad();
+
+render(<Routes />, document.getElementById('app'));

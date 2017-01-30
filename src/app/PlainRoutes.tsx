@@ -167,6 +167,36 @@ const rootRoute = [
   }
 ];
 
+export const onCordovaDeviceReady = () => {
+     
+      console.log('cordova device ready');
+      document.addEventListener("pause", onPause, false);
+      document.addEventListener("resume", onResume, false);
+      document.addEventListener("menubutton", onMenuKeyDown, false);
+
+}
+
+
+function onPause() {
+    console.log('cordova pause');
+}
+
+function onResume() {
+    console.log('cordova resume');
+    securityStore.dispatch(push('/'));
+}
+
+function onMenuKeyDown() {
+    console.log('cordova onMenuKeyDown');
+    // Handle the menubutton event
+}
+var persistEncryptedConfig =  {
+                                      keyPrefix: 'workbookencrypted',
+                                      storage: localForage,
+                                      blacklist: ['mode']
+                                    };
+var appStorePersistor = createPersistor(appStore, persistEncryptedConfig);
+appStorePersistor.pause();
 /**
  * AppProvider is the base/root component for the app
  *
@@ -198,18 +228,9 @@ class AppProvider extends React.Component<MyProps, MyState> {
      * Otherwise databases from other apps will overlap and cause strange behavior
      */
  
-    if(this.state.locked){
-        //securityStore.dispatch(push('/'));
-    }
-    const persistEncryptedConfig =  {
-                                      keyPrefix: 'workbookencrypted',
-                                      storage: localForage,
-                                      blacklist: ['mode']
-                                    };
 
-    
 
-    let listenForLock = true;
+   
     const securityPersist = persistStore(securityStore, {
                           keyPrefix: 'decryptedpersistor',
                           storage: localForage,
@@ -221,25 +242,23 @@ class AppProvider extends React.Component<MyProps, MyState> {
 
                         }
                   );
-    // ?? const persistor = createPersistor(store, persistConfig) ? Will this update from appStore in autorhydrate is removed
-      var persistor = createPersistor(appStore, persistEncryptedConfig);
-      persistor.pause();
+
+
       var appIsActive = false;
      
       securityStore.subscribe(() => {
-          if((securityStore as any).getState().mode === 0 && listenForLock){
+          if((securityStore as any).getState().mode === 0 && !appIsActive){
             if(__DEVTOOLS__){
               console.log('----------LOADING APP STORE---------');
             }
-            listenForLock = false
 
             getStoredState(persistEncryptedConfig).then((storedState) => {
-                appStore.dispatch(loadAppState(storedState));
-                
-                persistor.resume();
-                
-                listenForLock = true
                 appIsActive = true;
+
+                appStore.dispatch(loadAppState(storedState)); // store database loaded to reducer here
+                
+                appStorePersistor.resume();
+                
                 this.setState({ locked: false } as any);
 
             }).catch(function(err){
@@ -256,7 +275,7 @@ class AppProvider extends React.Component<MyProps, MyState> {
             }
 
             
-            persistor.pause();
+            appStorePersistor.pause();
             
             
             this.setState({ locked: true } as any);

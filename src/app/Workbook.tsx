@@ -1,7 +1,7 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import GoalDialog from './GoalCreateDialog';
+import GoalCreateDialog from './GoalCreateDialog';
 import GoalEditDialog from './GoalEditDialog';
 import {connect} from 'react-redux';
 import BasicDialog from './BasicDialog';
@@ -52,7 +52,7 @@ class Workbook extends React.Component<MyProps, MyState> {
                               leftIcon={<IconButton onTouchTap={() => goalClick(item)}><EditIcon  /></IconButton>}  />)
           })}
         </List>
-        <GoalDialog workbook={workbook} />
+        <GoalCreateDialog workbook={workbook} />
         <GoalEditDialog workbook={workbook} />
       </div>
     );
