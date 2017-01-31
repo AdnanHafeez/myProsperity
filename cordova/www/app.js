@@ -28761,8 +28761,6 @@
 	exports.onCordovaDeviceReady = function () {
 	    console.log(window.t2crypto);
 	    console.log('cordova device ready');
-	    console.log(cordova);
-	    console.log(window);
 	    document.addEventListener("pause", onPause, false);
 	    document.addEventListener("resume", onResume, false);
 	    document.addEventListener("menubutton", onMenuKeyDown, false);
@@ -28770,7 +28768,7 @@
 	    if (true) {
 	        var error = function (message) { console.log("!! FAILED !! API returned: " + message); };
 	        var success = function (echoValue) { console.log("--SUCCESS-- API returned: " + echoValue); };
-	        window.t2crypto.setApiTestFlag("0", success, error);
+	        window.t2crypto.setApiTestFlag("1", success, error);
 	        var init = { TAG: "Initializing T2Crypto" };
 	        window.t2crypto.initT2Crypto(init, function (args) {
 	            if (args.RESULT === 0) {
@@ -28780,13 +28778,12 @@
 	                console.log("Error during T2Crypto initialization: " + args.RESULT);
 	            }
 	        });
+	        if (true) {
+	            console.log("Dispatching device ready event");
+	        }
 	        SecurityProvider_1.securityStore.dispatch(security_1.cordovaDeviceReady());
 	    }
 	};
-	setTimeout(function () {
-	    console.log('long timeout test');
-	    console.log(window.t2crypto);
-	}, 10000);
 	function onPause() {
 	    console.log('cordova pause');
 	}

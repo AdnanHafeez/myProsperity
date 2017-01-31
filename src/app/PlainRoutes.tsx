@@ -25,11 +25,12 @@ import appReducer from './reducers';
 import {switchToAppProvider,switchToSecurityProvider,cordovaDeviceReady as deviceReady} from './actions/security';
 import * as objectAssign from 'object-assign';
 import createEncryptor from 'redux-persist-transform-encrypt';
+import createAsyncEncryptor from 'redux-persist-transform-encrypt/async';
 import {userLogout,encryptedDbPaused,loadAppState} from './actions';
 import localForage from 'localForage';
 import {securityStore,securityRoutes} from './SecurityProvider';
 
-
+var asyncTransform = createAsyncEncryptor({secretKey: 'adadaei8f9s'});
 /**
  * Apply migrations that have yet to be run.
  */
@@ -62,7 +63,34 @@ const encryptorTransform = createEncryptor({
   whitelist: ['goals']
 });
 
-const securityFilterTransform = createTransform(
+
+const transformExperiment2 = createTransform(
+  // transform state coming from redux on its way to being serialized and stored
+  (inboundState, key) => {
+   console.log('Promise Inbound: ' + key);
+    return new Promise(function(res,rej){
+        res(inboundState);
+    }).then(function(rs){
+       return rs;
+    });
+    
+  },
+  // transform state coming from storage, on its way to be rehydrated into redux
+  (outboundState, key) =>  {
+    console.log('Promise Outbound: ' + key);
+    return new Promise(function(res,rej){
+        console.log(outboundState);
+        res(outboundState);
+    }).then(function(rs){
+       return rs;
+    });
+    //return outboundState;
+  },
+  // configuration options
+//  {whitelist: ['goals','workbooks']}
+);
+const transformExperiment3 = asyncTransform ;
+const transformExperiment = createTransform(
   // transform state coming from redux on its way to being serialized and stored
   (inboundState, key) => {
 
@@ -169,13 +197,12 @@ export const onCordovaDeviceReady = () => {
 
       console.log((window as any).t2crypto);
       console.log('cordova device ready');
-      console.log(cordova);
-      console.log(window);
       document.addEventListener("pause", onPause, false);
       document.addEventListener("resume", onResume, false);
       document.addEventListener("menubutton", onMenuKeyDown, false);
       //securityStore.dispatch(cordovaDeviceReady());
      if(__IS_CORDOVA_BUILD__){
+
         var error = function(message) { console.log("!! FAILED !! API returned: " + message); };
         var success = function(echoValue) { console.log("--SUCCESS-- API returned: " + echoValue); };
         
@@ -190,17 +217,20 @@ export const onCordovaDeviceReady = () => {
             console.log("Error during T2Crypto initialization: " + args.RESULT);
           }
         }); 
+        (window as any).t2crypto.setVerboseLogging({"VERBOSE_LOGGING": "0"}, function(result) {
+            console.log("Verbose Logging disabled");
+        });
+        if(__DEVTOOLS__){
+            console.log("Dispatching device ready event");
+        }
+        
       
         securityStore.dispatch(deviceReady());
      }
 
 }
-setTimeout(
-function(){
-   console.log('long timeout test');
-    console.log((window as any).t2crypto);
-}
-  ,10000);
+
+
 
 function onPause() {
     console.log('cordova pause');
@@ -217,8 +247,9 @@ function onMenuKeyDown() {
 }
 var persistEncryptedConfig =  {
                                       keyPrefix: 'workbookencrypted',
-                                      storage: localForage,
-                                      blacklist: ['mode','cordova']
+                                      //storage: localForage,
+                                      blacklist: ['mode','cordova'],
+                                      transforms: [transformExperiment]
                                     };
 var appStorePersistor = createPersistor(appStore, persistEncryptedConfig);
 appStorePersistor.pause();
@@ -258,8 +289,10 @@ class AppProvider extends React.Component<MyProps, MyState> {
 
     const securityPersist = persistStore(securityStore, {
                           keyPrefix: 'decryptedpersistor',
-                          storage: localForage,
-                          blacklist: ['mode','cordova']
+                          //storage: localForage,
+                          blacklist: ['mode','cordova'],
+                          transforms: [transformExperiment]
+                      
                         }, 
                         () => {
 
