@@ -20,11 +20,20 @@ export const ENCRYPTED_DB_PAUSED = 'T2.ENCRYPTED_DB_PAUSED';
 export const LOAD_APP_STATE = 'T2.LOAD_APP_STATE';
 export const SWITCH_TO_APP_PROVIDER = 'T2.APP.SWITCH_TO_APP_PROVIDER';
 export const SWITCH_TO_SECURITY_PROVIDER = 'T2.APP.SWITCH_TO_SECURITY_PROVIDER';
+export const CORDOVA_DEVICE_READY = 'T2.APP.CORDOVA_DEVICE_READY';
 
 import {WorkbookReducerInterface, GoalReducerInterface, GoalFormItemInterface, NoteFormItemInterface, NoteReducerInterface} from '../data/workbook';
 import {nextId} from '../reducers';
 import {goalFactory} from '../reducers/workbook';
 import {noteFactory} from '../reducers/note';
+
+
+export const cordovaDeviceReady = () => {
+  return {
+    type: CORDOVA_DEVICE_READY
+  }
+}
+
 
 export const turnAppOn = () => {
   return {
@@ -140,24 +149,24 @@ export const noteCreate = (note: NoteFormItemInterface) => {
   }
 };
 
-export const goalEdit = (workbookId,goalId, goal: GoalFormItemInterface): {type:string, goal: GoalReducerInterface, workbookId: number} => {
+export const goalEdit = (workbookId,goalId, goal: GoalReducerInterface): {type:string, goal: GoalReducerInterface, workbookId: number} => {
   return {
     type: GOAL_EDIT,
-    goal: goalFactory(goalId, goal.goal),
+    goal: goalFactory(goalId, goal.title),
     workbookId
   };
 }
-export const goalSubmittedWithId = (workbookId,text,id) => {
+export const goalSubmittedWithId = (workbookId,goal: GoalReducerInterface,id) => {
   return {
     type: GOAL_SUBMITTED,
-    text,
+    goal,
     workbookId,
     id
   };
 }
-export const goalSubmitted= (workbookId: number, text: string) => {
+export const goalSubmitted= (workbookId: number, goal: GoalReducerInterface) => {
   return function(dispatch,getState){
-    dispatch(goalSubmittedWithId(workbookId, text, nextId(Object.keys(getState().goals))));
+    dispatch(goalSubmittedWithId(workbookId, goal, nextId(Object.keys(getState().goals))));
   }
 };
 

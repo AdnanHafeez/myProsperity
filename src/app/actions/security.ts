@@ -3,6 +3,14 @@ export const EDIT_QUESTION_2 = 'T2.SECURITY.EDIT_QUESTION_2';
 export const EDIT_PIN_FORM = 'T2.SECURITY.EDIT_PIN_FORM';
 export const SWITCH_TO_APP_PROVIDER = 'T2.SECURITY.SWITCH_TO_APP_PROVIDER';
 export const SWITCH_TO_SECURITY_PROVIDER = 'T2.SECURITY.SWITCH_TO_SECURITY_PROVIDER';
+export const CORDOVA_DEVICE_READY = 'T2.SECURITY.CORDOVA_DEVICE_READY';
+
+export const cordovaDeviceReady = () => {
+  return {
+    type: CORDOVA_DEVICE_READY
+  }
+}
+
 export const editQuestion = (type:string,questionId:string,answer: string) => {
   return {
     type,

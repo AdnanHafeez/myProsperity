@@ -13,11 +13,11 @@ import {goalFactory} from './reducers/workbook'
 
 
 interface MyProps {
-  editGoal(goal: GoalFormItemInterface): any;
-  editGoal2(goal: GoalReducerInterface): any;
+  editGoal(goal: GoalReducerInterface): any;
   open: boolean;
-  handleClose(): any
+  handleClose(): any;
   goal: GoalReducerInterface;
+  workbook: WorkbookReducerInterface;
 }
 
 interface MyState {
@@ -28,7 +28,7 @@ class GoalEditDialog extends React.Component<MyProps, MyState> {
 
 
   render() {
-    const {editGoal, open, handleClose, goal, editGoal2} = this.props;
+    const {editGoal, open, handleClose, goal, workbook} = this.props;
     const actions = [
       <FlatButton
         label="Cancel"
@@ -49,12 +49,12 @@ class GoalEditDialog extends React.Component<MyProps, MyState> {
         <Dialog
           title="Edit Goal"
           actions={actions}
-          modal={false}
+          modal={true}
           open={open}
           onRequestClose={handleClose}
         >
 
-          <GoalForm goal onSubmit={editGoal2(goal)} />
+          <GoalForm workbook={workbook} goal={goal} handleSubmit={editGoal(goal)} />
         </Dialog>
       </div>
     );
@@ -70,9 +70,9 @@ const stateToProps = (state) => {
 
 const dispatchToProps = (dispatch,ownProps) => {
   return {
-     editGoal2: (goal) => { 
-       return (goalForm: GoalFormItemInterface) => {
-         dispatch(goalEdit(ownProps.workbook.id,goal.id,goalForm)) 
+     editGoal: (goal) => { 
+       return (goal: GoalReducerInterface) => {
+         dispatch(goalEdit(ownProps.workbook.id,goal.id,goal)) 
          dispatch(goalLoad(-1));
        }
      },

@@ -17,9 +17,22 @@ injectTapEventPlugin();
 // Render the main app react component into the app div.
 // For more details see: https://facebook.github.io/react/docs/top-level-api.html#react.render
 function onPageLoad() {
-  document.addEventListener("deviceready", onCordovaDeviceReady, false);
+  document.addEventListener("deviceready", function(){
+    if(__DEVTOOLS__){
+      console.log("App root rendered in cordova environment");
+      console.log(t2crypto);
+    }
+    render(<Routes />, document.getElementById('app'));
+    onCordovaDeviceReady();
+  }, false);
 }
 
 onPageLoad();
 
-render(<Routes />, document.getElementById('app'));
+if(!__IS_CORDOVA_BUILD__){
+    if(__DEVTOOLS__){
+      console.log("App root rendered via browser");
+    }
+  render(<Routes />, document.getElementById('app'));
+}
+

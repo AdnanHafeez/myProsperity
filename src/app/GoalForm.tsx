@@ -4,6 +4,8 @@ import {Field, reduxForm} from 'redux-form';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import {connect} from 'react-redux';
+import {GoalReducerInterface, WorkbookReducerInterface} from './data/workbook';
+
 const validate = values => {
   const errors:any = {}
   if (!values.goal) {
@@ -23,52 +25,73 @@ const styles = {
     justifyContent: 'space-between'
   }
 }
-const renderTaskField = ({input, label, meta: {touched, error}}) => {
+
+interface MyProps {
+  goal: GoalReducerInterface;
+  workbook: WorkbookReducerInterface;
+  handleSubmit(goal: GoalReducerInterface): any;
+}
+
+interface MyState {
+   title: string;
+}
+export default class GoalForm extends React.Component<MyProps, MyState>{
+  constructor (props, context) {
+    super(props, context);
+    this.state = {
+      title: props.goal.title,
+    };
+  }
+  handleChange = (event) => {
+    console.log("Change event");
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+    this.setState({
+      title: value
+    } as any);
+  }
+  render(){
+    const {handleSubmit,goal} = this.props;
+    const formSubmit = (event) => {
+
+      handleSubmit({id: this.props.goal.id, title: this.state.title, desc: ''});
+      event.preventDefault();
+    }
+    
+    const touched = false;
+    const error = false;
     return (
-      <TextField 
-            floatingLabelText={label} 
-            hintText={label} 
-            multiLine={true}
-            rows={1}
-            rowsMax={2}
-            fullWidth={true}
-            errorText={touched && error} {...input} />
+      <form onSubmit={formSubmit}>
+      <div style={styles.layout as any}>
+        <div>
+        <TextField 
+              floatingLabelText={'Goal'} 
+              hintText={'Enter Text Here'} 
+              multiLine={true}
+              rows={1}
+              rowsMax={2}
+              name='title'
+              value={this.state.title}
+              fullWidth={true}
+              onChange={this.handleChange}
+              errorText={touched && error} />
+        </div>
+        <div>
+          <RaisedButton type="submit" label="Save" />
+        </div>
+      </div>
+      </form>
     );
-}
-
-let GoalForm = (props) => {
-  const {handleSubmit, load, pristine, reset, submitting ,goal} = props;
-
-  return (
-    <form onSubmit={handleSubmit}>
-    <div style={styles.layout as any}>
-      <div>
-        <Field name="goal" component={renderTaskField} />
-      </div>
-      <div>
-        <RaisedButton type="submit" label="Save" />
-      </div>
-    </div>
-    </form>
-  );
+  }
 }
 
 
+
+/* redux-form to slow 
 
 GoalForm = reduxForm({
   form: 'goalsForm',
   validate
 })((GoalForm  as any));
-
-
-export default connect(state => {
-  let data = {goal: ''};
-  if(state.loadedGoalId > 0){
-    data = {goal: state.goals[state.loadedGoalId + ''].title};
-  }
-  return {
-    initialValues: data
-
-  }
-})
-(GoalForm) as any;
+*/

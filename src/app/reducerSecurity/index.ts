@@ -3,7 +3,14 @@ import {routerReducer} from 'react-router-redux';
 import {REHYDRATE} from 'redux-persist/constants';
 
 import * as objectAssign from 'object-assign';
-import {EDIT_QUESTION_1,EDIT_QUESTION_2,EDIT_PIN_FORM, SWITCH_TO_APP_PROVIDER, SWITCH_TO_SECURITY_PROVIDER} from '../actions/security'
+import {
+  EDIT_QUESTION_1,
+  EDIT_QUESTION_2,
+  EDIT_PIN_FORM, 
+  SWITCH_TO_APP_PROVIDER, 
+  SWITCH_TO_SECURITY_PROVIDER,
+  CORDOVA_DEVICE_READY
+} from '../actions/security'
 /*
 * The data below could come from a rest server
 */
@@ -140,6 +147,24 @@ function questionAnswers(state = {}, action){
   return state;
 }
 
+
+
+const cordovaDefaults = {
+  deviceReady: false
+}
+
+const cordova = (state = cordovaDefaults, action) => {
+  switch(action.type){
+    case CORDOVA_DEVICE_READY:
+      console.log(CORDOVA_DEVICE_READY);
+      state.deviceReady = true;
+      state = objectAssign({},state);
+      break;
+
+  }
+  return state;
+}
+
 const securityReducer = combineReducers({
   sMigrations: migrations,
   sUser: user,
@@ -148,7 +173,8 @@ const securityReducer = combineReducers({
   selectedPinQuestionIds,
   questionAnswers,
   mode,
-  routing: routerReducer
+  routing: routerReducer,
+  cordova
 });
 
 const rootReducer = (state, action) => {

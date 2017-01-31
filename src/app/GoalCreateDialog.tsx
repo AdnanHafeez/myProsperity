@@ -9,8 +9,8 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 import GoalForm from './GoalForm';
 import {connect} from 'react-redux';
 import {goalSubmitted,goalEdit,goalLoad} from './actions';
-
-import {WorkbookReducerInterface} from './data/workbook';
+import {goalFactory } from './reducers/workbook';
+import {WorkbookReducerInterface, GoalReducerInterface} from './data/workbook';
 
 const style = {
 
@@ -24,16 +24,14 @@ const style = {
     }
 };
 
-interface GoalFormItemInterface {
-  goal: string;
-}
 
 interface MyProps {
-  addGoal(goal: GoalFormItemInterface): void;
+  addGoal(goal: GoalReducerInterface): void;
   workbook: WorkbookReducerInterface;
   open: boolean;
   handleOpen(): any;
   handleClose(): any;
+  goal: GoalReducerInterface;
 }
 
 interface MyState {
@@ -44,7 +42,7 @@ class GoalCreateDialog extends React.Component<MyProps, MyState> {
 
 
   render() {
-    const {addGoal, workbook, handleClose, handleOpen, open} = this.props;
+    const {addGoal, workbook, handleClose, handleOpen, open, goal} = this.props;
 
     const actions = [
       <FlatButton
@@ -71,12 +69,12 @@ class GoalCreateDialog extends React.Component<MyProps, MyState> {
           <Dialog
             title="Create a Goal"
             actions={actions}
-            modal={false}
+            modal={true}
             open={open}
             onRequestClose={handleClose}
           >
 
-          <GoalForm onSubmit={addGoal} workbook />
+          <GoalForm handleSubmit={addGoal} workbook={workbook} goal={goal} />
         </Dialog>
       </div>
     );
@@ -86,13 +84,14 @@ class GoalCreateDialog extends React.Component<MyProps, MyState> {
 const stateToProps = (state) => {
   return {
     open: state.loadedGoalId === 0,
+    goal: goalFactory(0,'')
   }
 }
 
 const dispatchToProps = (dispatch,ownProps) => {
   return {
-     addGoal: (goal: GoalFormItemInterface) => { 
-       dispatch(goalSubmitted(ownProps.workbook.id,goal.goal)) 
+     addGoal: (goal: GoalReducerInterface) => { 
+       dispatch(goalSubmitted(ownProps.workbook.id,goal)) 
        dispatch(goalLoad(-1)); //resets and closes form
      },
      handleOpen: () => {

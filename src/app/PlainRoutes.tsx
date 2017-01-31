@@ -22,7 +22,7 @@ import {navigationCreateMiddleware} from 'local-t2-navigation-redux';
 import navigationConfig from './navigationConfig';
 import createMigration from 'redux-persist-migrate';
 import appReducer from './reducers';
-import {switchToAppProvider,switchToSecurityProvider} from './actions/security';
+import {switchToAppProvider,switchToSecurityProvider,cordovaDeviceReady as deviceReady} from './actions/security';
 import * as objectAssign from 'object-assign';
 import createEncryptor from 'redux-persist-transform-encrypt';
 import {userLogout,encryptedDbPaused,loadAppState} from './actions';
@@ -135,12 +135,6 @@ if (__DEVTOOLS__) { // Webpack defined variable for build process
   });
 }
 
-if(__IS_CORDOVA_BUILD__){
-  document.addEventListener('deviceready', function(){
-
-    //store.dispatch({type: 'CORDOVA_DEVICE_READY'});
-  }, false);
-}
 
 
 
@@ -166,16 +160,47 @@ const rootRoute = [
     ]
   }
 ];
+if(!__IS_CORDOVA_BUILD__){
+  securityStore.dispatch(deviceReady());
+  var t2crypto = {test: 'stub'} as any;
+}
 
 export const onCordovaDeviceReady = () => {
-     
+
+      console.log((window as any).t2crypto);
       console.log('cordova device ready');
+      console.log(cordova);
+      console.log(window);
       document.addEventListener("pause", onPause, false);
       document.addEventListener("resume", onResume, false);
       document.addEventListener("menubutton", onMenuKeyDown, false);
+      //securityStore.dispatch(cordovaDeviceReady());
+     if(__IS_CORDOVA_BUILD__){
+        var error = function(message) { console.log("!! FAILED !! API returned: " + message); };
+        var success = function(echoValue) { console.log("--SUCCESS-- API returned: " + echoValue); };
+        
+        (window as any).t2crypto.setApiTestFlag("0", success, error);
+
+        var init = { TAG: "Initializing T2Crypto" };
+        (window as any).t2crypto.initT2Crypto(init, function(args){
+          if(args.RESULT === 0) {
+            console.log("T2Crypto initialized");
+          }
+          else {
+            console.log("Error during T2Crypto initialization: " + args.RESULT);
+          }
+        }); 
+      
+        securityStore.dispatch(deviceReady());
+     }
 
 }
-
+setTimeout(
+function(){
+   console.log('long timeout test');
+    console.log((window as any).t2crypto);
+}
+  ,10000);
 
 function onPause() {
     console.log('cordova pause');
@@ -193,7 +218,7 @@ function onMenuKeyDown() {
 var persistEncryptedConfig =  {
                                       keyPrefix: 'workbookencrypted',
                                       storage: localForage,
-                                      blacklist: ['mode']
+                                      blacklist: ['mode','cordova']
                                     };
 var appStorePersistor = createPersistor(appStore, persistEncryptedConfig);
 appStorePersistor.pause();
@@ -229,12 +254,12 @@ class AppProvider extends React.Component<MyProps, MyState> {
      */
  
 
+     console.log((window as any).t2crypto);
 
-   
     const securityPersist = persistStore(securityStore, {
                           keyPrefix: 'decryptedpersistor',
                           storage: localForage,
-                          blacklist: ['mode']
+                          blacklist: ['mode','cordova']
                         }, 
                         () => {
 
@@ -245,8 +270,10 @@ class AppProvider extends React.Component<MyProps, MyState> {
 
 
       var appIsActive = false;
-     
+      
       securityStore.subscribe(() => {
+   
+
           if((securityStore as any).getState().mode === 0 && !appIsActive){
             if(__DEVTOOLS__){
               console.log('----------LOADING APP STORE---------');

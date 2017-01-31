@@ -8196,10 +8196,22 @@
 	// Render the main app react component into the app div.
 	// For more details see: https://facebook.github.io/react/docs/top-level-api.html#react.render
 	function onPageLoad() {
-	    document.addEventListener("deviceready", PlainRoutes_1.onCordovaDeviceReady, false);
+	    document.addEventListener("deviceready", function () {
+	        if (true) {
+	            console.log("App root rendered in cordova environment");
+	            console.log(t2crypto);
+	        }
+	        render(React.createElement(PlainRoutes_1.default, null), document.getElementById('app'));
+	        PlainRoutes_1.onCordovaDeviceReady();
+	    }, false);
 	}
 	onPageLoad();
-	render(React.createElement(PlainRoutes_1.default, null), document.getElementById('app'));
+	if (false) {
+	    if (__DEVTOOLS__) {
+	        console.log("App root rendered via browser");
+	    }
+	    render(React.createElement(PlainRoutes_1.default, null), document.getElementById('app'));
+	}
 
 
 /***/ },
@@ -28720,11 +28732,6 @@
 	        console.log(appStore.getState()); // list entire state of app in js console. Essential for debugging.
 	    });
 	}
-	if (true) {
-	    document.addEventListener('deviceready', function () {
-	        //store.dispatch({type: 'CORDOVA_DEVICE_READY'});
-	    }, false);
-	}
 	/**
 	 * This is the root route.
 	 * Like any route is used to bind Components to a route.
@@ -28747,22 +28754,57 @@
 	        ]
 	    }
 	];
+	if (false) {
+	    SecurityProvider_1.securityStore.dispatch(security_1.cordovaDeviceReady());
+	    var t2crypto = { test: 'stub' };
+	}
 	exports.onCordovaDeviceReady = function () {
+	    console.log(window.t2crypto);
 	    console.log('cordova device ready');
+	    console.log(cordova);
+	    console.log(window);
 	    document.addEventListener("pause", onPause, false);
 	    document.addEventListener("resume", onResume, false);
 	    document.addEventListener("menubutton", onMenuKeyDown, false);
+	    //securityStore.dispatch(cordovaDeviceReady());
+	    if (true) {
+	        var error = function (message) { console.log("!! FAILED !! API returned: " + message); };
+	        var success = function (echoValue) { console.log("--SUCCESS-- API returned: " + echoValue); };
+	        window.t2crypto.setApiTestFlag("0", success, error);
+	        var init = { TAG: "Initializing T2Crypto" };
+	        window.t2crypto.initT2Crypto(init, function (args) {
+	            if (args.RESULT === 0) {
+	                console.log("T2Crypto initialized");
+	            }
+	            else {
+	                console.log("Error during T2Crypto initialization: " + args.RESULT);
+	            }
+	        });
+	        SecurityProvider_1.securityStore.dispatch(security_1.cordovaDeviceReady());
+	    }
 	};
+	setTimeout(function () {
+	    console.log('long timeout test');
+	    console.log(window.t2crypto);
+	}, 10000);
 	function onPause() {
 	    console.log('cordova pause');
 	}
 	function onResume() {
 	    console.log('cordova resume');
+	    SecurityProvider_1.securityStore.dispatch(react_router_redux_1.push('/'));
 	}
 	function onMenuKeyDown() {
 	    console.log('cordova onMenuKeyDown');
 	    // Handle the menubutton event
 	}
+	var persistEncryptedConfig = {
+	    keyPrefix: 'workbookencrypted',
+	    storage: localForage_1.default,
+	    blacklist: ['mode', 'cordova']
+	};
+	var appStorePersistor = redux_persist_1.createPersistor(appStore, persistEncryptedConfig);
+	appStorePersistor.pause();
 	var AppProvider = (function (_super) {
 	    __extends(AppProvider, _super);
 	    function AppProvider(props) {
@@ -28778,36 +28820,24 @@
 	         * Otherwise databases from other apps will overlap and cause strange behavior
 	         */
 	        var _this = this;
-	        if (this.state.locked) {
-	        }
-	        var persistEncryptedConfig = {
-	            keyPrefix: 'workbookencrypted',
-	            storage: localForage_1.default,
-	            blacklist: ['mode']
-	        };
-	        var listenForLock = true;
+	        console.log(window.t2crypto);
 	        var securityPersist = redux_persist_1.persistStore(SecurityProvider_1.securityStore, {
 	            keyPrefix: 'decryptedpersistor',
 	            storage: localForage_1.default,
-	            blacklist: ['mode']
+	            blacklist: ['mode', 'cordova']
 	        }, function () {
 	            _this.setState({ rehydrated: true });
 	        });
-	        // ?? const persistor = createPersistor(store, persistConfig) ? Will this update from appStore in autorhydrate is removed
-	        var persistor = redux_persist_1.createPersistor(appStore, persistEncryptedConfig);
-	        persistor.pause();
 	        var appIsActive = false;
 	        SecurityProvider_1.securityStore.subscribe(function () {
 	            if (SecurityProvider_1.securityStore.getState().mode === 0 && !appIsActive) {
 	                if (true) {
 	                    console.log('----------LOADING APP STORE---------');
 	                }
-	                listenForLock = false;
 	                redux_persist_1.getStoredState(persistEncryptedConfig).then(function (storedState) {
 	                    appIsActive = true;
-	                    appStore.dispatch(actions_1.loadAppState(storedState));
-	                    persistor.resume();
-	                    listenForLock = true;
+	                    appStore.dispatch(actions_1.loadAppState(storedState)); // store database loaded to reducer here
+	                    appStorePersistor.resume();
 	                    _this.setState({ locked: false });
 	                }).catch(function (err) {
 	                    console.log(err);
@@ -28819,7 +28849,7 @@
 	                if (true) {
 	                    console.log('----------LOADING SECURITY STORE---------');
 	                }
-	                persistor.pause();
+	                appStorePersistor.pause();
 	                _this.setState({ locked: true });
 	                appIsActive = false;
 	                SecurityProvider_1.securityStore.dispatch(security_1.switchToSecurityProvider()); // securityState.mode == 1
@@ -56096,9 +56126,15 @@
 	exports.LOAD_APP_STATE = 'T2.LOAD_APP_STATE';
 	exports.SWITCH_TO_APP_PROVIDER = 'T2.APP.SWITCH_TO_APP_PROVIDER';
 	exports.SWITCH_TO_SECURITY_PROVIDER = 'T2.APP.SWITCH_TO_SECURITY_PROVIDER';
+	exports.CORDOVA_DEVICE_READY = 'T2.APP.CORDOVA_DEVICE_READY';
 	var reducers_1 = __webpack_require__(910);
 	var workbook_1 = __webpack_require__(913);
 	var note_1 = __webpack_require__(922);
+	exports.cordovaDeviceReady = function () {
+	    return {
+	        type: exports.CORDOVA_DEVICE_READY
+	    };
+	};
 	exports.turnAppOn = function () {
 	    return {
 	        type: exports.SWITCH_TO_APP_PROVIDER
@@ -56198,21 +56234,21 @@
 	exports.goalEdit = function (workbookId, goalId, goal) {
 	    return {
 	        type: exports.GOAL_EDIT,
-	        goal: workbook_1.goalFactory(goalId, goal.goal),
+	        goal: workbook_1.goalFactory(goalId, goal.title),
 	        workbookId: workbookId
 	    };
 	};
-	exports.goalSubmittedWithId = function (workbookId, text, id) {
+	exports.goalSubmittedWithId = function (workbookId, goal, id) {
 	    return {
 	        type: exports.GOAL_SUBMITTED,
-	        text: text,
+	        goal: goal,
 	        workbookId: workbookId,
 	        id: id
 	    };
 	};
-	exports.goalSubmitted = function (workbookId, text) {
+	exports.goalSubmitted = function (workbookId, goal) {
 	    return function (dispatch, getState) {
-	        dispatch(exports.goalSubmittedWithId(workbookId, text, reducers_1.nextId(Object.keys(getState().goals))));
+	        dispatch(exports.goalSubmittedWithId(workbookId, goal, reducers_1.nextId(Object.keys(getState().goals))));
 	    };
 	};
 	exports.goalUpdated = function (id, text) {
@@ -56319,7 +56355,7 @@
 	            // TODO
 	            break;
 	        case actions_1.GOAL_SUBMITTED:
-	            state[action.id + ''] = exports.goalFactory(action.id, action.text);
+	            state[action.id + ''] = exports.goalFactory(action.id, action.goal.title);
 	            state = objectAssign({}, state);
 	            break;
 	        case actions_1.GOAL_EDIT:
@@ -68329,6 +68365,12 @@
 	exports.EDIT_PIN_FORM = 'T2.SECURITY.EDIT_PIN_FORM';
 	exports.SWITCH_TO_APP_PROVIDER = 'T2.SECURITY.SWITCH_TO_APP_PROVIDER';
 	exports.SWITCH_TO_SECURITY_PROVIDER = 'T2.SECURITY.SWITCH_TO_SECURITY_PROVIDER';
+	exports.CORDOVA_DEVICE_READY = 'T2.SECURITY.CORDOVA_DEVICE_READY';
+	exports.cordovaDeviceReady = function () {
+	    return {
+	        type: exports.CORDOVA_DEVICE_READY
+	    };
+	};
 	exports.editQuestion = function (type, questionId, answer) {
 	    return {
 	        type: type,
@@ -77667,6 +77709,20 @@
 	    }
 	    return state;
 	}
+	var cordovaDefaults = {
+	    deviceReady: false
+	};
+	var cordova = function (state, action) {
+	    if (state === void 0) { state = cordovaDefaults; }
+	    switch (action.type) {
+	        case security_1.CORDOVA_DEVICE_READY:
+	            console.log(security_1.CORDOVA_DEVICE_READY);
+	            state.deviceReady = true;
+	            state = objectAssign({}, state);
+	            break;
+	    }
+	    return state;
+	};
 	var securityReducer = redux_1.combineReducers({
 	    sMigrations: migrations,
 	    sUser: user,
@@ -77675,7 +77731,8 @@
 	    selectedPinQuestionIds: selectedPinQuestionIds,
 	    questionAnswers: questionAnswers,
 	    mode: mode,
-	    routing: react_router_redux_1.routerReducer
+	    routing: react_router_redux_1.routerReducer,
+	    cordova: cordova
 	});
 	var rootReducer = function (state, action) {
 	    return securityReducer(state, action);
@@ -86619,10 +86676,7 @@
 	        margin: '0 auto 0 auto'
 	    },
 	    content: {
-	        paddingTop: '10px',
-	        display: 'flex',
-	        flexFlow: 'row wrap',
-	        justifyContent: 'center'
+	        paddingTop: '10px'
 	    }
 	};
 	var Main = (function (_super) {
@@ -90328,36 +90382,46 @@
 	var GoalForm_1 = __webpack_require__(1288);
 	var react_redux_1 = __webpack_require__(711);
 	var actions_1 = __webpack_require__(912);
+	var workbook_1 = __webpack_require__(913);
+	var style = {
+	    floatingAction: {
+	        margin: 0,
+	        top: 'auto',
+	        right: 20,
+	        bottom: 20,
+	        left: 'auto',
+	        position: 'fixed'
+	    }
+	};
 	var GoalCreateDialog = (function (_super) {
 	    __extends(GoalCreateDialog, _super);
 	    function GoalCreateDialog() {
 	        return _super !== null && _super.apply(this, arguments) || this;
 	    }
 	    GoalCreateDialog.prototype.render = function () {
-	        var _a = this.props, addGoal = _a.addGoal, workbook = _a.workbook, handleClose = _a.handleClose, handleOpen = _a.handleOpen, open = _a.open;
+	        var _a = this.props, addGoal = _a.addGoal, workbook = _a.workbook, handleClose = _a.handleClose, handleOpen = _a.handleOpen, open = _a.open, goal = _a.goal;
 	        var actions = [
 	            React.createElement(FlatButton_1.default, { label: "Cancel", primary: true, onTouchTap: handleClose }),
 	            React.createElement(FlatButton_1.default, { label: "Submit", primary: true, keyboardFocused: true, onTouchTap: handleClose }),
 	        ];
 	        return (React.createElement("div", null,
-	            React.createElement(FloatingActionButton_1.default, { onTouchTap: handleOpen, style: {
-	                    marginRight: 20,
-	                } },
+	            React.createElement(FloatingActionButton_1.default, { onTouchTap: handleOpen, style: style.floatingAction },
 	                React.createElement(add_1.default, null)),
-	            React.createElement(Dialog_1.default, { title: "Create a Goal", actions: actions, modal: false, open: open, onRequestClose: handleClose },
-	                React.createElement(GoalForm_1.default, { onSubmit: addGoal, workbook: true }))));
+	            React.createElement(Dialog_1.default, { title: "Create a Goal", actions: actions, modal: true, open: open, onRequestClose: handleClose },
+	                React.createElement(GoalForm_1.default, { handleSubmit: addGoal, workbook: workbook, goal: goal }))));
 	    };
 	    return GoalCreateDialog;
 	}(React.Component));
 	var stateToProps = function (state) {
 	    return {
 	        open: state.loadedGoalId === 0,
+	        goal: workbook_1.goalFactory(0, '')
 	    };
 	};
 	var dispatchToProps = function (dispatch, ownProps) {
 	    return {
 	        addGoal: function (goal) {
-	            dispatch(actions_1.goalSubmitted(ownProps.workbook.id, goal.goal));
+	            dispatch(actions_1.goalSubmitted(ownProps.workbook.id, goal));
 	            dispatch(actions_1.goalLoad(-1)); //resets and closes form
 	        },
 	        handleOpen: function () {
@@ -90819,19 +90883,14 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var __assign = (this && this.__assign) || Object.assign || function(t) {
-	    for (var s, i = 1, n = arguments.length; i < n; i++) {
-	        s = arguments[i];
-	        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-	            t[p] = s[p];
-	    }
-	    return t;
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	var React = __webpack_require__(299);
-	var redux_form_1 = __webpack_require__(926);
 	var TextField_1 = __webpack_require__(1209);
 	var RaisedButton_1 = __webpack_require__(1272);
-	var react_redux_1 = __webpack_require__(711);
 	var validate = function (values) {
 	    var errors = {};
 	    if (!values.goal) {
@@ -90851,33 +90910,51 @@
 	        justifyContent: 'space-between'
 	    }
 	};
-	var renderTaskField = function (_a) {
-	    var input = _a.input, label = _a.label, _b = _a.meta, touched = _b.touched, error = _b.error;
-	    return (React.createElement(TextField_1.default, __assign({ floatingLabelText: label, hintText: label, multiLine: true, rows: 1, rowsMax: 2, fullWidth: true, errorText: touched && error }, input)));
-	};
-	var GoalForm = function (props) {
-	    var handleSubmit = props.handleSubmit, load = props.load, pristine = props.pristine, reset = props.reset, submitting = props.submitting, goal = props.goal;
-	    return (React.createElement("form", { onSubmit: handleSubmit },
-	        React.createElement("div", { style: styles.layout },
-	            React.createElement("div", null,
-	                React.createElement(redux_form_1.Field, { name: "goal", component: renderTaskField })),
-	            React.createElement("div", null,
-	                React.createElement(RaisedButton_1.default, { type: "submit", label: "Save" })))));
-	};
-	GoalForm = redux_form_1.reduxForm({
-	    form: 'goalsForm',
-	    validate: validate
-	})(GoalForm);
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = react_redux_1.connect(function (state) {
-	    var data = { goal: '' };
-	    if (state.loadedGoalId > 0) {
-	        data = { goal: state.goals[state.loadedGoalId + ''].title };
+	var GoalForm = (function (_super) {
+	    __extends(GoalForm, _super);
+	    function GoalForm(props, context) {
+	        var _this = _super.call(this, props, context) || this;
+	        _this.handleChange = function (event) {
+	            console.log("Change event");
+	            var target = event.target;
+	            var value = target.type === 'checkbox' ? target.checked : target.value;
+	            var name = target.name;
+	            _this.setState({
+	                title: value
+	            });
+	        };
+	        _this.state = {
+	            title: props.goal.title,
+	        };
+	        return _this;
 	    }
-	    return {
-	        initialValues: data
+	    GoalForm.prototype.render = function () {
+	        var _this = this;
+	        var _a = this.props, handleSubmit = _a.handleSubmit, goal = _a.goal;
+	        var formSubmit = function (event) {
+	            handleSubmit({ id: _this.props.goal.id, title: _this.state.title, desc: '' });
+	            event.preventDefault();
+	        };
+	        var touched = false;
+	        var error = false;
+	        return (React.createElement("form", { onSubmit: formSubmit },
+	            React.createElement("div", { style: styles.layout },
+	                React.createElement("div", null,
+	                    React.createElement(TextField_1.default, { floatingLabelText: 'Goal', hintText: 'Enter Text Here', multiLine: true, rows: 1, rowsMax: 2, name: 'title', value: this.state.title, fullWidth: true, onChange: this.handleChange, errorText: touched && error })),
+	                React.createElement("div", null,
+	                    React.createElement(RaisedButton_1.default, { type: "submit", label: "Save" })))));
 	    };
-	})(GoalForm);
+	    return GoalForm;
+	}(React.Component));
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = GoalForm;
+	/* redux-form to slow
+	
+	GoalForm = reduxForm({
+	  form: 'goalsForm',
+	  validate
+	})((GoalForm  as any));
+	*/
 
 
 /***/ },
@@ -90903,14 +90980,14 @@
 	        return _super !== null && _super.apply(this, arguments) || this;
 	    }
 	    GoalEditDialog.prototype.render = function () {
-	        var _a = this.props, editGoal = _a.editGoal, open = _a.open, handleClose = _a.handleClose, goal = _a.goal, editGoal2 = _a.editGoal2;
+	        var _a = this.props, editGoal = _a.editGoal, open = _a.open, handleClose = _a.handleClose, goal = _a.goal, workbook = _a.workbook;
 	        var actions = [
 	            React.createElement(FlatButton_1.default, { label: "Cancel", primary: true, onTouchTap: handleClose }),
 	            React.createElement(FlatButton_1.default, { label: "Submit", primary: true, keyboardFocused: true, onTouchTap: handleClose }),
 	        ];
 	        return (React.createElement("div", null,
-	            React.createElement(Dialog_1.default, { title: "Edit Goal", actions: actions, modal: false, open: open, onRequestClose: handleClose },
-	                React.createElement(GoalForm_1.default, { goal: true, onSubmit: editGoal2(goal) }))));
+	            React.createElement(Dialog_1.default, { title: "Edit Goal", actions: actions, modal: true, open: open, onRequestClose: handleClose },
+	                React.createElement(GoalForm_1.default, { workbook: workbook, goal: goal, handleSubmit: editGoal(goal) }))));
 	    };
 	    return GoalEditDialog;
 	}(React.Component));
@@ -90922,9 +90999,9 @@
 	};
 	var dispatchToProps = function (dispatch, ownProps) {
 	    return {
-	        editGoal2: function (goal) {
-	            return function (goalForm) {
-	                dispatch(actions_1.goalEdit(ownProps.workbook.id, goal.id, goalForm));
+	        editGoal: function (goal) {
+	            return function (goal) {
+	                dispatch(actions_1.goalEdit(ownProps.workbook.id, goal.id, goal));
 	                dispatch(actions_1.goalLoad(-1));
 	            };
 	        },

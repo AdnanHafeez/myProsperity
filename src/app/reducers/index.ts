@@ -26,13 +26,13 @@ const defaultUser = {
   secondQuestionAnwser: '' // etc, etc //TODO implement pin lock system
 };
 
-interface GoalInterface {
+export interface GoalInterface {
   id: string;
   name: string;
   date: string;
 }
 
-interface GoalTreeInterface {
+export interface GoalTreeInterface {
   [propName: string]: GoalInterface;
 }
 

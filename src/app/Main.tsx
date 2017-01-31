@@ -18,6 +18,8 @@ import {UpdateDialogContainer} from 'local-t2-app-redux/lib/components';
 
 import {deviceActions} from 'local-t2-device-redux';
 import {userLogin,userLogout,turnAppOff} from './actions';
+import BlankPage from './BlankPage';
+import SplashPage from './SplashPage';
 var {windowResize} = deviceActions;
 
 const styles = {

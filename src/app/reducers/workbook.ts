@@ -76,7 +76,7 @@ export const goals = (state = normalizedData.entities.goals || {},action) => {
       // TODO
       break;
     case GOAL_SUBMITTED:
-        state[action.id + ''] = goalFactory(action.id, action.text);
+        state[action.id + ''] = goalFactory(action.id, action.goal.title);
         state = objectAssign({},state);
         break;
      case GOAL_EDIT:
