@@ -24,12 +24,12 @@ import createMigration from 'redux-persist-migrate';
 import appReducer from './reducers';
 import {switchToAppProvider,switchToSecurityProvider,cordovaDeviceReady as deviceReady} from './actions/security';
 import * as objectAssign from 'object-assign';
-import createEncryptor from 'redux-persist-transform-encrypt';
+//import createEncryptor from 'redux-persist-transform-encrypt';
 import createAsyncEncryptor from 'redux-persist-transform-encrypt/async';
 import {userLogout,encryptedDbPaused,loadAppState} from './actions';
-import localForage from 'localForage';
-import {securityStore,securityRoutes} from './SecurityProvider';
 
+import {securityStore,securityRoutes} from './SecurityProvider';
+import createPersistorAdapter from './persistStoreAdapter';
 var asyncTransform = createAsyncEncryptor({secretKey: 'adadaei8f9s'});
 /**
  * Apply migrations that have yet to be run.
@@ -57,19 +57,22 @@ let reducerKey = 'migrations'; // name of the migration
 const migration = createMigration(manifest, reducerKey);
 // const persistEnhancer = compose(migration, autoRehydrate());
 
-
+/*
 const encryptorTransform = createEncryptor({
   secretKey: 'my-super-secret-key',
   whitelist: ['goals']
 });
+*/
 
-
-const transformExperiment2 = createTransform(
+var transformExperiment = createTransform(
   // transform state coming from redux on its way to being serialized and stored
   (inboundState, key) => {
-   console.log('Promise Inbound: ' + key);
+   console.log(inboundState);
     return new Promise(function(res,rej){
-        res(inboundState);
+        setTimeout(function(){
+          console.log('resolve promise');
+          res(inboundState);
+        },3000);
     }).then(function(rs){
        return rs;
     });
@@ -77,20 +80,13 @@ const transformExperiment2 = createTransform(
   },
   // transform state coming from storage, on its way to be rehydrated into redux
   (outboundState, key) =>  {
-    console.log('Promise Outbound: ' + key);
-    return new Promise(function(res,rej){
-        console.log(outboundState);
-        res(outboundState);
-    }).then(function(rs){
-       return rs;
-    });
-    //return outboundState;
+    return outboundState;
   },
   // configuration options
 //  {whitelist: ['goals','workbooks']}
 );
-const transformExperiment3 = asyncTransform ;
-const transformExperiment = createTransform(
+
+const transformExperimentPlain = createTransform(
   // transform state coming from redux on its way to being serialized and stored
   (inboundState, key) => {
 
@@ -190,7 +186,6 @@ const rootRoute = [
 ];
 if(!__IS_CORDOVA_BUILD__){
   securityStore.dispatch(deviceReady());
-  var t2crypto = {test: 'stub'} as any;
 }
 
 export const onCordovaDeviceReady = () => {
@@ -246,12 +241,11 @@ function onMenuKeyDown() {
     // Handle the menubutton event
 }
 var persistEncryptedConfig =  {
-                                      keyPrefix: 'workbookencrypted',
-                                      //storage: localForage,
+                                      keyPrefix: 't2encryptedPersist',
                                       blacklist: ['mode','cordova'],
-                                      transforms: [transformExperiment]
+                                      transform: transformExperiment
                                     };
-var appStorePersistor = createPersistor(appStore, persistEncryptedConfig);
+var appStorePersistor = createPersistorAdapter(appStore, persistEncryptedConfig);
 appStorePersistor.pause();
 /**
  * AppProvider is the base/root component for the app
@@ -291,9 +285,9 @@ class AppProvider extends React.Component<MyProps, MyState> {
                           keyPrefix: 'decryptedpersistor',
                           //storage: localForage,
                           blacklist: ['mode','cordova'],
-                          transforms: [transformExperiment]
+                  
                       
-                        }, 
+                        } as any, 
                         () => {
 
                            this.setState({ rehydrated: true } as any);
@@ -312,7 +306,7 @@ class AppProvider extends React.Component<MyProps, MyState> {
               console.log('----------LOADING APP STORE---------');
             }
 
-            getStoredState(persistEncryptedConfig).then((storedState) => {
+            (getStoredState(persistEncryptedConfig) as any).then((storedState) => {
                 appIsActive = true;
 
                 appStore.dispatch(loadAppState(storedState)); // store database loaded to reducer here
