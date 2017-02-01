@@ -30,6 +30,7 @@ import {userLogout,encryptedDbPaused,loadAppState} from './actions';
 
 import {securityStore,securityRoutes} from './SecurityProvider';
 import createPersistorAdapter from './persistStoreAdapter';
+import createPromiseTransform from './createPromiseTransform';
 var asyncTransform = createAsyncEncryptor({secretKey: 'adadaei8f9s'});
 /**
  * Apply migrations that have yet to be run.
@@ -63,46 +64,72 @@ const encryptorTransform = createEncryptor({
   whitelist: ['goals']
 });
 */
+var tempKeyPin = 'asdfasdf343'
+if(__IS_CORDOVA_BUILD__){
+var transformEncryptTransform = createPromiseTransform(
+    // transform state coming from redux on its way to being serialized and stored
+    (inboundState, key) => {
+     console.log(inboundState);
+      return new Promise(function(res,rej){
+          let dataJSON = {
+                      "KEY_PIN": tempKeyPin,
+                      "KEY_INPUT": inboundState
+                    };
+          (window as any).t2crypto.encryptRaw(dataJSON,function success(result){
+              if(result.RESULT !== -1){
+                if(__DEVTOOLS__){
+                  console.log('inbound enc '+ result.RESULT);
+                }
+                res(result.RESULT);
+              }else{
+                let err = {
+                  message: 'inbound encryption failer',
+                  key: key
+                }
+                if(__DEVTOOLS__){
+                  console.log(err);
+                }
+                rej(err);
+              }
+          });
+      }).then(function(rs){
+         return rs;
+      });
+    },
+    // transform state coming from storage, on its way to be rehydrated into redux
+    (outboundState, key) =>  {
+      return outboundState;
+    }
+  );
+} else {
+var transformEncryptTransform = createPromiseTransform(
+    // transform state coming from redux on its way to being serialized and stored
+    (inboundState, key) => {
+     console.log(inboundState);
+      console.log('inboundkey '+key);
+      return new Promise(function(res,rej){
+            res(inboundState);
+      }).then(function(rs){
+         return rs;
+      }).catch(function(e){
+        console.log(e);
+      });
+      
+    },
+    // transform state coming from storage, on its way to be rehydrated into redux
+    (outboundState, key) =>  {
+      console.log('outbound state');
+      return new Promise(function(res,rej){
+            res(outboundState);
+      }).then(function(rs){
+         return rs;
+      }).catch(function(e){
+        console.log(e);
+      });
+    }
+  );
+}
 
-var transformExperiment = createTransform(
-  // transform state coming from redux on its way to being serialized and stored
-  (inboundState, key) => {
-   console.log(inboundState);
-    return new Promise(function(res,rej){
-        setTimeout(function(){
-          console.log('resolve promise');
-          res(inboundState);
-        },3000);
-    }).then(function(rs){
-       return rs;
-    });
-    
-  },
-  // transform state coming from storage, on its way to be rehydrated into redux
-  (outboundState, key) =>  {
-    return outboundState;
-  },
-  // configuration options
-//  {whitelist: ['goals','workbooks']}
-);
-
-const transformExperimentPlain = createTransform(
-  // transform state coming from redux on its way to being serialized and stored
-  (inboundState, key) => {
-
-    console.log('Inbound: ' + key);
-    // console.log(inboundState);
-    return inboundState;
-  },
-  // transform state coming from storage, on its way to be rehydrated into redux
-  (outboundState, key) =>  {
-    console.log('Outbound: ' + key);
-    return outboundState;
-    //return outboundState;
-  },
-  // configuration options
-//  {whitelist: ['goals','workbooks']}
-);
 
 // State of app is persisted and made availabe via the call below
 
@@ -211,8 +238,12 @@ export const onCordovaDeviceReady = () => {
           else {
             console.log("Error during T2Crypto initialization: " + args.RESULT);
           }
+        },(err) => {
+          console.log('Error on t2crypto init');
+          console.log(err);
+
         }); 
-        (window as any).t2crypto.setVerboseLogging({"VERBOSE_LOGGING": "0"}, function(result) {
+        (window as any).t2crypto.setVerboseLogging({"VERBOSE_LOGGING": "1"}, function(result) {
             console.log("Verbose Logging disabled");
         });
         if(__DEVTOOLS__){
@@ -243,7 +274,7 @@ function onMenuKeyDown() {
 var persistEncryptedConfig =  {
                                       keyPrefix: 't2encryptedPersist',
                                       blacklist: ['mode','cordova'],
-                                      transform: transformExperiment
+                                      inboundTransform: transformEncryptTransform
                                     };
 var appStorePersistor = createPersistorAdapter(appStore, persistEncryptedConfig);
 appStorePersistor.pause();
@@ -279,7 +310,7 @@ class AppProvider extends React.Component<MyProps, MyState> {
      */
  
 
-     console.log((window as any).t2crypto);
+    console.log((window as any).t2crypto);
 
     const securityPersist = persistStore(securityStore, {
                           keyPrefix: 'decryptedpersistor',
@@ -289,9 +320,7 @@ class AppProvider extends React.Component<MyProps, MyState> {
                       
                         } as any, 
                         () => {
-
                            this.setState({ rehydrated: true } as any);
-
                         }
                   );
 
@@ -308,12 +337,72 @@ class AppProvider extends React.Component<MyProps, MyState> {
 
             (getStoredState(persistEncryptedConfig) as any).then((storedState) => {
                 appIsActive = true;
+               let hydratePromises = [];
+               console.log("Stored state raw");
+               console.log(storedState);
 
-                appStore.dispatch(loadAppState(storedState)); // store database loaded to reducer here
+               let isStateEmpty = Object.keys(storedState).length === 0;
+               Object.keys(storedState).forEach((objectKey) => {
+                 console.log("object key "+objectKey);
+                  let field = new Promise((resolve,reject) => {
+                      if(__IS_CORDOVA_BUILD__){
+                        let dataJSON = {
+                          "KEY_PIN": tempKeyPin,
+                          "KEY_INPUT": storedState[objectKey]
+                        };
+                        console.log('calling decryptRaw for objectKey');
+                        console.log(dataJSON);
+                        console.log((window as any).t2crypto.decryptRaw);
+                        (window as any).t2crypto.decryptRaw(dataJSON,(result) => {
+                            if(result.RESULT !== -1){
+                                console.log('decrypting');
+                                resolve([objectKey,result.RESULT]);
+                            } else {
+                              let err = {
+                                message: 'cordova: failed decryption on field ' + objectKey
+                              }
+                              console.log(err);
+                              reject(err);
+                            }
+                        },(er) => {
+                          console.log("Error cb is implemented");
+                          console.log(er);
+                        });
+                      }else{
+                        resolve([objectKey,storedState[objectKey]]);
+                      }
+                  });
+                  hydratePromises.push(field);
+                });
+                if(isStateEmpty){
+                     console.log("stored state is empty");
+                      appStore.dispatch(loadAppState(storedState));
+                      appStorePersistor.resume();
+                      this.setState({ locked: false } as any);
+                } else {
+                 console.log("stored state has data");
+                 Promise.all(hydratePromises).then((results) => {
+                      let finalStoredState = results.reduce(function(accum,result){
+                            let [key,value] = result;
+                            accum[key] = value
+                            return accum;
+                      },{});
+                      console.log('promise array complete');
+                      console.log(finalStoredState);
+                      appStore.dispatch(loadAppState(finalStoredState));
+                      appStorePersistor.resume();
+                      this.setState({ locked: false } as any);
+                  }).catch(function(err){
+                    console.log(err);
+                  });
+                }
+
+
+                 // store database loaded to reducer here
                 
-                appStorePersistor.resume();
                 
-                this.setState({ locked: false } as any);
+                
+                
 
             }).catch(function(err){
                 console.log(err);

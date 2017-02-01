@@ -19,11 +19,67 @@ injectTapEventPlugin();
 function onPageLoad() {
   document.addEventListener("deviceready", function(){
     if(__DEVTOOLS__){
-      console.log("App root rendered in cordova environment");
+      console.log("Running t2crypto test");
       console.log(t2crypto);
+      var error = function(message) { console.log("!! FAILED !! API returned: " + message); };
+      var success = function(echoValue) { console.log("--SUCCESS-- API returned: " + echoValue); };
+      t2crypto.setApiTestFlag("0", success, error);
+        var init = { TAG: "Initializing T2Crypto" };
+
+      t2crypto.initT2Crypto(init, function(args){
+        if(args.RESULT === 0) {
+          console.log("T2Crypto initialized");
+        }
+        else {
+          console.log("Error during T2Crypto initialization: " + args.RESULT);
+        }
+      },(err) => {
+        console.log('Error on t2crypto init');
+        console.log(err);
+
+      }); 
+
+      t2crypto.setVerboseLogging({"VERBOSE_LOGGING": "1"}, function(result) {
+          console.log("Verbose Logging success cb");
+          console.log(result);
+      });
+
+      let dataJSON = {
+        "KEY_PIN": 'mumblemumble',
+        "KEY_INPUT": '{"test": "data"}'
+      };
+      var encryptedData;
+      t2crypto.encryptRaw(dataJSON,function(result) {
+          console.log(result);
+          encryptedData = result.RESULT;
+      },function(error) {
+          console.log("Enc error");
+          console.log('error');
+      });
+
+
+      setTimeout(() => {
+        console.log('decrypting data');
+        console.log(encryptedData);
+        let decDataJSON = {
+          "KEY_PIN": 'mumblemumble',
+          "KEY_INPUT": encryptedData
+        };
+        t2crypto.decryptRaw(decDataJSON,function(result) {
+            console.log(result);
+            encryptedData = result.RESULT;
+        },function(error) {
+            console.log("Enc error");
+            console.log(error);
+        });
+
+      },1000);
+
     }
-    render(<Routes />, document.getElementById('app'));
-    onCordovaDeviceReady();
+
+
+    // render(<Routes />, document.getElementById('app'));
+    // onCordovaDeviceReady();
   }, false);
 }
 

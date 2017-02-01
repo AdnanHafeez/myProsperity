@@ -9,7 +9,7 @@ export default function createPersistor (store, config) {
   const deserializer = config.serialize === false ? (data) => data : defaultDeserializer
   const blacklist = config.blacklist || []
   const whitelist = config.whitelist || false
-  const transforms = config.transform || null
+  const transforms = config.inboundTransform || null
   const debounce = config.debounce || false
   const keyPrefix = config.keyPrefix !== undefined ? config.keyPrefix : 't2adapter'
 
@@ -57,11 +57,8 @@ export default function createPersistor (store, config) {
         storesToProcess.shift();
         let promise = transforms.in(stateGetter(store.getState(), key))
           .then(function(results){
-          console.log(results);
-          console.log(storageKey);
-          console.log(key);
-          storage.setItem(storageKey, serializer(results), warnIfSetError(key))
-         
+
+                storage.setItem(storageKey, serializer(results), warnIfSetError(key))
         });
         
       }, debounce)
