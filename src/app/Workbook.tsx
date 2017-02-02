@@ -45,6 +45,10 @@ class Workbook extends React.Component<MyProps, MyState> {
     this.props.appBarTitle && this.props.appBarTitle(workbook.title);
   }
 
+  componentWillUnmount() {
+    this.setState({editMode: false});
+  }
+
   handleEditToggle = () => {
     let newToggleState = !this.state.editMode;
     this.setState({editMode: newToggleState});

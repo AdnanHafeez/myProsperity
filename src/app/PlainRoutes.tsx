@@ -108,8 +108,6 @@ var transformEncryptTransform = createPromiseTransform(
 var transformEncryptTransform = createPromiseTransform(
     // transform state coming from redux on its way to being serialized and stored
     (inboundState, key) => {
-     console.log(inboundState);
-      console.log('inboundkey '+key);
       return new Promise(function(res,rej){
             res(inboundState);
       }).then(function(rs){
@@ -121,7 +119,7 @@ var transformEncryptTransform = createPromiseTransform(
     },
     // transform state coming from storage, on its way to be rehydrated into redux
     (outboundState, key) =>  {
-      console.log('outbound state');
+      
       return new Promise(function(res,rej){
             res(outboundState);
       }).then(function(rs){
@@ -342,13 +340,11 @@ class AppProvider extends React.Component<MyProps, MyState> {
             (getStoredState(persistEncryptedConfig) as any).then((storedState) => {
                 appIsActive = true;
                let hydratePromises = [];
-               console.log("Stored state raw");
-               console.log(storedState);
 
                let isStateEmpty = Object.keys(storedState).length === 0;
 
                Object.keys(storedState).forEach((objectKey) => {
-                 console.log("object key "+objectKey);
+               
                   let field = new Promise((resolve,reject) => {
                       if(__IS_CORDOVA_BUILD__){
                         let dataJSON = {

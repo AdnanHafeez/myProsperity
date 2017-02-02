@@ -88,7 +88,7 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
 
 
 
-/* redux-form to slow 
+/* redux-form too slow 
 
 GoalForm = reduxForm({
   form: 'goalsForm',

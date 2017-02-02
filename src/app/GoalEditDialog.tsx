@@ -9,7 +9,7 @@ import GoalForm from './GoalForm';
 import {connect} from 'react-redux';
 import {goalEdit,goalLoad} from './actions';
 import {goalFactory} from './reducers/workbook'
-
+import {foatingButtonStyle, fullWidthDialagStyle} from './commonStyles';
 
 
 interface MyProps {
@@ -57,6 +57,7 @@ class GoalEditDialog extends React.Component<MyProps, MyState> {
           modal={true}
           open={open}
           onRequestClose={handleClose}
+          contentStyle={fullWidthDialagStyle}
         >
 
           <GoalForm workbook={workbook} goal={goal} handleSubmit={editGoal(goal)} />

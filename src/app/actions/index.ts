@@ -118,10 +118,10 @@ export const noteLoad = (id: number) => {
   }
 }
 
-export const noteEdit = (id, note: NoteFormItemInterface): {type:string, note: NoteReducerInterface} => {
+export const noteEdit = (id, note: string): {type:string, note: NoteReducerInterface} => {
   return {
     type: NOTE_EDIT,
-    note: noteFactory(id,note.note)
+    note: noteFactory(id,note)
   };
 }
 
@@ -140,9 +140,9 @@ export const noteAdd = (note: NoteReducerInterface): {type:string, note: NoteRed
   };
 }
 
-export const noteCreate = (note: NoteFormItemInterface) => {
+export const noteCreate = (note: string) => {
   return function(dispatch,getState){
-    let newNote = noteFactory(nextId(Object.keys(getState().notes)),note.note);
+    let newNote = noteFactory(nextId(Object.keys(getState().notes)),note);
     dispatch(
       noteAdd(newNote)
     );

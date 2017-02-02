@@ -10,7 +10,9 @@ import EditIcon from 'material-ui/svg-icons/content/create';
 import IconButton from 'material-ui/IconButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
-import {foatingButtonStyle} from './commonStyles';
+import RaisedButton from 'material-ui/RaisedButton';
+import {foatingButtonStyle,topRightButtonStyle, subMenuFlexContainerStyle} from './commonStyles';
+
 const styles = {
   video: {
     width: '100%',
@@ -28,23 +30,24 @@ interface MyProps {
 }
 
 interface MyState {
-
+  editMode: boolean;
 }
 class Workbook extends React.Component<MyProps, MyState> {
   componentWillMount () {
     this.props.appBarTitle && this.props.appBarTitle('Notes');
   }
+
   render () {
-    var {isOnline, noteEdit, notes, noteDelete,noteLoad} = this.props;
+    const {isOnline, noteEdit, notes, noteDelete,noteLoad} = this.props;
 
     return (
       <div>
-  
         <List>
           {notes.map((item) => {
             return (<ListItem key={item.id} primaryText={item.text}  
-                              rightIcon={<IconButton onTouchTap={() => noteDelete(item.id)}><DeleteIcon  /></IconButton>} 
-                              leftIcon={<IconButton onTouchTap={() => noteEdit(item)}><EditIcon  /></IconButton>}  />)
+                              onTouchTap={() => noteEdit(item)}
+                              rightIcon={<EditIcon  />}
+                               />)
           })}
         </List>
           <FloatingActionButton  onTouchTap={() => noteLoad()} style={foatingButtonStyle}>

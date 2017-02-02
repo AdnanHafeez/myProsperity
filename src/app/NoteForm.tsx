@@ -4,6 +4,7 @@ import {Field, reduxForm} from 'redux-form';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import {connect} from 'react-redux';
+import {NoteReducerInterface} from './data/workbook';
 const validate = values => {
   const errors:any = {}
   if (!values.note) {
@@ -36,44 +37,62 @@ const styles = {
     justifyContent: 'space-between'
   }
 }
-
-let NoteForm = (props) => {
-  const {handleSubmit, load, pristine, reset, submitting ,note} = props;
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <div style={styles.layout as any}>
-        <div>
-          <Field name="note" component={renderTaskField} />
-        </div>
-        <div style={styles.buttonContainer as any}>
-          <div>
-            <RaisedButton type="submit" primary={true} disabled={pristine || submitting} label="Save" />
-          </div>
-          <div>
-            <RaisedButton onTouchTap={reset} secondary={true} disabled={pristine} label="Clear" />
-          </div>
-        </div>
-      </div>
-    </form>
-  );
+interface MyProps {
+  note: NoteReducerInterface;
+  handleSubmit({text: string}): any;
 }
 
-
-
-NoteForm = reduxForm({
-  form: 'notesForm',
-  validate
-})((NoteForm  as any));
-
-
-export default connect(state => {
-  let data = {note: ''};
-  if(state.loadedNoteId > 0){
-    data = {note: state.notes[state.loadedNoteId + ''].text};
+interface MyState {
+   text: string;
+}
+export default class NoteForm extends React.Component<MyProps, MyState> {
+  
+  constructor (props, context) {
+    super(props, context);
+    console.log(props);
+    this.state = {
+      text: props.note.text
+    };
   }
-  return {
-    initialValues: data
+
+  handleChange = (event) => {
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+    this.setState({
+      text: value
+    } as any);
   }
-})
-(NoteForm) as any;
+  render(){
+  const {handleSubmit,note} = this.props;
+  const formSubmit = (event) => {
+
+    handleSubmit({text: this.state.text});
+    event.preventDefault();
+  }
+    return (
+      <form onSubmit={formSubmit}>
+        <div style={styles.layout as any}>
+          <div>
+        <TextField 
+              floatingLabelText={'Note'} 
+              hintText={'Enter Text Here'} 
+              multiLine={true}
+              rows={1}
+              rowsMax={2}
+              name='text'
+              value={this.state.text}
+              fullWidth={true}
+              onChange={this.handleChange}
+              errorText={false} />
+          </div>
+          <div style={styles.buttonContainer as any}>
+            <div>
+              <RaisedButton type="submit" primary={true} disabled={false} label="Save" />
+            </div>
+          </div>
+        </div>
+      </form>
+    );
+  }
+}
