@@ -10,7 +10,7 @@ import EditIcon from 'material-ui/svg-icons/content/create';
 import IconButton from 'material-ui/IconButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
-
+import {foatingButtonStyle} from './commonStyles';
 const styles = {
   video: {
     width: '100%',
@@ -47,9 +47,7 @@ class Workbook extends React.Component<MyProps, MyState> {
                               leftIcon={<IconButton onTouchTap={() => noteEdit(item)}><EditIcon  /></IconButton>}  />)
           })}
         </List>
-          <FloatingActionButton  onTouchTap={() => noteLoad()} style={{
-                                        marginRight: 20,
-                                      }}>
+          <FloatingActionButton  onTouchTap={() => noteLoad()} style={foatingButtonStyle}>
             <ContentAdd />
           </FloatingActionButton>
         <NoteEditDialog />

@@ -18,6 +18,7 @@ interface MyProps {
   handleClose(): any;
   goal: GoalReducerInterface;
   workbook: WorkbookReducerInterface;
+  goalDelete(workbookId:number,goalId:number): any;
 }
 
 interface MyState {
@@ -26,9 +27,11 @@ interface MyState {
 
 class GoalEditDialog extends React.Component<MyProps, MyState> {
 
-
   render() {
-    const {editGoal, open, handleClose, goal, workbook} = this.props;
+    const {editGoal, goalDelete, open, handleClose, goal, workbook} = this.props;
+
+
+
     const actions = [
       <FlatButton
         label="Cancel"
@@ -36,10 +39,12 @@ class GoalEditDialog extends React.Component<MyProps, MyState> {
         onTouchTap={handleClose}
       />,
       <FlatButton
-        label="Submit"
+        label="Delete"
         primary={true}
-        keyboardFocused={true}
-        onTouchTap={handleClose}
+        onTouchTap={() => {
+          goalDelete(workbook.id, goal.id);
+          handleClose();
+        }}
       />,
     ];
 

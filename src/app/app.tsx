@@ -19,10 +19,24 @@ injectTapEventPlugin();
 function onPageLoad() {
   document.addEventListener("deviceready", function(){
     if(__DEVTOOLS__){
+
+       /*
       console.log("Running t2crypto test");
       console.log(t2crypto);
       var error = function(message) { console.log("!! FAILED !! API returned: " + message); };
       var success = function(echoValue) { console.log("--SUCCESS-- API returned: " + echoValue); };
+
+      t2crypto.fipsStatus(function(fipsresult){
+
+        console.log('status success');
+        console.log(fipsresult);
+      },
+        function(err){
+        console.log('status error');
+        console.log(err);
+
+        });
+      
       t2crypto.setApiTestFlag("0", success, error);
         var init = { TAG: "Initializing T2Crypto" };
 
@@ -74,12 +88,14 @@ function onPageLoad() {
         });
 
       },1000);
+       */
+
 
     }
 
 
-    // render(<Routes />, document.getElementById('app'));
-    // onCordovaDeviceReady();
+    render(<Routes />, document.getElementById('app'));
+    onCordovaDeviceReady();
   }, false);
 }
 

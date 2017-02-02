@@ -14,7 +14,9 @@ const mapStateToProps = (state, ownProps) => {
 const dispatchToProps = (dispatch) => {
   return {
     goalClick: (goal: GoalReducerInterface) => dispatch(goalLoad(goal.id)),
-    goalDelete: (workbookId,goalId: number) => dispatch(goalDeleted(workbookId,goalId))
+    goalDelete: (workbookId,goalId: number) => {
+      dispatch(goalDeleted(workbookId,goalId))
+    }
   }
 }
 

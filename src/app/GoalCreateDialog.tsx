@@ -11,6 +11,7 @@ import {connect} from 'react-redux';
 import {goalSubmitted,goalEdit,goalLoad} from './actions';
 import {goalFactory } from './reducers/workbook';
 import {WorkbookReducerInterface, GoalReducerInterface} from './data/workbook';
+import {foatingButtonStyle, fullWidthDialagStyle} from './commonStyles';
 
 const style = {
 
@@ -41,6 +42,7 @@ interface MyState {
 class GoalCreateDialog extends React.Component<MyProps, MyState> {
 
 
+
   render() {
     const {addGoal, workbook, handleClose, handleOpen, open, goal} = this.props;
 
@@ -50,31 +52,26 @@ class GoalCreateDialog extends React.Component<MyProps, MyState> {
         primary={true}
         onTouchTap={handleClose}
       />,
-      <FlatButton
-        label="Submit"
-        primary={true}
-        keyboardFocused={true}
-        onTouchTap={handleClose}
-      />,
     ];
 
     
 
     return (
       <div>
-          <FloatingActionButton  onTouchTap={handleOpen} style={style.floatingAction as any}>
+          <FloatingActionButton  onTouchTap={handleOpen} style={foatingButtonStyle as any}>
             <ContentAdd />
           </FloatingActionButton>
 
           <Dialog
-            title="Create a Goal"
+
             actions={actions}
             modal={true}
             open={open}
             onRequestClose={handleClose}
+            contentStyle={fullWidthDialagStyle}
           >
 
-          <GoalForm handleSubmit={addGoal} workbook={workbook} goal={goal} />
+          <GoalForm handleSubmit={addGoal} workbook={workbook} goal={goal} ref='goalForm' />
         </Dialog>
       </div>
     );

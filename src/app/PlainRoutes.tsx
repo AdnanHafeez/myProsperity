@@ -25,6 +25,7 @@ import appReducer from './reducers';
 import {switchToAppProvider,switchToSecurityProvider,cordovaDeviceReady as deviceReady} from './actions/security';
 import * as objectAssign from 'object-assign';
 //import createEncryptor from 'redux-persist-transform-encrypt';
+import localForage from 'localForage';
 import createAsyncEncryptor from 'redux-persist-transform-encrypt/async';
 import {userLogout,encryptedDbPaused,loadAppState} from './actions';
 
@@ -79,7 +80,9 @@ var transformEncryptTransform = createPromiseTransform(
               if(result.RESULT !== -1){
                 if(__DEVTOOLS__){
                   console.log('inbound enc '+ result.RESULT);
+                  console.log(result.RESULT)
                 }
+
                 res(result.RESULT);
               }else{
                 let err = {
@@ -274,6 +277,7 @@ function onMenuKeyDown() {
 var persistEncryptedConfig =  {
                                       keyPrefix: 't2encryptedPersist',
                                       blacklist: ['mode','cordova'],
+                                      storage: localForage,
                                       inboundTransform: transformEncryptTransform
                                     };
 var appStorePersistor = createPersistorAdapter(appStore, persistEncryptedConfig);
@@ -314,7 +318,7 @@ class AppProvider extends React.Component<MyProps, MyState> {
 
     const securityPersist = persistStore(securityStore, {
                           keyPrefix: 'decryptedpersistor',
-                          //storage: localForage,
+                          storage: localForage,
                           blacklist: ['mode','cordova'],
                   
                       
@@ -342,6 +346,7 @@ class AppProvider extends React.Component<MyProps, MyState> {
                console.log(storedState);
 
                let isStateEmpty = Object.keys(storedState).length === 0;
+
                Object.keys(storedState).forEach((objectKey) => {
                  console.log("object key "+objectKey);
                   let field = new Promise((resolve,reject) => {
@@ -350,13 +355,27 @@ class AppProvider extends React.Component<MyProps, MyState> {
                           "KEY_PIN": tempKeyPin,
                           "KEY_INPUT": storedState[objectKey]
                         };
+
                         console.log('calling decryptRaw for objectKey');
                         console.log(dataJSON);
-                        console.log((window as any).t2crypto.decryptRaw);
+              
                         (window as any).t2crypto.decryptRaw(dataJSON,(result) => {
                             if(result.RESULT !== -1){
                                 console.log('decrypting');
-                                resolve([objectKey,result.RESULT]);
+                                console.log(result.RESULT);
+                                let parsedResult
+                                try {
+                                    parsedResult = JSON.parse(result.RESULT);
+                                } catch(e) {
+                                    if(__DEVTOOLS__){
+                                      console.log('could not parse the following');
+                                      console.log(result.RESULT);
+                                    }
+                                    parsedResult = null;
+                                    //TODO decide what to do here
+                                }
+                                
+                                resolve([objectKey,parsedResult]);
                             } else {
                               let err = {
                                 message: 'cordova: failed decryption on field ' + objectKey
