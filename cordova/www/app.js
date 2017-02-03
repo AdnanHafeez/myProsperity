@@ -8184,12 +8184,12 @@
 	var injectTapEventPlugin = __webpack_require__(463);
 	var PlainRoutes_1 = __webpack_require__(470); // Our custom react component
 	__webpack_require__(805);
-	__webpack_require__(1233);
-	__webpack_require__(1234);
-	__webpack_require__(1237);
-	__webpack_require__(1236);
 	__webpack_require__(1235);
+	__webpack_require__(1236);
+	__webpack_require__(1239);
 	__webpack_require__(1238);
+	__webpack_require__(1237);
+	__webpack_require__(1240);
 	// Needed for onTouchTap
 	// http://stackoverflow.com/a/34015469/988941
 	injectTapEventPlugin();
@@ -28729,8 +28729,6 @@
 	    var transformEncryptTransform = createPromiseTransform_1.default(
 	    // transform state coming from redux on its way to being serialized and stored
 	    function (inboundState, key) {
-	        console.log(inboundState);
-	        console.log('inboundkey ' + key);
 	        return new Promise(function (res, rej) {
 	            res(inboundState);
 	        }).then(function (rs) {
@@ -28741,7 +28739,6 @@
 	    }, 
 	    // transform state coming from storage, on its way to be rehydrated into redux
 	    function (outboundState, key) {
-	        console.log('outbound state');
 	        return new Promise(function (res, rej) {
 	            res(outboundState);
 	        }).then(function (rs) {
@@ -28806,7 +28803,7 @@
 	        childRoutes: [
 	            __webpack_require__(1178).default,
 	            __webpack_require__(1207).default,
-	            __webpack_require__(1231).default
+	            __webpack_require__(1233).default
 	        ]
 	    }
 	];
@@ -28896,11 +28893,8 @@
 	                redux_persist_1.getStoredState(persistEncryptedConfig).then(function (storedState) {
 	                    appIsActive = true;
 	                    var hydratePromises = [];
-	                    console.log("Stored state raw");
-	                    console.log(storedState);
 	                    var isStateEmpty = Object.keys(storedState).length === 0;
 	                    Object.keys(storedState).forEach(function (objectKey) {
-	                        console.log("object key " + objectKey);
 	                        var field = new Promise(function (resolve, reject) {
 	                            if (true) {
 	                                var dataJSON = {
@@ -52869,6 +52863,7 @@
 	exports.GOAL_CREATE = 'T2.GOAL_CREATE';
 	exports.GOAL_EDIT = 'T2.GOAL_EDIT';
 	exports.GOAL_LOAD = 'T2.GOAL_LOAD';
+	exports.GOAL_STATUS_CHANGE = 'T2.GOAL_STATUS_CHANGE';
 	exports.NOTE_LOAD = 'T2.NOTE_LOAD';
 	exports.NOTE_EDIT = 'T2.NOTE_EDIT';
 	exports.NOTE_CREATE = 'T2.NOTE_CREATE';
@@ -52883,6 +52878,25 @@
 	var reducers_1 = __webpack_require__(805);
 	var workbook_1 = __webpack_require__(808);
 	var note_1 = __webpack_require__(817);
+	exports.goalCompleted = function (goal) {
+	    return exports.goalStatusChange(goal.id, 1);
+	};
+	exports.goalOpened = function (goal) {
+	    return exports.goalStatusChange(goal.id, 0);
+	};
+	exports.goalToggleStatus = function (goal) {
+	    console.log(goal.status);
+	    var status = goal.status === 1 ? 0 : 1;
+	    console.log(status);
+	    return exports.goalStatusChange(goal.id, status);
+	};
+	exports.goalStatusChange = function (id, status) {
+	    return {
+	        type: exports.GOAL_STATUS_CHANGE,
+	        id: id,
+	        status: status
+	    };
+	};
 	exports.cordovaDeviceReady = function () {
 	    return {
 	        type: exports.CORDOVA_DEVICE_READY
@@ -52963,7 +52977,7 @@
 	exports.noteEdit = function (id, note) {
 	    return {
 	        type: exports.NOTE_EDIT,
-	        note: note_1.noteFactory(id, note.note)
+	        note: note_1.noteFactory(id, note)
 	    };
 	};
 	exports.noteDelete = function (id) {
@@ -52980,7 +52994,7 @@
 	};
 	exports.noteCreate = function (note) {
 	    return function (dispatch, getState) {
-	        var newNote = note_1.noteFactory(reducers_1.nextId(Object.keys(getState().notes)), note.note);
+	        var newNote = note_1.noteFactory(reducers_1.nextId(Object.keys(getState().notes)), note);
 	        dispatch(exports.noteAdd(newNote));
 	    };
 	};
@@ -53031,6 +53045,14 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	var __assign = (this && this.__assign) || Object.assign || function(t) {
+	    for (var s, i = 1, n = arguments.length; i < n; i++) {
+	        s = arguments[i];
+	        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+	            t[p] = s[p];
+	    }
+	    return t;
+	};
 	var workbook_1 = __webpack_require__(809);
 	var normalizr_1 = __webpack_require__(810);
 	var objectAssign = __webpack_require__(301);
@@ -53046,18 +53068,20 @@
 	var workBookListSchema = new normalizr_1.schema.Array(workbook);
 	var normalizedData = normalizr_1.normalize(workbook_1.wbData, workBookListSchema);
 	console.log(normalizedData);
-	exports.goalFactory = function (id, title, desc) {
+	exports.goalFactory = function (id, title, desc, status) {
 	    if (desc === void 0) { desc = ''; }
+	    if (status === void 0) { status = 0; }
 	    return {
 	        id: id,
 	        title: title,
-	        desc: desc
+	        desc: desc,
+	        status: status
 	    };
 	};
 	function checkProperty(ob, prop) {
 	    if (typeof ob[prop + ''] === 'undefined') {
 	        if (true) {
-	            console.log("Invalid workbook id submitted to reducer");
+	            console.log("Invalid object id submitted to reducer");
 	        }
 	        return false;
 	    }
@@ -53099,13 +53123,15 @@
 	    switch (action.type) {
 	        case constants_1.REHYDRATE:
 	            var incoming = action.payload.myReducer;
-	            // TODO if (incoming) return {...state, ...incoming, specialKey: processSpecial(incoming.specialKey)}
+	            // noop
 	            break;
-	        case actions_1.USER_LOGIN:
-	            // TODO
-	            break;
-	        case actions_1.USER_LOGOUT:
-	            // TODO
+	        case actions_1.GOAL_STATUS_CHANGE:
+	            console.log(actions_1.GOAL_STATUS_CHANGE);
+	            if (checkProperty(state, action.id)) {
+	                console.log(action.status);
+	                state[action.id + ''] = __assign({}, state[action.id + ''], { status: action.status });
+	                state = objectAssign({}, state);
+	            }
 	            break;
 	        case actions_1.GOAL_SUBMITTED:
 	            state[action.id + ''] = exports.goalFactory(action.id, action.goal.title);
@@ -93892,7 +93918,7 @@
 	  name: 'main',
 	  getChildRoutes: function getChildRoutes(partialNextState, cb) {
 	    //require.ensure([], function (require) {
-	    cb(null, [__webpack_require__(1188).default, __webpack_require__(1208).default, __webpack_require__(1210).default, __webpack_require__(1211).default, __webpack_require__(1225).default, __webpack_require__(1230).default]);
+	    cb(null, [__webpack_require__(1188).default, __webpack_require__(1208).default, __webpack_require__(1210).default, __webpack_require__(1211).default, __webpack_require__(1227).default, __webpack_require__(1232).default]);
 	    //});
 	  }
 	};
@@ -94063,8 +94089,13 @@
 	};
 	var dispatchToProps = function (dispatch) {
 	    return {
-	        goalClick: function (goal) { return dispatch(actions_1.goalLoad(goal.id)); },
-	        goalDelete: function (workbookId, goalId) { return dispatch(actions_1.goalDeleted(workbookId, goalId)); }
+	        goalEditClick: function (goal) { return dispatch(actions_1.goalLoad(goal.id)); },
+	        goalStatusClick: function (goal) {
+	            dispatch(actions_1.goalToggleStatus(goal));
+	        },
+	        goalDelete: function (workbookId, goalId) {
+	            dispatch(actions_1.goalDeleted(workbookId, goalId));
+	        }
 	    };
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -94083,12 +94114,14 @@
 	};
 	var React = __webpack_require__(299);
 	var GoalCreateDialog_1 = __webpack_require__(1214);
-	var GoalEditDialog_1 = __webpack_require__(1219);
-	var BasicDialog_1 = __webpack_require__(1220);
-	var List_1 = __webpack_require__(1221);
-	var delete_1 = __webpack_require__(1223);
+	var GoalEditDialog_1 = __webpack_require__(1220);
+	var BasicDialog_1 = __webpack_require__(1221);
+	var List_1 = __webpack_require__(1222);
 	var create_1 = __webpack_require__(1224);
-	var IconButton_1 = __webpack_require__(1117);
+	var check_box_1 = __webpack_require__(1225);
+	var check_box_outline_blank_1 = __webpack_require__(1226);
+	var RaisedButton_1 = __webpack_require__(1202);
+	var commonStyles_1 = __webpack_require__(1219);
 	var styles = {
 	    video: {
 	        width: '100%',
@@ -94098,27 +94131,52 @@
 	var Workbook = (function (_super) {
 	    __extends(Workbook, _super);
 	    function Workbook() {
-	        return _super !== null && _super.apply(this, arguments) || this;
+	        var _this = _super !== null && _super.apply(this, arguments) || this;
+	        _this.handleEditToggle = function () {
+	            var newToggleState = !_this.state.editMode;
+	            _this.setState({ editMode: newToggleState });
+	        };
+	        return _this;
 	    }
 	    Workbook.prototype.componentWillMount = function () {
 	        var workbook = this.props.workbook;
 	        this.props.appBarTitle && this.props.appBarTitle(workbook.title);
+	        this.state = { editMode: false };
 	    };
 	    Workbook.prototype.componentWillUpdate = function (nextProps) {
 	        var workbook = nextProps.workbook;
 	        this.props.appBarTitle && this.props.appBarTitle(workbook.title);
 	    };
+	    Workbook.prototype.componentWillUnmount = function () {
+	        this.setState({ editMode: false });
+	    };
 	    Workbook.prototype.render = function () {
-	        var _a = this.props, workbook = _a.workbook, isOnline = _a.isOnline, examples = _a.examples, goals = _a.goals, goalClick = _a.goalClick, goalDelete = _a.goalDelete;
+	        var _a = this.props, workbook = _a.workbook, isOnline = _a.isOnline, examples = _a.examples, goals = _a.goals, goalEditClick = _a.goalEditClick, goalStatusClick = _a.goalStatusClick, goalDelete = _a.goalDelete;
+	        var listItems;
+	        var actionToggleButton;
+	        if (this.state.editMode) {
+	            actionToggleButton = React.createElement(RaisedButton_1.default, { primary: true, onTouchTap: this.handleEditToggle, label: "Done" });
+	            listItems = goals.map(function (item) {
+	                return (React.createElement(List_1.ListItem, { key: item.id, primaryText: item.title, onTouchTap: function () { return goalEditClick(item); }, rightIcon: React.createElement(create_1.default, null) }));
+	            });
+	        }
+	        else {
+	            actionToggleButton = React.createElement(RaisedButton_1.default, { onTouchTap: this.handleEditToggle, label: "Edit Goals" });
+	            ;
+	            listItems = goals.map(function (item) {
+	                console.log(item);
+	                return (React.createElement(List_1.ListItem, { key: item.id, primaryText: item.title, onTouchTap: function () { return goalStatusClick(item); }, leftIcon: item.status === 1 ? React.createElement(check_box_1.default, { color: "green" }) : React.createElement(check_box_outline_blank_1.default, { color: "grey" }) }));
+	            });
+	        }
 	        return (React.createElement("div", null,
-	            React.createElement(BasicDialog_1.default, { title: "Examples", items: examples }),
-	            React.createElement(List_1.List, null, goals.map(function (item) {
-	                return (React.createElement(List_1.ListItem, { key: item.id, primaryText: item.title, rightIcon: React.createElement(IconButton_1.default, { onTouchTap: function () { return goalDelete(workbook.id, item.id); } },
-	                        React.createElement(delete_1.default, null)), leftIcon: React.createElement(IconButton_1.default, { onTouchTap: function () { return goalClick(item); } },
-	                        React.createElement(create_1.default, null)) }));
-	            })),
-	            React.createElement(GoalCreateDialog_1.default, { workbook: workbook }),
-	            React.createElement(GoalEditDialog_1.default, { workbook: workbook })));
+	            React.createElement("div", { style: commonStyles_1.subMenuFlexContainerStyle },
+	                React.createElement("div", null,
+	                    React.createElement(BasicDialog_1.default, { title: "Examples", items: examples })),
+	                React.createElement("div", null, actionToggleButton)),
+	            React.createElement("div", null,
+	                React.createElement(List_1.List, null, listItems),
+	                React.createElement(GoalCreateDialog_1.default, { workbook: workbook }),
+	                React.createElement(GoalEditDialog_1.default, { workbook: workbook, goalDelete: goalDelete }))));
 	    };
 	    return Workbook;
 	}(React.Component));
@@ -94145,6 +94203,7 @@
 	var react_redux_1 = __webpack_require__(711);
 	var actions_1 = __webpack_require__(807);
 	var workbook_1 = __webpack_require__(808);
+	var commonStyles_1 = __webpack_require__(1219);
 	var style = {
 	    floatingAction: {
 	        margin: 0,
@@ -94164,13 +94223,12 @@
 	        var _a = this.props, addGoal = _a.addGoal, workbook = _a.workbook, handleClose = _a.handleClose, handleOpen = _a.handleOpen, open = _a.open, goal = _a.goal;
 	        var actions = [
 	            React.createElement(FlatButton_1.default, { label: "Cancel", primary: true, onTouchTap: handleClose }),
-	            React.createElement(FlatButton_1.default, { label: "Submit", primary: true, keyboardFocused: true, onTouchTap: handleClose }),
 	        ];
 	        return (React.createElement("div", null,
-	            React.createElement(FloatingActionButton_1.default, { onTouchTap: handleOpen, style: style.floatingAction },
+	            React.createElement(FloatingActionButton_1.default, { onTouchTap: handleOpen, style: commonStyles_1.foatingButtonStyle },
 	                React.createElement(add_1.default, null)),
-	            React.createElement(Dialog_1.default, { title: "Create a Goal", actions: actions, modal: true, open: open, onRequestClose: handleClose },
-	                React.createElement(GoalForm_1.default, { handleSubmit: addGoal, workbook: workbook, goal: goal }))));
+	            React.createElement(Dialog_1.default, { actions: actions, modal: true, open: open, onRequestClose: handleClose, contentStyle: commonStyles_1.fullWidthDialagStyle },
+	                React.createElement(GoalForm_1.default, { handleSubmit: addGoal, workbook: workbook, goal: goal, ref: 'goalForm' }))));
 	    };
 	    return GoalCreateDialog;
 	}(React.Component));
@@ -94710,7 +94768,7 @@
 	}(React.Component));
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = GoalForm;
-	/* redux-form to slow
+	/* redux-form too slow
 	
 	GoalForm = reduxForm({
 	  form: 'goalsForm',
@@ -94721,6 +94779,34 @@
 
 /***/ },
 /* 1219 */
+/***/ function(module, exports) {
+
+	"use strict";
+	exports.foatingButtonStyle = {
+	    margin: 0,
+	    top: 'auto',
+	    right: 20,
+	    bottom: 20,
+	    left: 'auto',
+	    position: 'fixed'
+	};
+	exports.topRightButtonStyle = {
+	    position: 'relative',
+	    float: 'right'
+	};
+	exports.subMenuFlexContainerStyle = {
+	    display: 'flex',
+	    flexFlow: 'row nowrap',
+	    justifyContent: 'space-between'
+	};
+	exports.fullWidthDialagStyle = {
+	    width: '100%',
+	    maxWidth: '500px',
+	};
+
+
+/***/ },
+/* 1220 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -94736,19 +94822,23 @@
 	var react_redux_1 = __webpack_require__(711);
 	var actions_1 = __webpack_require__(807);
 	var workbook_1 = __webpack_require__(808);
+	var commonStyles_1 = __webpack_require__(1219);
 	var GoalEditDialog = (function (_super) {
 	    __extends(GoalEditDialog, _super);
 	    function GoalEditDialog() {
 	        return _super !== null && _super.apply(this, arguments) || this;
 	    }
 	    GoalEditDialog.prototype.render = function () {
-	        var _a = this.props, editGoal = _a.editGoal, open = _a.open, handleClose = _a.handleClose, goal = _a.goal, workbook = _a.workbook;
+	        var _a = this.props, editGoal = _a.editGoal, goalDelete = _a.goalDelete, open = _a.open, handleClose = _a.handleClose, goal = _a.goal, workbook = _a.workbook;
 	        var actions = [
 	            React.createElement(FlatButton_1.default, { label: "Cancel", primary: true, onTouchTap: handleClose }),
-	            React.createElement(FlatButton_1.default, { label: "Submit", primary: true, keyboardFocused: true, onTouchTap: handleClose }),
+	            React.createElement(FlatButton_1.default, { label: "Delete", primary: true, onTouchTap: function () {
+	                    goalDelete(workbook.id, goal.id);
+	                    handleClose();
+	                } }),
 	        ];
 	        return (React.createElement("div", null,
-	            React.createElement(Dialog_1.default, { title: "Edit Goal", actions: actions, modal: true, open: open, onRequestClose: handleClose },
+	            React.createElement(Dialog_1.default, { title: "Edit Goal", actions: actions, modal: true, open: open, onRequestClose: handleClose, contentStyle: commonStyles_1.fullWidthDialagStyle },
 	                React.createElement(GoalForm_1.default, { workbook: workbook, goal: goal, handleSubmit: editGoal(goal) }))));
 	    };
 	    return GoalEditDialog;
@@ -94777,7 +94867,7 @@
 
 
 /***/ },
-/* 1220 */
+/* 1221 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -94790,7 +94880,7 @@
 	var Dialog_1 = __webpack_require__(744);
 	var FlatButton_1 = __webpack_require__(763);
 	var RaisedButton_1 = __webpack_require__(1202);
-	var List_1 = __webpack_require__(1221);
+	var List_1 = __webpack_require__(1222);
 	var BasicDialog = (function (_super) {
 	    __extends(BasicDialog, _super);
 	    function BasicDialog() {
@@ -94823,7 +94913,7 @@
 
 
 /***/ },
-/* 1221 */
+/* 1222 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -94841,7 +94931,7 @@
 	
 	var _ListItem3 = _interopRequireDefault(_ListItem2);
 	
-	var _makeSelectable2 = __webpack_require__(1222);
+	var _makeSelectable2 = __webpack_require__(1223);
 	
 	var _makeSelectable3 = _interopRequireDefault(_makeSelectable2);
 	
@@ -94853,7 +94943,7 @@
 	exports.default = _List3.default;
 
 /***/ },
-/* 1222 */
+/* 1223 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -95025,43 +95115,6 @@
 	exports.default = makeSelectable;
 
 /***/ },
-/* 1223 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _react = __webpack_require__(299);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _pure = __webpack_require__(1123);
-	
-	var _pure2 = _interopRequireDefault(_pure);
-	
-	var _SvgIcon = __webpack_require__(1130);
-	
-	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var ActionDelete = function ActionDelete(props) {
-	  return _react2.default.createElement(
-	    _SvgIcon2.default,
-	    props,
-	    _react2.default.createElement('path', { d: 'M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z' })
-	  );
-	};
-	ActionDelete = (0, _pure2.default)(ActionDelete);
-	ActionDelete.displayName = 'ActionDelete';
-	ActionDelete.muiName = 'SvgIcon';
-	
-	exports.default = ActionDelete;
-
-/***/ },
 /* 1224 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -95108,7 +95161,81 @@
 	  value: true
 	});
 	
-	var _NotesContainer = __webpack_require__(1226);
+	var _react = __webpack_require__(299);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _pure = __webpack_require__(1123);
+	
+	var _pure2 = _interopRequireDefault(_pure);
+	
+	var _SvgIcon = __webpack_require__(1130);
+	
+	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var ToggleCheckBox = function ToggleCheckBox(props) {
+	  return _react2.default.createElement(
+	    _SvgIcon2.default,
+	    props,
+	    _react2.default.createElement('path', { d: 'M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z' })
+	  );
+	};
+	ToggleCheckBox = (0, _pure2.default)(ToggleCheckBox);
+	ToggleCheckBox.displayName = 'ToggleCheckBox';
+	ToggleCheckBox.muiName = 'SvgIcon';
+	
+	exports.default = ToggleCheckBox;
+
+/***/ },
+/* 1226 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(299);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _pure = __webpack_require__(1123);
+	
+	var _pure2 = _interopRequireDefault(_pure);
+	
+	var _SvgIcon = __webpack_require__(1130);
+	
+	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var ToggleCheckBoxOutlineBlank = function ToggleCheckBoxOutlineBlank(props) {
+	  return _react2.default.createElement(
+	    _SvgIcon2.default,
+	    props,
+	    _react2.default.createElement('path', { d: 'M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z' })
+	  );
+	};
+	ToggleCheckBoxOutlineBlank = (0, _pure2.default)(ToggleCheckBoxOutlineBlank);
+	ToggleCheckBoxOutlineBlank.displayName = 'ToggleCheckBoxOutlineBlank';
+	ToggleCheckBoxOutlineBlank.muiName = 'SvgIcon';
+	
+	exports.default = ToggleCheckBoxOutlineBlank;
+
+/***/ },
+/* 1227 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _NotesContainer = __webpack_require__(1228);
 	
 	var _NotesContainer2 = _interopRequireDefault(_NotesContainer);
 	
@@ -95125,11 +95252,11 @@
 	};
 
 /***/ },
-/* 1226 */
+/* 1228 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Notes_1 = __webpack_require__(1227);
+	var Notes_1 = __webpack_require__(1229);
 	var react_redux_1 = __webpack_require__(711);
 	var actions_1 = __webpack_require__(807);
 	var mapStateToProps = function (state, ownProps) {
@@ -95150,7 +95277,7 @@
 
 
 /***/ },
-/* 1227 */
+/* 1229 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -95160,13 +95287,12 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	var React = __webpack_require__(299);
-	var NoteEditDialog_1 = __webpack_require__(1228);
-	var List_1 = __webpack_require__(1221);
-	var delete_1 = __webpack_require__(1223);
+	var NoteEditDialog_1 = __webpack_require__(1230);
+	var List_1 = __webpack_require__(1222);
 	var create_1 = __webpack_require__(1224);
-	var IconButton_1 = __webpack_require__(1117);
 	var FloatingActionButton_1 = __webpack_require__(1215);
 	var add_1 = __webpack_require__(1217);
+	var commonStyles_1 = __webpack_require__(1219);
 	var styles = {
 	    video: {
 	        width: '100%',
@@ -95185,13 +95311,9 @@
 	        var _a = this.props, isOnline = _a.isOnline, noteEdit = _a.noteEdit, notes = _a.notes, noteDelete = _a.noteDelete, noteLoad = _a.noteLoad;
 	        return (React.createElement("div", null,
 	            React.createElement(List_1.List, null, notes.map(function (item) {
-	                return (React.createElement(List_1.ListItem, { key: item.id, primaryText: item.text, rightIcon: React.createElement(IconButton_1.default, { onTouchTap: function () { return noteDelete(item.id); } },
-	                        React.createElement(delete_1.default, null)), leftIcon: React.createElement(IconButton_1.default, { onTouchTap: function () { return noteEdit(item); } },
-	                        React.createElement(create_1.default, null)) }));
+	                return (React.createElement(List_1.ListItem, { key: item.id, primaryText: item.text, onTouchTap: function () { return noteEdit(item); }, rightIcon: React.createElement(create_1.default, null) }));
 	            })),
-	            React.createElement(FloatingActionButton_1.default, { onTouchTap: function () { return noteLoad(); }, style: {
-	                    marginRight: 20,
-	                } },
+	            React.createElement(FloatingActionButton_1.default, { onTouchTap: function () { return noteLoad(); }, style: commonStyles_1.foatingButtonStyle },
 	                React.createElement(add_1.default, null)),
 	            React.createElement(NoteEditDialog_1.default, null)));
 	    };
@@ -95202,7 +95324,7 @@
 
 
 /***/ },
-/* 1228 */
+/* 1230 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -95214,23 +95336,30 @@
 	var React = __webpack_require__(299);
 	var Dialog_1 = __webpack_require__(744);
 	var FlatButton_1 = __webpack_require__(763);
-	var NoteForm_1 = __webpack_require__(1229);
+	var NoteForm_1 = __webpack_require__(1231);
 	var react_redux_1 = __webpack_require__(711);
 	var actions_1 = __webpack_require__(807);
 	var note_1 = __webpack_require__(817);
+	var commonStyles_1 = __webpack_require__(1219);
 	var NoteEditDialog = (function (_super) {
 	    __extends(NoteEditDialog, _super);
 	    function NoteEditDialog() {
 	        return _super !== null && _super.apply(this, arguments) || this;
 	    }
 	    NoteEditDialog.prototype.render = function () {
-	        var _a = this.props, editNote = _a.editNote, open = _a.open, handleClose = _a.handleClose, note = _a.note;
+	        var _a = this.props, editNote = _a.editNote, open = _a.open, handleClose = _a.handleClose, note = _a.note, noteDelete = _a.noteDelete;
 	        var actions = [
 	            React.createElement(FlatButton_1.default, { label: "Cancel", primary: true, onTouchTap: handleClose })
 	        ];
+	        if (note.id) {
+	            actions.push(React.createElement(FlatButton_1.default, { label: "Delete", primary: true, onTouchTap: function () {
+	                    noteDelete(note.id);
+	                    handleClose();
+	                } }));
+	        }
 	        return (React.createElement("div", null,
-	            React.createElement(Dialog_1.default, { title: "Note", actions: actions, modal: false, open: open, onRequestClose: handleClose },
-	                React.createElement(NoteForm_1.default, { note: true, onSubmit: editNote(note) }))));
+	            React.createElement(Dialog_1.default, { title: "Note", actions: actions, modal: false, open: open, onRequestClose: handleClose, contentStyle: commonStyles_1.fullWidthDialagStyle },
+	                React.createElement(NoteForm_1.default, { note: note, handleSubmit: editNote(note) }))));
 	    };
 	    return NoteEditDialog;
 	}(React.Component));
@@ -95246,14 +95375,17 @@
 	            return function (noteForm) {
 	                if (note.id) {
 	                    console.log('noteEdit');
-	                    dispatch(actions_1.noteEdit(note.id, noteForm));
+	                    dispatch(actions_1.noteEdit(note.id, noteForm.text));
 	                }
 	                else {
 	                    console.log('noteCreate');
-	                    dispatch(actions_1.noteCreate(noteForm));
+	                    dispatch(actions_1.noteCreate(noteForm.text));
 	                }
 	                dispatch(actions_1.noteLoad(-1));
 	            };
+	        },
+	        noteDelete: function (noteId) {
+	            dispatch(actions_1.noteDelete(noteId));
 	        },
 	        handleClose: function () {
 	            dispatch(actions_1.noteLoad(-1));
@@ -95265,10 +95397,15 @@
 
 
 /***/ },
-/* 1229 */
+/* 1231 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
 	var __assign = (this && this.__assign) || Object.assign || function(t) {
 	    for (var s, i = 1, n = arguments.length; i < n; i++) {
 	        s = arguments[i];
@@ -95278,10 +95415,8 @@
 	    return t;
 	};
 	var React = __webpack_require__(299);
-	var redux_form_1 = __webpack_require__(821);
 	var TextField_1 = __webpack_require__(1137);
 	var RaisedButton_1 = __webpack_require__(1202);
-	var react_redux_1 = __webpack_require__(711);
 	var validate = function (values) {
 	    var errors = {};
 	    if (!values.note) {
@@ -95305,36 +95440,47 @@
 	        justifyContent: 'space-between'
 	    }
 	};
-	var NoteForm = function (props) {
-	    var handleSubmit = props.handleSubmit, load = props.load, pristine = props.pristine, reset = props.reset, submitting = props.submitting, note = props.note;
-	    return (React.createElement("form", { onSubmit: handleSubmit },
-	        React.createElement("div", { style: styles.layout },
-	            React.createElement("div", null,
-	                React.createElement(redux_form_1.Field, { name: "note", component: renderTaskField })),
-	            React.createElement("div", { style: styles.buttonContainer },
-	                React.createElement("div", null,
-	                    React.createElement(RaisedButton_1.default, { type: "submit", primary: true, disabled: pristine || submitting, label: "Save" })),
-	                React.createElement("div", null,
-	                    React.createElement(RaisedButton_1.default, { onTouchTap: reset, secondary: true, disabled: pristine, label: "Clear" }))))));
-	};
-	NoteForm = redux_form_1.reduxForm({
-	    form: 'notesForm',
-	    validate: validate
-	})(NoteForm);
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = react_redux_1.connect(function (state) {
-	    var data = { note: '' };
-	    if (state.loadedNoteId > 0) {
-	        data = { note: state.notes[state.loadedNoteId + ''].text };
+	var NoteForm = (function (_super) {
+	    __extends(NoteForm, _super);
+	    function NoteForm(props, context) {
+	        var _this = _super.call(this, props, context) || this;
+	        _this.handleChange = function (event) {
+	            var target = event.target;
+	            var value = target.type === 'checkbox' ? target.checked : target.value;
+	            var name = target.name;
+	            _this.setState({
+	                text: value
+	            });
+	        };
+	        console.log(props);
+	        _this.state = {
+	            text: props.note.text
+	        };
+	        return _this;
 	    }
-	    return {
-	        initialValues: data
+	    NoteForm.prototype.render = function () {
+	        var _this = this;
+	        var _a = this.props, handleSubmit = _a.handleSubmit, note = _a.note;
+	        var formSubmit = function (event) {
+	            handleSubmit({ text: _this.state.text });
+	            event.preventDefault();
+	        };
+	        return (React.createElement("form", { onSubmit: formSubmit },
+	            React.createElement("div", { style: styles.layout },
+	                React.createElement("div", null,
+	                    React.createElement(TextField_1.default, { floatingLabelText: 'Note', hintText: 'Enter Text Here', multiLine: true, rows: 1, rowsMax: 2, name: 'text', value: this.state.text, fullWidth: true, onChange: this.handleChange, errorText: false })),
+	                React.createElement("div", { style: styles.buttonContainer },
+	                    React.createElement("div", null,
+	                        React.createElement(RaisedButton_1.default, { type: "submit", primary: true, disabled: false, label: "Save" }))))));
 	    };
-	})(NoteForm);
+	    return NoteForm;
+	}(React.Component));
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = NoteForm;
 
 
 /***/ },
-/* 1230 */
+/* 1232 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -95354,7 +95500,7 @@
 	};
 
 /***/ },
-/* 1231 */
+/* 1233 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -95363,7 +95509,7 @@
 	  value: true
 	});
 	
-	var _NotFound = __webpack_require__(1232);
+	var _NotFound = __webpack_require__(1234);
 	
 	var _NotFound2 = _interopRequireDefault(_NotFound);
 	
@@ -95378,7 +95524,7 @@
 	};
 
 /***/ },
-/* 1232 */
+/* 1234 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -95397,41 +95543,41 @@
 
 
 /***/ },
-/* 1233 */
+/* 1235 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "manifest.json";
 
 /***/ },
-/* 1234 */
-/***/ function(module, exports, __webpack_require__) {
-
-	__webpack_require__(1235)
-	__webpack_require__(1236)
-	__webpack_require__(1237)
-	__webpack_require__(1238)
-	module.exports = "index.html"
-
-/***/ },
-/* 1235 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "static/appIcon_152-0396220bbc3c3dd1b385c4a271cb95fb.png";
-
-/***/ },
 /* 1236 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "static/appIcon_144-9cc26bb3079c038ac446ad5d9298ab04.png";
+	__webpack_require__(1237)
+	__webpack_require__(1238)
+	__webpack_require__(1239)
+	__webpack_require__(1240)
+	module.exports = "index.html"
 
 /***/ },
 /* 1237 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "main-04312762f51e2ceefa7ee046a1f1e37d.css";
+	module.exports = __webpack_require__.p + "static/appIcon_152-0396220bbc3c3dd1b385c4a271cb95fb.png";
 
 /***/ },
 /* 1238 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "static/appIcon_144-9cc26bb3079c038ac446ad5d9298ab04.png";
+
+/***/ },
+/* 1239 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "main-04312762f51e2ceefa7ee046a1f1e37d.css";
+
+/***/ },
+/* 1240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "static/appIcon_32-d2a5f9283a623a506743532058926892.png";

@@ -9,7 +9,10 @@ import {
   EDIT_PIN_FORM, 
   SWITCH_TO_APP_PROVIDER, 
   SWITCH_TO_SECURITY_PROVIDER,
-  CORDOVA_DEVICE_READY
+  CORDOVA_DEVICE_READY,
+  EULA_ACCEPTED,
+  EULA_REJECTED,
+  FIPS_IS_SETUP
 } from '../actions/security'
 /*
 * The data below could come from a rest server
@@ -36,7 +39,9 @@ const defaultUser = {
   isAuthenticated: false,
   pin: '',
   firstQuestionAnwser: '',
-  secondQuestionAnwser: '' // etc, etc //TODO implement pin lock system
+  secondQuestionAnwser: '',
+  eulaAccepted: false,
+  fipsIsSetUp: false,
 };
 
 interface PinQuestionsMap {
@@ -54,8 +59,10 @@ const pinQuestionsDefault: PinQuestionsMap = {
   'QUESTION_OPT_8': { id:"QUESTION_OPT_8", title:"What is your favorite sports team?"},
   'QUESTION_OPT_9': { id:"QUESTION_OPT_9", title:"What branch of the military did you serve?"},
   'QUESTION_OPT_10': { id:"QUESTION_OPT_10", title:"What was your favorite high school activity?"},
-  'QUESTION_OPT_NONE': { id:"QUESTION_OPT_NONE", title:"None Selected"}
+  
 }
+
+const questionNone = {'QUESTION_OPT_NONE': { id:"QUESTION_OPT_NONE", title:"None Selected"}};
 
 
 
@@ -74,7 +81,15 @@ const pinQuestionsDefault: PinQuestionsMap = {
 
 function user (state = defaultUser, action) {
   switch (action.type) {
-
+    case EULA_ACCEPTED:
+      state = {...state,eulaAccepted: true}
+      break;
+    case EULA_REJECTED:
+      state = {...state,eulaAccepted: false}
+      break;
+    case FIPS_IS_SETUP:
+      state = {...state,fipsIsSetUp: true}
+      break;
   }
   return state;
 }

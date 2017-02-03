@@ -10,23 +10,32 @@ const workbook = new schema.Entity('workbooks',{
   examples: [example],
   goals: [goal]
 });
-import {GOAL_SUBMITTED,GOAL_LOAD,GOAL_EDIT,GOAL_DELETED,USER_LOGIN,USER_LOGOUT} from '../actions';
+import {
+  GOAL_SUBMITTED,
+  GOAL_LOAD,
+  GOAL_EDIT,
+  GOAL_DELETED,
+  GOAL_STATUS_CHANGE,
+  USER_LOGIN,
+  USER_LOGOUT
+} from '../actions';
 const workBookListSchema = new schema.Array(workbook);
 const normalizedData = normalize(wbData, workBookListSchema);
 console.log(normalizedData);
 
-export const goalFactory = (id: number, title: string, desc: string = ''): GoalReducerInterface => {
+export const goalFactory = (id: number, title: string, desc: string = '', status = 0): GoalReducerInterface => {
   return {
     id,
     title,
-    desc
+    desc,
+    status
   }
 }
 
 function checkProperty(ob,prop){
         if(typeof ob[ prop + ''] === 'undefined'){
           if(__DEVTOOLS__){
-            console.log("Invalid workbook id submitted to reducer");
+            console.log("Invalid object id submitted to reducer");
           }
           return false;
         }
@@ -67,19 +76,21 @@ export const goals = (state = normalizedData.entities.goals || {},action) => {
   switch(action.type){
     case REHYDRATE:
        var incoming = action.payload.myReducer
-      // TODO if (incoming) return {...state, ...incoming, specialKey: processSpecial(incoming.specialKey)}
+       // noop
        break;
-    case USER_LOGIN:
-      // TODO
-      break;
-    case USER_LOGOUT:
-      // TODO
-      break;
+    case GOAL_STATUS_CHANGE:
+        console.log(GOAL_STATUS_CHANGE);
+        if(checkProperty(state,action.id)){
+          console.log(action.status);
+          state[action.id + ''] = {...state[action.id + ''],status: action.status};
+          state = objectAssign({},state);
+        }
+        break;
     case GOAL_SUBMITTED:
         state[action.id + ''] = goalFactory(action.id, action.goal.title);
         state = objectAssign({},state);
         break;
-     case GOAL_EDIT:
+    case GOAL_EDIT:
         state[action.goal.id + ''] = action.goal;
         state = objectAssign({},state);
         break;

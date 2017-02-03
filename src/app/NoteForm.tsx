@@ -12,18 +12,7 @@ const validate = values => {
   }
   return errors
 }
-const renderTaskField = ({input, label, meta: {touched, error}}) => {
-    return (
-      <TextField 
-            floatingLabelText={label} 
-            hintText={label} 
-            multiLine={true}
-            rows={2}
-            rowsMax={4}
-            fullWidth={true}
-            errorText={touched && error} {...input} />
-    );
-}
+
 
 const styles = {
   layout: {
@@ -53,6 +42,7 @@ export default class NoteForm extends React.Component<MyProps, MyState> {
     this.state = {
       text: props.note.text
     };
+     
   }
 
   handleChange = (event) => {
@@ -63,13 +53,15 @@ export default class NoteForm extends React.Component<MyProps, MyState> {
       text: value
     } as any);
   }
-  render(){
-  const {handleSubmit,note} = this.props;
-  const formSubmit = (event) => {
-
-    handleSubmit({text: this.state.text});
-    event.preventDefault();
+  componentDidMount(){
+    (this as any).textInput.focus();
   }
+  render(){
+    const {handleSubmit,note} = this.props;
+    const formSubmit = (event) => {
+      handleSubmit({text: this.state.text});
+      event.preventDefault();
+    }
     return (
       <form onSubmit={formSubmit}>
         <div style={styles.layout as any}>
@@ -83,6 +75,7 @@ export default class NoteForm extends React.Component<MyProps, MyState> {
               name='text'
               value={this.state.text}
               fullWidth={true}
+              ref={(input) => { (this as any).textInput = input; }}
               onChange={this.handleChange}
               errorText={false} />
           </div>

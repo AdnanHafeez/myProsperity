@@ -4,6 +4,28 @@ export const EDIT_PIN_FORM = 'T2.SECURITY.EDIT_PIN_FORM';
 export const SWITCH_TO_APP_PROVIDER = 'T2.SECURITY.SWITCH_TO_APP_PROVIDER';
 export const SWITCH_TO_SECURITY_PROVIDER = 'T2.SECURITY.SWITCH_TO_SECURITY_PROVIDER';
 export const CORDOVA_DEVICE_READY = 'T2.SECURITY.CORDOVA_DEVICE_READY';
+export const PIN_ACCEPTED = 'T2.SECURITY.PIN_ACCEPTED';
+export const EULA_ACCEPTED = 'T2.SECURITY.EULA_ACCEPTED';
+export const EULA_REJECTED = 'T2.SECURITY.EULA_REJECTED';
+export const FIPS_IS_SETUP = 'T2.SECURITY.FIPS_IS_SETUP';
+
+export const eulaRejected = () => {
+  return {
+    type: EULA_REJECTED
+  }
+}
+
+export const fipsIsSetup = () => {
+  return {
+    type: FIPS_IS_SETUP
+  }
+}
+
+export const eulaAccepted = () => {
+  return {
+    type: EULA_ACCEPTED
+  }
+}
 
 export const cordovaDeviceReady = () => {
   return {

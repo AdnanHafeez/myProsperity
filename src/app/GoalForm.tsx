@@ -42,6 +42,9 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
       title: props.goal.title,
     };
   }
+  componentDidMount(){
+    (this as any).textInput.focus();
+  }
   handleChange = (event) => {
     console.log("Change event");
     const target = event.target;
@@ -75,6 +78,7 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
               value={this.state.title}
               fullWidth={true}
               onChange={this.handleChange}
+              ref={(input) => { (this as any).textInput = input; }}
               errorText={touched && error} />
         </div>
         <div>

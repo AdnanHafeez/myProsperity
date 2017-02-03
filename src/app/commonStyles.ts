@@ -21,5 +21,5 @@ export const subMenuFlexContainerStyle = {
 
 export const fullWidthDialagStyle = {
   width: '100%',
-  maxWidth: '500px',
+  maxWidth: '700px',
 };

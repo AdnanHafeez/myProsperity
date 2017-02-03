@@ -35,6 +35,7 @@ export interface GoalReducerInterface {
   desc: string;
   reminder?: any;
   date_created?: any;
+  status?: number;
 }
 
 export interface GoalFormItemInterface {

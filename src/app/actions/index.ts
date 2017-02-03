@@ -10,6 +10,7 @@ export const GOAL_UPDATED = 'T2.GOAL_UPDATED';
 export const GOAL_CREATE = 'T2.GOAL_CREATE';
 export const GOAL_EDIT = 'T2.GOAL_EDIT';
 export const GOAL_LOAD= 'T2.GOAL_LOAD';
+export const GOAL_STATUS_CHANGE = 'T2.GOAL_STATUS_CHANGE';
 export const NOTE_LOAD = 'T2.NOTE_LOAD';
 export const NOTE_EDIT = 'T2.NOTE_EDIT';
 export const NOTE_CREATE = 'T2.NOTE_CREATE';
@@ -26,6 +27,30 @@ import {WorkbookReducerInterface, GoalReducerInterface, GoalFormItemInterface, N
 import {nextId} from '../reducers';
 import {goalFactory} from '../reducers/workbook';
 import {noteFactory} from '../reducers/note';
+
+
+export const goalCompleted = (goal: GoalReducerInterface) => {
+  return goalStatusChange(goal.id,1);
+}
+
+export const goalOpened = (goal: GoalReducerInterface) => {
+  return goalStatusChange(goal.id,0);
+}
+
+export const goalToggleStatus = (goal: GoalReducerInterface) => {
+  console.log(goal.status);
+  let status = goal.status === 1 ? 0 : 1;
+  console.log(status);
+  return goalStatusChange(goal.id,status);
+}
+
+export const goalStatusChange = (id,status) => {
+  return {
+    type: GOAL_STATUS_CHANGE,
+    id,
+    status
+  }
+}
 
 
 export const cordovaDeviceReady = () => {

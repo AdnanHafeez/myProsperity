@@ -19,6 +19,7 @@ import {UpdateDialogContainer} from 'local-t2-app-redux/lib/components';
 import {deviceActions} from 'local-t2-device-redux';
 
 import {userLogin,userLogout} from './actions';
+import Eula from './Eula';
 var {windowResize} = deviceActions;
 
 const styles = {
@@ -93,7 +94,7 @@ export default class MainComponent extends React.Component<MyProps, MyState>{
                 iconElementRight={<Toggle toggled={!isAuthed} onToggle={() => authToggle(isAuthed)} />}
                  />
                 <div style={styles.content as any}>{React.cloneElement(this.props.children, { appBarTitle: this.handleTitle })}</div>
-
+                <Eula />
         </div>
     );
   }

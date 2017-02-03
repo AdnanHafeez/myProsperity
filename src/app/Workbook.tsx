@@ -10,6 +10,9 @@ import {List, ListItem} from 'material-ui/List';
 import DeleteIcon from 'material-ui/svg-icons/action/delete';
 import EditIcon from 'material-ui/svg-icons/content/create';
 import DoneIcon from 'material-ui/svg-icons/action/done';
+import ToggoleCheckBox from 'material-ui/svg-icons/toggle/check-box';
+import ToggoleCheckBoxOutline from 'material-ui/svg-icons/toggle/check-box-outline-blank';
+import Checkbox from 'material-ui/Checkbox';
 import IconButton from 'material-ui/IconButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import {topRightButtonStyle, subMenuFlexContainerStyle} from './commonStyles';
@@ -26,7 +29,8 @@ interface MyProps {
   examples: any[];
   goals: GoalReducerInterface[];
   isOnline: any;
-  goalClick(goal: GoalReducerInterface): any;
+  goalEditClick(goal: GoalReducerInterface): any;
+  goalStatusClick(goal: GoalReducerInterface): any;
   goalDelete(workbookId:number, goalId: number): any;
 
 }
@@ -55,21 +59,24 @@ class Workbook extends React.Component<MyProps, MyState> {
   }
 
   render () {
-    const {workbook, isOnline, examples, goals, goalClick, goalDelete} = this.props;
+    const {workbook, isOnline, examples, goals, goalEditClick, goalStatusClick, goalDelete} = this.props;
     let listItems;
     let actionToggleButton;
     if(this.state.editMode){
       actionToggleButton = <RaisedButton  primary={true} onTouchTap={this.handleEditToggle} label="Done" />;
       listItems = goals.map((item) => {
             return (<ListItem key={item.id} primaryText={item.title}  
-                              onTouchTap={() => goalClick(item)}
+                              onTouchTap={() => goalEditClick(item)}
                               rightIcon={<EditIcon  />}  />)
           });
     }else{
       actionToggleButton = <RaisedButton  onTouchTap={this.handleEditToggle} label="Edit Goals" />;;
       listItems = goals.map((item) => {
-            return (<ListItem key={item.id} primaryText={item.title}  
-                              rightIcon={<DoneIcon  />} 
+            console.log(item);
+            return (<ListItem key={item.id} primaryText={item.title} 
+                              onTouchTap={() => goalStatusClick(item)}
+                           
+                              leftIcon={item.status === 1 ? <ToggoleCheckBox color="green" /> : <ToggoleCheckBoxOutline color="grey"/>} 
                                 />)
           });
     }

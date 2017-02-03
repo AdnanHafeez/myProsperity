@@ -6,7 +6,8 @@ import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import { Link } from 'react-router';
 import {switchToAppProvider} from './actions/security';
-
+import SecurityPinLogin from './SecurityPinLogin';
+import SecuritySetPinContainer from './SecuritySetPinContainer';
 const styles = {
   video: {
     width: '100%',
@@ -19,6 +20,7 @@ interface MyProps {
   error: boolean;
   input: {value: any, name: string}
   submitPin(any): any;
+  fipsIsSetUp: boolean;
 }
 
 interface MyState {
@@ -40,35 +42,20 @@ class SecurityHome extends React.Component<MyProps, MyState> {
   }
 
   render () {
-    var {error,input,submitPin} = this.props;
+    const {error,input,submitPin,fipsIsSetUp} = this.props;
 
+    if(fipsIsSetUp){
+      return (<SecurityPinLogin submitPin={submitPin} />)
+    }
     return (
-      <div>
-         <div>
-         <form onSubmit={submitPin} >
-              <TextField 
-            floatingLabelText={'Enter Pin'} 
-            hintText={'1234'} 
-            multiLine={false}
-            errorText={error} value={this.state.pin} onChange={this.handleChange} />
-
-            <FlatButton label="Login" type="submit" />
-         </form>
-         </div>
-         <br />
-         <br />
-         <Link to={'security/forgotpin'}>Forgot Pin</Link>
-         <br />
-         <br />
-         <FlatButton label="Forgot Pin" containerElement={<Link to={'security/forgotpin'} />} />
-      </div>
+      <SecuritySetPinContainer />
     );
   }
 }
 
 const stateToProps = (state) => {
   return {
-
+    fipsIsSetUp: state.sUser.fipsIsSetUp
   }
 }
 
