@@ -1,6 +1,6 @@
 export const EDIT_QUESTION_1 = 'T2.SECURITY.EDIT_QUESTION_1';
 export const EDIT_QUESTION_2 = 'T2.SECURITY.EDIT_QUESTION_2';
-export const EDIT_PIN_FORM = 'T2.SECURITY.EDIT_PIN_FORM';
+export const EDIT_ALL_QUESTIONS = 'T2.SECURITY.EDIT_ALL_QUESTIONS';
 export const SWITCH_TO_APP_PROVIDER = 'T2.SECURITY.SWITCH_TO_APP_PROVIDER';
 export const SWITCH_TO_SECURITY_PROVIDER = 'T2.SECURITY.SWITCH_TO_SECURITY_PROVIDER';
 export const CORDOVA_DEVICE_READY = 'T2.SECURITY.CORDOVA_DEVICE_READY';
@@ -23,6 +23,12 @@ export interface SetPinFormInterface {
   answer2: string;
   pin: string;
   pinConfirm: string;
+}
+
+export interface ChangePinWithQuestionsFormInterface {
+  answer1: string;
+  answer2: string;
+  newPin: string;
 }
 
 export const SecurityAnswer3 = 'NA'
@@ -76,7 +82,12 @@ export const cordovaLoginWithPin = (pin) => {
   }
   return (dispatch,getState) => {
     dispatch(localAction);
-    dispatch(cordovaGetRiKey(pin));
+    if(__IS_CORDOVA_BUILD__){
+      dispatch(cordovaGetRiKey(pin));
+    } else {
+      dispatch(getDummyRiKey(pin));
+    }
+    
   }
 }
 
@@ -101,8 +112,15 @@ export const cordovaGetRiKey = (pin) => {
       });
   }
 }
+
+export const getDummyRiKey = (pin) => {
+  const rikey = 'dummykey1234';
+  return (dispatch,getState) => {
+      dispatch(cordovaLoginWithRikey(rikey));
+  }
+}
 export const cordovaInitLogin = (loginData: SetPinFormInterface) => {
-  console.log('cordovaInitLogin thunk called');
+ 
   return (dispatch, getState) => {
       dispatch(cordovaInitLoginStart());
       var loginjson = {
@@ -112,21 +130,27 @@ export const cordovaInitLogin = (loginData: SetPinFormInterface) => {
         "KEY_SECURITY_ANSWER_3" : SecurityAnswer3
       };
       console.log(loginjson);
-      (window as any).t2crypto.initializeLogin(loginjson,function(args){
-        console.log(args);
-            if(args.RESULT === 0) {
-              dispatch(cordovaGetRiKey(loginData.pin));
-            } else {
-              dispatch(cordovaInitLoginFail('Login Initialization Failed.',400));
-            }
-      },
-      function(error){
-        if(__DEVTOOLS__){
-          console.log('initializeLogin Error');
-          console.log(error);
-        }
-        dispatch(cordovaInitLoginFail('Login Initialization Failed.',403));
-      });
+      if(__IS_CORDOVA_BUILD__){
+        (window as any).t2crypto.initializeLogin(loginjson,function(args){
+          console.log(args);
+              if(args.RESULT === 0) {
+                dispatch(cordovaGetRiKey(loginData.pin));
+                dispatch(editAllQuestions(loginData.question1, loginData.question2));
+              } else {
+                dispatch(cordovaInitLoginFail('Login Initialization Failed.',400));
+              }
+        },
+        function(error){
+          if(__DEVTOOLS__){
+            console.log('initializeLogin Error');
+            console.log(error);
+          }
+          dispatch(cordovaInitLoginFail('Login Initialization Failed.',403));
+        });
+      } else {
+         dispatch(editAllQuestions(loginData.question1, loginData.question2));
+         dispatch(getDummyRiKey(loginData.pin));
+      }
   }
 }
 
@@ -187,12 +211,10 @@ export const editQuestion2 = (questionId:string,answer: string) => {
 }
 
 
-export const editPinForm = (question1Id:string,answer1: string,question2Id:string,answer2: string) => {
+export const editAllQuestions = (question1Id:string,question2Id:string) => {
   return {
-    type: EDIT_PIN_FORM,
+    type: EDIT_ALL_QUESTIONS,
     question1Id,
-    question2Id,
-    answer1,
-    answer2
+    question2Id
   }
 }

@@ -6,7 +6,7 @@ import * as objectAssign from 'object-assign';
 import {
   EDIT_QUESTION_1,
   EDIT_QUESTION_2,
-  EDIT_PIN_FORM, 
+  EDIT_ALL_QUESTIONS, 
   SWITCH_TO_APP_PROVIDER, 
   SWITCH_TO_SECURITY_PROVIDER,
   CORDOVA_DEVICE_READY,
@@ -135,7 +135,7 @@ function rikey(state = '', action) {
 
 function selectedPinQuestionIds(state =['QUESTION_OPT_NONE','QUESTION_OPT_NONE'], action){
   switch(action.type){
-    case EDIT_PIN_FORM:
+    case EDIT_ALL_QUESTIONS:
       state[0] = action.question1Id;
       state[1] = action.question2Id;
       state = state.map(item => item);
@@ -154,23 +154,23 @@ function selectedPinQuestionIds(state =['QUESTION_OPT_NONE','QUESTION_OPT_NONE']
 
 
 const defaultState = {
-  '1': {questionId: null, answer: ''},
-  '2': {questionId: null, answer: ''}
+  '1': {questionId: null},
+  '2': {questionId: null}
 }
 
 function questionAnswers(state = {}, action){
   switch(action.type){
-    case EDIT_PIN_FORM:
-      state['1'] = objectAssign({},{questionId: action.question1Id, answer: action.answer1 })
-      state['2'] = objectAssign({},{questionId: action.question2Id, answer: action.answer2 })
+    case EDIT_ALL_QUESTIONS:
+      state['1'] = objectAssign({},{questionId: action.question1Id})
+      state['2'] = objectAssign({},{questionId: action.question2Id})
       state = objectAssign({},state);
       break;
     case EDIT_QUESTION_1:
-      state['1'] = objectAssign({},{questionId: action.questioId, answer: action.answer });
+      state['1'] = objectAssign({},{questionId: action.questioId});
       state = objectAssign({},state);
       break;
     case EDIT_QUESTION_2:
-      state['2'] = objectAssign({},{questionId: action.questioId, answer: action.answer });
+      state['2'] = objectAssign({},{questionId: action.questioId});
       state = objectAssign({},state);
       break;
   }

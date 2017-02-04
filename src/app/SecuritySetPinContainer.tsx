@@ -4,7 +4,6 @@ import {connect} from 'react-redux';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 import MenuItem from 'material-ui/MenuItem';
-import {editPinForm} from './actions/security';
 import FlatButton from 'material-ui/FlatButton';
 import {SetPinFormInterface} from './actions/security';
 

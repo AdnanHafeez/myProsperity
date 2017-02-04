@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 import MenuItem from 'material-ui/MenuItem';
-import {editQuestion1, editQuestion2, editPinForm} from './actions/security';
+import {editQuestion1, editQuestion2, editAllQuestions} from './actions/security';
 import FlatButton from 'material-ui/FlatButton';
 
 const styles = {
@@ -139,7 +139,7 @@ const dispatchToProps = (dispatch, ownProps) => {
     submitFormValues: (values) => {
       console.log(values);
       //TODO validation
-      dispatch(editPinForm(values.question1,values.answer1, values.question2,values.answer2));
+      dispatch(editAllQuestions(values.question1,values.question2));
     }
   }
 }
