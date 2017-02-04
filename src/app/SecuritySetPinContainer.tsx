@@ -4,29 +4,23 @@ import {connect} from 'react-redux';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 import MenuItem from 'material-ui/MenuItem';
-import {editQuestion1, editQuestion2, editPinForm} from './actions/security';
+import {editPinForm} from './actions/security';
 import FlatButton from 'material-ui/FlatButton';
-interface FormValues {
-  question1: string;
-  question2: string;
-  answer1: string;
-  answer2: string;
-  pin: string;
-  pinConfirm: string;
-}
+import {SetPinFormInterface} from './actions/security';
+
 
 interface FormErrors {
   isValid: boolean;
   errorMessage: string;
-  fields: FormValues;
+  fields: SetPinFormInterface;
 }
 
-const validateForm = (values: FormValues): any => {
+const validateForm = (values: SetPinFormInterface): any => {
   let fields = Object.keys(values).reduce((accum,current) => {
                                                accum[current] = '';
                                                return accum;
                                             },{});
-  
+  console.log(values);
   //const results = {...{fields,isValid: false, errorMessage: ''};
 
   const results = {...{fields},isValid: false, errorMessage: ''};
@@ -52,6 +46,7 @@ const validateForm = (values: FormValues): any => {
         results.errorMessage = 'Unexpected form field "' + propName +'".'
     }
     //no empty fields
+    console.log(propName);
     if(values[propName].length === 0){
        isFormValid = false;
        results.fields[propName] = 'Required';
@@ -65,25 +60,18 @@ const validateForm = (values: FormValues): any => {
   return results;
 }
 interface MyProps {
-  question1: any,
-  answer1: any,
-  question2: any,
-  answer2: any,
-  appBarTitle(title:string): any;
   questions: any[];
-  editQuestion1(any): any;
-  editQuestion2(any): any;
-  submitFormValues(any): any;
+  submitForm(any): any;
 }
 
 interface MyState {
-  values: FormValues;
-  errors: FormValues;
+  values: SetPinFormInterface;
+  errors: SetPinFormInterface;
 }
-class SecuritySetQuestionsContainer extends React.Component<MyProps, MyState> {
+export default class SecuritySetQuestionsContainer extends React.Component<MyProps, MyState> {
   constructor(props){
     super(props);
-    let fields:FormValues = {
+    let fields:SetPinFormInterface = {
       pin: '',
       pinConfirm: '',
       question1: '',
@@ -98,7 +86,7 @@ class SecuritySetQuestionsContainer extends React.Component<MyProps, MyState> {
   }
 
   componentWillUpdate(nextProps) {
-    this.props.appBarTitle && this.props.appBarTitle('Security Questions');
+
   }
 
   handleChange = (event) => {
@@ -113,11 +101,11 @@ class SecuritySetQuestionsContainer extends React.Component<MyProps, MyState> {
   }
 
   handleSubmit = (event) => {
-    var {submitFormValues} = this.props;
+    var {submitForm} = this.props;
     let result = validateForm(this.state.values);
 
     if(result.isValid){
-      submitFormValues(this.state);
+      submitForm(this.state.values);
     }
     
     this.setState({
@@ -128,16 +116,16 @@ class SecuritySetQuestionsContainer extends React.Component<MyProps, MyState> {
   }
 
   questionSelectChange = (questionName: string) => {
-      return (event, index, value) => {
+      return (event) => {
         this.setState({
-          values: {...this.state.values,[questionName]: value},
+          values: {...this.state.values,[questionName]: event.target.value},
           errors: {...this.state.errors,[questionName]: ''}
         } as any);
       }
   }
 
   render () {
-    const {submitFormValues, question1, question2, answer1, answer2, questions,editQuestion1, editQuestion2} = this.props;
+    const {questions} = this.props;
 
     return (
       <form onSubmit={this.handleSubmit}>
@@ -158,19 +146,18 @@ class SecuritySetQuestionsContainer extends React.Component<MyProps, MyState> {
                 errorText={this.state.errors.pinConfirm} value={this.state.values.pinConfirm} onChange={this.handleChange} />
         </div>
         <div>
-            <SelectField
-              floatingLabelText="Question 1"
-              value={this.state.values.question1}
-              onChange={this.questionSelectChange('question1')}
-              autoWidth={true}
-              errorText={this.state.errors.question1}
+            <div><label>Question 1</label></div>
+            <div>{this.state.errors.question1}</div>
+            <select 
+              value={this.state.values.question1} 
+              onChange={this.questionSelectChange('question1') as any}
+              name='question1'
             >
-            {questions.map((question) => {
-                return <MenuItem key={question.id} value={question.id} primaryText={question.title} />
-            })}
-            
-
-          </SelectField>
+              <option key='q1_none'>Select a question</option>
+              {questions.map((question) => {
+                  return <option key={'q1_' + question.id} value={question.id}>{question.title}</option>
+              })}
+            </select>
         </div>
         <div>
           <TextField 
@@ -181,19 +168,18 @@ class SecuritySetQuestionsContainer extends React.Component<MyProps, MyState> {
                 errorText={this.state.errors.answer1} value={this.state.values.answer1} onChange={this.handleChange} />
         </div>
         <div>
-            <SelectField
-              floatingLabelText="Question 2"
-              value={this.state.values.question2}
-              onChange={this.questionSelectChange('question2')}
-              autoWidth={true}
-              errorText={this.state.errors.question2}
+            <div><label>Question 2</label></div>
+            <div>{this.state.errors.question2}</div>
+            <select 
+              value={this.state.values.question2} 
+              onChange={this.questionSelectChange('question2') as any}
+              name='question2'
             >
-            {questions.map((question) => {
-                return <MenuItem key={question.id} value={question.id} primaryText={question.title} />
-            })}
-            
-
-          </SelectField>
+              <option key='q2_none'>Select a question</option>
+              {questions.map((question) => {
+                  return <option key={'q2_' + question.id} value={question.id}>{question.title}</option>
+              })}
+            </select>
         </div>
         <div>
         <TextField 
@@ -210,29 +196,3 @@ class SecuritySetQuestionsContainer extends React.Component<MyProps, MyState> {
     );
   }
 }
-
-const stateToProps = (state) => {
-  return {
-    question1: {},
-    question2: {},
-    questions: state.pinQuestionIds
-        .map(questionId => state.pinQuestions[questionId + ''])
-
-  }
-}
-
-const dispatchToProps = (dispatch, ownProps) => {
-  return {
-    submitFormValues: (values) => {
-      console.log(values);
-      //TODO validation
-
-      dispatch(editPinForm(values.question1,values.answer1, values.question2,values.answer2));
-    }
-  }
-}
-export default connect(
-                    stateToProps,
-                    dispatchToProps
-                )(SecuritySetQuestionsContainer);
-

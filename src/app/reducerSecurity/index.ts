@@ -12,7 +12,9 @@ import {
   CORDOVA_DEVICE_READY,
   EULA_ACCEPTED,
   EULA_REJECTED,
-  FIPS_IS_SETUP
+  FIPS_IS_SETUP,
+  CORDOVA_LOGIN_RIKEY,
+  ERROR_MESSAGE
 } from '../actions/security'
 /*
 * The data below could come from a rest server
@@ -87,7 +89,7 @@ function user (state = defaultUser, action) {
     case EULA_REJECTED:
       state = {...state,eulaAccepted: false}
       break;
-    case FIPS_IS_SETUP:
+    case CORDOVA_LOGIN_RIKEY:
       state = {...state,fipsIsSetUp: true}
       break;
   }
@@ -108,7 +110,7 @@ function pinQuestionIds(state = Object.keys(pinQuestionsDefault).map((key) => ke
 
 function mode(state = 1, action){
   switch(action.type){
-    case SWITCH_TO_APP_PROVIDER:
+    case CORDOVA_LOGIN_RIKEY:
       state = 0;
       break;
     case SWITCH_TO_SECURITY_PROVIDER:
@@ -117,6 +119,19 @@ function mode(state = 1, action){
   }
   return state;
 }
+
+function rikey(state = '', action) {
+  switch(action.type){
+    case CORDOVA_LOGIN_RIKEY:
+      state = action.rikey;
+      break;
+    case SWITCH_TO_SECURITY_PROVIDER:
+      state = '';
+      break;
+  }
+  return state;
+}
+
 
 function selectedPinQuestionIds(state =['QUESTION_OPT_NONE','QUESTION_OPT_NONE'], action){
   switch(action.type){
@@ -162,6 +177,28 @@ function questionAnswers(state = {}, action){
   return state;
 }
 
+const defaultView = {
+  flash: {
+    message: '',
+    open: false,
+    type: 'notice'
+  }
+};
+
+export const view = function (state = defaultView, action){
+  switch(action.type){
+    case ERROR_MESSAGE: //Display an action message
+      if(__DEVTOOLS__){
+        console.log(action);
+      }
+      state.flash.message = action.message;
+      state.flash.open = true;
+      state.flash.type = 'error';
+      state = objectAssign({}, state); 
+      break; 
+  }
+  return state;
+}
 
 
 const cordovaDefaults = {
@@ -189,7 +226,9 @@ const securityReducer = combineReducers({
   questionAnswers,
   mode,
   routing: routerReducer,
-  cordova
+  cordova,
+  rikey,
+  view
 });
 
 const rootReducer = (state, action) => {

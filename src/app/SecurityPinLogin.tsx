@@ -9,7 +9,7 @@ import {switchToAppProvider} from './actions/security';
 
 
 interface MyProps {
-  submitPin(any): any;
+  submitForm(any): any;
 }
 
 interface MyState {
@@ -24,11 +24,17 @@ class SecurityLoginPin extends React.Component<MyProps, MyState>{
   handleChange = (event) => {
     this.setState({pin: event.target.value})
   }
+
+  handleSubmit = (event) => {
+      const {submitForm} = this.props;
+      submitForm(this.state.pin);
+      event.preventDefault();
+  }
   render(){
-    const {submitPin} = this.props;
+    
     return (<div>
        <div>
-         <form onSubmit={submitPin} >
+         <form onSubmit={this.handleSubmit} >
               <TextField 
             floatingLabelText={'Enter Pin'} 
             hintText={'1234'} 

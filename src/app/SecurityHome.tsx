@@ -5,7 +5,8 @@ import BasicDialog from './BasicDialog';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import { Link } from 'react-router';
-import {switchToAppProvider} from './actions/security';
+import {cordovaLoginWithPin, SetPinFormInterface, cordovaInitLogin} from './actions/security';
+
 import SecurityPinLogin from './SecurityPinLogin';
 import SecuritySetPinContainer from './SecuritySetPinContainer';
 const styles = {
@@ -17,55 +18,62 @@ const styles = {
 
 interface MyProps {
   appBarTitle(title: string): any;
-  error: boolean;
-  input: {value: any, name: string}
-  submitPin(any): any;
+  submitPin(pin: string): any;
+  initPin(data: SetPinFormInterface): any;
   fipsIsSetUp: boolean;
+  question1: any,
+  question2: any,
+  questions: any[];
 }
 
 interface MyState {
-  pin: any;
 }
 
 
 class SecurityHome extends React.Component<MyProps, MyState> {
   constructor(props){
     super(props);
-    this.state = {pin: ''};
   }
   componentWillMount () {
     this.props.appBarTitle && this.props.appBarTitle('Enter Pin');
   }
 
-  handleChange = (event) => {
-    this.setState({pin: event.target.value})
-  }
-
   render () {
-    const {error,input,submitPin,fipsIsSetUp} = this.props;
+    const {submitPin,fipsIsSetUp,initPin,questions} = this.props;
 
     if(fipsIsSetUp){
-      return (<SecurityPinLogin submitPin={submitPin} />)
+      return (<SecurityPinLogin submitForm={submitPin} />)
     }
     return (
-      <SecuritySetPinContainer />
+      <SecuritySetPinContainer 
+              questions={questions}
+              submitForm={initPin} />
     );
   }
 }
 
 const stateToProps = (state) => {
   return {
-    fipsIsSetUp: state.sUser.fipsIsSetUp
+    fipsIsSetUp: state.sUser.fipsIsSetUp,
+    question1: {},
+    question2: {},
+    questions: state.pinQuestionIds
+        .map(questionId => state.pinQuestions[questionId + ''])
   }
 }
 
 const dispatchToProps = (dispatch,ownProps) => {
   return {
-    submitPin: (event) => {
-      dispatch(switchToAppProvider());
-      event.preventDefault();
-    }  
+    submitPin: (pinChallenge: string) => {
+      dispatch(cordovaLoginWithPin(pinChallenge));
+    }, 
+    initPin: (data: SetPinFormInterface) => {
+      console.log(data);
+      console.log('cordovaInitLogin');
+      dispatch(cordovaInitLogin(data));
+    },
   }
 }
 export default connect(stateToProps, dispatchToProps)
 (SecurityHome);
+

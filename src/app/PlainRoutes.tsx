@@ -245,7 +245,10 @@ export const onCordovaDeviceReady = () => {
 
         }); 
         (window as any).t2crypto.setVerboseLogging({"VERBOSE_LOGGING": "1"}, function(result) {
-            console.log("Verbose Logging disabled");
+            if(__DEVTOOLS__){
+              console.log("Verbose Logging");
+              console.log(result);
+            }
         });
         if(__DEVTOOLS__){
             console.log("Dispatching device ready event");
@@ -317,9 +320,7 @@ class AppProvider extends React.Component<MyProps, MyState> {
     const securityPersist = persistStore(securityStore, {
                           keyPrefix: 'decryptedpersistor',
                           storage: localForage,
-                          blacklist: ['mode','cordova'],
-                  
-                      
+                          blacklist: ['mode','cordova','rikey','view'],
                         } as any, 
                         () => {
                            this.setState({ rehydrated: true } as any);
