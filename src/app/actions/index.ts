@@ -66,9 +66,10 @@ export const turnAppOn = () => {
   }
 }
 
-export const turnAppOff = () => {
+export const turnAppOff = (redirect = '/') => {
   return {
-    type: SWITCH_TO_SECURITY_PROVIDER
+    type: SWITCH_TO_SECURITY_PROVIDER,
+    redirect
   }
 }
 export const encryptedDbPaused = () => {

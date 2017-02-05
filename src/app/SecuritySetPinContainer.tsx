@@ -19,8 +19,7 @@ const validateForm = (values: SetPinFormInterface): any => {
                                                accum[current] = '';
                                                return accum;
                                             },{});
-  console.log(values);
-  //const results = {...{fields,isValid: false, errorMessage: ''};
+
 
   const results = {...{fields},isValid: false, errorMessage: ''};
   let isFormValid = true;

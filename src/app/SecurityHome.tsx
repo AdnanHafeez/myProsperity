@@ -18,7 +18,7 @@ const styles = {
 
 interface MyProps {
   appBarTitle(title: string): any;
-  submitPin(pin: string): any;
+  submitPin(data: SetPinFormInterface): any;
   initPin(data: SetPinFormInterface): any;
   fipsIsSetUp: boolean;
   question1: any,
@@ -64,8 +64,8 @@ const stateToProps = (state) => {
 
 const dispatchToProps = (dispatch,ownProps) => {
   return {
-    submitPin: (pinChallenge: string) => {
-      dispatch(cordovaLoginWithPin(pinChallenge));
+    submitPin: (data: SetPinFormInterface) => {
+      dispatch(cordovaLoginWithPin(data.pin));
     }, 
     initPin: (data: SetPinFormInterface) => {
       console.log(data);

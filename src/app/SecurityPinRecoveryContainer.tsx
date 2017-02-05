@@ -5,8 +5,9 @@ import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 import MenuItem from 'material-ui/MenuItem';
 import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
 import { Link } from 'react-router';
-import {ChangePinWithQuestionsFormInterface} from './actions/security';
+import {ChangePinWithQuestionsFormInterface,changePinWithAnswers} from './actions/security';
 import SecurityHome from './SecurityHome'
 
 const styles = {
@@ -90,6 +91,7 @@ class SecurityPinRecoveryContainer extends React.Component<MyProps, MyState> {
     this.setState({
       errors: {...result.fields}
     } as any);
+    event.preventDefault();
   }
 
   handleChange = (event) => {
@@ -102,10 +104,6 @@ class SecurityPinRecoveryContainer extends React.Component<MyProps, MyState> {
       errors: {...this.state.errors,[name]: ''}
     } as any);
   }
-  handleFocus = (event) => {
-    console.log("Focus event");
-    console.log(event.target.hasFocus);
-  }
 
   render () {
     var {submitFormValues, question1, question2} = this.props;
@@ -115,6 +113,7 @@ class SecurityPinRecoveryContainer extends React.Component<MyProps, MyState> {
     }
     return (
       <div style={{maxWidth: 400,width: '90%'} as any}>
+      <div>
         <form onSubmit={this.handleSubmit}>
           <div>
             <TextField 
@@ -132,7 +131,6 @@ class SecurityPinRecoveryContainer extends React.Component<MyProps, MyState> {
                     fullWidth={true}
                     multiLine={false}
                     name='answer1'
-                    onFocus={this.handleFocus}
                     errorText={this.state.errors.answer1} value={this.state.values.answer1} onChange={this.handleChange} />
           </div>
           <div>
@@ -142,19 +140,17 @@ class SecurityPinRecoveryContainer extends React.Component<MyProps, MyState> {
                   multiLine={false}
                   fullWidth={true}
                   name='answer2'
-                  onFocus={this.handleFocus}
                   errorText={this.state.errors.answer2}
                   value={this.state.values.answer2} onChange={this.handleChange} />
           </div>
           <div>
-            <div>
-              <FlatButton label="Submit" type="submit" />
-            </div>
-            <div>
-              <FlatButton label="Back" type="submit" containerElement={<Link to='/' />} />
-            </div>
+              <RaisedButton primary={true} label="Submit" type="submit" />
           </div>
         </form>
+       </div>
+       <div style={{float: 'right'}}>
+         <FlatButton label="Back" containerElement={<Link to={'/'} />} />
+       </div>
       </div>
     );
   }
@@ -169,9 +165,8 @@ const stateToProps = (state) => {
 
 const dispatchToProps = (dispatch, ownProps) => {
   return {
-    submitFormValues: (values) => {
-      console.log(values);
-      //TODO validation
+    submitFormValues: (values:ChangePinWithQuestionsFormInterface) => {
+      dispatch(changePinWithAnswers(values));
     }
   }
 }

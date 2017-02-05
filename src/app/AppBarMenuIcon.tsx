@@ -8,6 +8,7 @@ import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 import ArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
 import { Link } from 'react-router';
 import Divider from 'material-ui/Divider';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 /**
  * AppBarMenuIcon provides the left icon in the top navigation bar
  * @param  {[type]} options.paths   [description]
@@ -15,6 +16,7 @@ import Divider from 'material-ui/Divider';
  * @param  {[type]} options.parent  [description]
  * @return {[type]}                 [description]
  */
+
 const AppBarMenuIcon = ({paths, submenu, parent, workbooks}) => {
   if (paths.current.level > 1) {
     if (parent) {

@@ -10,8 +10,10 @@ import AppBar from 'material-ui/AppBar';
 import Toggle from 'material-ui/Toggle';
 import AppSnackBar from './AppSnackBar';
 import AppBarMenuIcon from './AppBarMenuIconDrawer';
+import HomeIcon from 'material-ui/svg-icons/action/home';
+import IconButton from 'material-ui/IconButton';
 import { connect } from 'react-redux';
-
+import { Link } from 'react-router';
 import {push, replace} from 'react-router-redux';
 import { withRouter } from 'react-router';
 import {UpdateDialogContainer} from 'local-t2-app-redux/lib/components';
@@ -90,8 +92,8 @@ export default class MainComponent extends React.Component<MyProps, MyState>{
             <AppBar
                 title={this.state.title}
                 titleStyle={{textAlign: 'center'}}
+                iconElementLeft={<IconButton containerElement={<Link to="/" />}><HomeIcon /></IconButton>}
                
-                iconElementRight={<Toggle toggled={!isAuthed} onToggle={() => authToggle(isAuthed)} />}
                  />
                 <div style={styles.content as any}>{React.cloneElement(this.props.children, { appBarTitle: this.handleTitle })}</div>
                 <Eula />

@@ -14,7 +14,7 @@ export const CORDOVA_INIT_LOGIN_FAIL = 'T2.SECURITY.CORDOVA_INIT_LOGIN_FAIL';
 export const CORDOVA_LOGIN_PIN = 'T2.SECURITY.CORDOVA_LOGIN_PIN';
 export const CORDOVA_LOGIN_RIKEY = 'T2.SECURITY.CORDOVA_LOGIN_RIKEY';
 export const ERROR_MESSAGE = 'T2.SECURITY.ERROR_MESSAGE';
-
+export const CHANGE_PIN_WITH_ANSWERS = 'T2.SECURITY.CHANGE_PIN_WITH_ANSWERS ';
 
 export interface SetPinFormInterface {
   question1: string;
@@ -29,6 +29,15 @@ export interface ChangePinWithQuestionsFormInterface {
   answer1: string;
   answer2: string;
   newPin: string;
+}
+export interface ChangePinWithPinFormInterface {
+  currentPin: string;
+  newPin: string;
+  confirmNewPin: string;
+}
+
+export interface PinLoginFormInterface {
+  pin: string;
 }
 
 export const SecurityAnswer3 = 'NA'
@@ -72,6 +81,39 @@ export const cordovaLoginWithRikey = (rikey) => {
   }
 }
 
+export const changePinWithAnswers = (data: ChangePinWithQuestionsFormInterface) => {
+  let localAction = {
+    type: CHANGE_PIN_WITH_ANSWERS
+  }
+  return (dispatch,getState) => {
+    dispatch(localAction);
+    if(__DEVTOOLS__){
+      console.log(data);
+    }
+    if(__IS_CORDOVA_BUILD__){
+      var changejson = {
+        "KEY_NEW_PIN": data.newPin,
+        "KEY_SECURITY_ANSWER_1": data.answer1,
+        "KEY_SECURITY_ANSWER_2": data.answer2,
+        "KEY_SECURITY_ANSWER_3": SecurityAnswer3
+      };
+
+      (window as any).t2crypto.changePinUsingAnswers(changejson,(result)=>{
+        if(result.RESULT === 0){
+          dispatch(cordovaLoginWithPin(data.newPin));
+        } else {
+            dispatch(sendErrorMessage('Invalid Answers',406));
+        }
+      },
+      (error)=>{
+        dispatch(sendErrorMessage('Invalid Answers',407));
+      });
+    }else{
+      dispatch(cordovaLoginWithPin(data.newPin));
+    }
+  }
+}
+
 export const cordovaLoginWithPin = (pin) => {
   let localAction = {
     type: CORDOVA_LOGIN_PIN,
@@ -81,9 +123,23 @@ export const cordovaLoginWithPin = (pin) => {
     console.log('cordovaLoginWithPin');
   }
   return (dispatch,getState) => {
+
     dispatch(localAction);
+
     if(__IS_CORDOVA_BUILD__){
-      dispatch(cordovaGetRiKey(pin));
+      const pinJSON = {
+        "KEY_PIN": pin
+      };
+      (window as any).t2crypto.checkPin(pinJSON,(result)=>{
+        if(result.RESULT === 0){
+            dispatch(cordovaGetRiKey(pin));
+        } else {
+            dispatch(sendErrorMessage('Invalid Pin',404));
+        }
+      },
+      (error)=>{
+        dispatch(sendErrorMessage('Invalid Pin',405));
+      });
     } else {
       dispatch(getDummyRiKey(pin));
     }
@@ -103,9 +159,8 @@ export const cordovaGetRiKey = (pin) => {
          if(__DEVTOOLS__){
            console.log(rikey);
          }
-         
          if(!rikey){
-              dispatch(cordovaInitLoginFail('Login Initialization Failed.',401));
+              dispatch(cordovaInitLoginFail('Login Failed.',401));
          }else{
               dispatch(cordovaLoginWithRikey(rikey));
          }

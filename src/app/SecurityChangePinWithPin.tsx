@@ -6,9 +6,9 @@ import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Link } from 'react-router';
-import {switchToAppProvider, PinLoginFormInterface} from './actions/security';
+import {switchToAppProvider, ChangePinWithPinFormInterface} from './actions/security';
 
-const validateForm = (values: PinLoginFormInterface): any => {
+const validateForm = (values: ChangePinWithPinFormInterface): any => {
   let fields = Object.keys(values).reduce((accum,current) => {
                                                accum[current] = '';
                                                return accum;
@@ -19,7 +19,14 @@ const validateForm = (values: PinLoginFormInterface): any => {
   let isFormValid = true;
   Object.keys(fields).map(function(propName){
     switch(propName){
-      case 'pin':
+      case 'currentPin':
+        break;
+      case 'newPin':
+        break;
+      case 'confirmNewPin':
+        if(values.newPin !== values.confirmNewPin){
+          results.fields[propName] = 'Your pins must match.';
+        }
         break;
       default: //unexpected value
         results.errorMessage = 'Unexpected form field "' + propName +'".'
@@ -39,19 +46,21 @@ const validateForm = (values: PinLoginFormInterface): any => {
 }
 
 interface MyProps {
-  submitForm(any): any;
+  submitData(any): any;
 }
 
 interface MyState {
-  values: PinLoginFormInterface,
-  errors: PinLoginFormInterface
+  values: ChangePinWithPinFormInterface,
+  errors: ChangePinWithPinFormInterface
 }
 
-class SecurityLoginPin extends React.Component<MyProps, MyState>{
+class SecurityChangePinWithPin extends React.Component<MyProps, MyState>{
   constructor(props){
     super(props);
-    let fields: PinLoginFormInterface = {
-      pin: ''
+    let fields: ChangePinWithPinFormInterface = {
+      currentPin: '',
+      newPin: '',
+      confirmNewPin: '',
     };
     this.state = {
       values: fields,
@@ -70,11 +79,11 @@ class SecurityLoginPin extends React.Component<MyProps, MyState>{
   }
 
   handleSubmit = (event) => {
-      const {submitForm} = this.props;
+      const {submitData} = this.props;
       console.log(this.state.values);
       const result = validateForm(this.state.values);
       if(result.isValid){
-        submitForm(this.state.values);
+        submitData(this.state.values);
       }
       this.setState({
         errors: {...result.fields}
@@ -88,14 +97,31 @@ class SecurityLoginPin extends React.Component<MyProps, MyState>{
      <div>
        <div>
          <form onSubmit={this.handleSubmit} >
-           <div>
+             <div>
               <TextField 
-                floatingLabelText={'Enter Pin'} 
-                hintText={'1234'} 
+                floatingLabelText={'Enter Current Pin'} 
                 multiLine={false}
-                name='pin'
-                errorText={this.state.errors.pin} 
-                value={this.state.values.pin} 
+                name='currentPin'
+                errorText={this.state.errors.currentPin} 
+                value={this.state.values.currentPin} 
+                onChange={this.handleChange} />
+            </div>
+             <div>
+              <TextField 
+                floatingLabelText={'Enter New Pin'} 
+                multiLine={false}
+                name='newPin'
+                errorText={this.state.errors.newPin} 
+                value={this.state.values.newPin} 
+                onChange={this.handleChange} />
+            </div>
+             <div>
+              <TextField 
+                floatingLabelText={'Confirm New Pin'} 
+                multiLine={false}
+                name='confirmNewPin'
+                errorText={this.state.errors.confirmNewPin} 
+                value={this.state.values.confirmNewPin} 
                 onChange={this.handleChange} />
             </div>
             <div>
@@ -110,4 +136,18 @@ class SecurityLoginPin extends React.Component<MyProps, MyState>{
   }
 }
 
-export default SecurityLoginPin;
+const stateToProps = () => {
+  return {
+
+  }
+}
+const dispatchToProps = (dispatch) => {
+  return {
+    submitData: (data: ChangePinWithPinFormInterface) => {
+
+    }
+  }
+}
+export default connect(stateToProps,dispatchToProps)(SecurityChangePinWithPin);
+
+

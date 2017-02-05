@@ -433,15 +433,16 @@ class AppProvider extends React.Component<MyProps, MyState> {
               console.log('----------LOADING SECURITY STORE---------');
             }
 
+            const logoutRedirect =  (appStore as any).getState().onLogout.redirect || '/';
             
             appStorePersistor.pause();
             
-            
+            console.log(logoutRedirect);
             this.setState({ locked: true } as any);
 
             appIsActive = false;
             securityStore.dispatch(switchToSecurityProvider()); // securityState.mode == 1
-            securityStore.dispatch(push('/'));
+            securityStore.dispatch(push(logoutRedirect));
           }
       });
    

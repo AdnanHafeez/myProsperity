@@ -20,6 +20,15 @@ import {deviceActions} from 'local-t2-device-redux';
 import {userLogin,userLogout,turnAppOff} from './actions';
 import BlankPage from './BlankPage';
 import SplashPage from './SplashPage';
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
+import IconButton from 'material-ui/IconButton';
+import MenuIcon from 'material-ui/svg-icons/navigation/menu';
+import ArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
+import { Link } from 'react-router';
+import Divider from 'material-ui/Divider';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+
 var {windowResize} = deviceActions;
 
 const styles = {
@@ -31,13 +40,30 @@ const styles = {
     paddingTop: '10px'
   }
 };
+
+// const {isAuthed,authToggle} = props;
+const Logged = (props) => {
+  const {isAuthed,turnAppOffRedirect} = props;
+  return (<IconMenu
+    iconButtonElement={
+      <IconButton><MoreVertIcon /></IconButton>
+    }
+    targetOrigin={{horizontal: 'right', vertical: 'top'}}
+    anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+  >
+    <MenuItem  primaryText="Change Pin" onTouchTap={() => turnAppOffRedirect('/security/changepin')}  />
+    <MenuItem  primaryText="Edit Security Questions" onTouchTap={() => turnAppOffRedirect('/security/changequestions')} />
+    <MenuItem  primaryText="Sign Out" onTouchTap={() => turnAppOffRedirect('/')} />
+  </IconMenu>)
+}
+
 interface MyProps {
   appBarTitle?(title: string): any;
   dispatch(arg: any): any;
   device: any;
   children: any;
   isAuthed: boolean;
-  authToggle(isAuthed: boolean): any;
+  turnAppOffRedirect(path: string): any;
 }
 
 interface MyState {
@@ -84,14 +110,14 @@ class Main extends React.Component<MyProps, MyState>{
   }
 
   render () {
-    var {isAuthed, authToggle} = this.props;
+    var {isAuthed, turnAppOffRedirect} = this.props;
     return (
         <div style={styles.wrapper}>
             <AppBar
                 title={this.state.title}
                 titleStyle={{textAlign: 'center'}}
                 iconElementLeft={<AppBarMenuIcon/>}
-                iconElementRight={<Toggle toggled={!isAuthed} onToggle={() => authToggle(isAuthed)} />}
+                iconElementRight={<Logged isAuthed={isAuthed} turnAppOffRedirect={turnAppOffRedirect} />}
                  />
                 <div style={styles.content as any}>{React.cloneElement(this.props.children, { appBarTitle: this.handleTitle })}</div>
           <UpdateDialogContainer />
@@ -109,12 +135,9 @@ export default connect(
   (dispatch, ownProps) => {
     return {
       dispatch: dispatch,
-      authToggle: (authed) => {
-        if(authed){
-          dispatch(turnAppOff());
-        } else {
-
-        }
+      turnAppOffRedirect: (path) => {
+        console.log(path);
+        dispatch(turnAppOff(path))
       }
     };
   }

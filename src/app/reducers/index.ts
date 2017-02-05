@@ -76,6 +76,18 @@ function mode(state = 0, action) {
   return state;
 }
 
+const onLogOutDefault = {
+  redirect: '/'
+}
+function onLogout(state = onLogOutDefault, action){
+  switch(action.type){
+    case SWITCH_TO_SECURITY_PROVIDER:
+      state = {...state,redirect: action.redirect};
+      break;
+  }
+  return state;
+}
+
 
 
 export const getMax = function(array){
@@ -104,7 +116,8 @@ const appHub = combineReducers({
   notes,
   noteIds,
   loadedNoteId,
-  mode
+  mode,
+  onLogout
 });
 
 const rootReducer = (state, action) => {

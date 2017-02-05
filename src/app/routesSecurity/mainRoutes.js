@@ -11,7 +11,9 @@ export default {
         require('./indexRoute.js').default,
         require('./homeRoute.js').default,
         require('./forgotPinRoute.js').default,
-        require('./setPinRoute.js').default
+        require('./setPinRoute.js').default,
+        require('./changePinRoute.js').default,
+        require('./changeQuestionsRoute.js').default
       ]);
     //});
   }
