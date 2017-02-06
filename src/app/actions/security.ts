@@ -16,6 +16,7 @@ export const CORDOVA_LOGIN_RIKEY = 'T2.SECURITY.CORDOVA_LOGIN_RIKEY';
 export const ERROR_MESSAGE = 'T2.SECURITY.ERROR_MESSAGE';
 export const CHANGE_PIN_WITH_ANSWERS = 'T2.SECURITY.CHANGE_PIN_WITH_ANSWERS';
 export const CHANGE_PIN_WITH_PIN = 'T2.SECURITY.CHANGE_PIN_WITH_PIN';
+export const CHANGE_QUESTIONS_WITH_PIN = 'T2.SECURITY.CHANGE_QUESTIONS_WITH_PIN';
 //changePinUsingPin
 export interface SetPinFormInterface {
   question1: string;
@@ -24,6 +25,14 @@ export interface SetPinFormInterface {
   answer2: string;
   pin: string;
   pinConfirm: string;
+}
+
+export interface ChangeQuestionsWithPinInterface {
+  question1: string;
+  question2: string;
+  answer1: string;
+  answer2: string;
+  currentPin: string;
 }
 
 export interface ChangePinWithQuestionsFormInterface {
@@ -42,6 +51,45 @@ export interface PinLoginFormInterface {
 }
 
 export const SecurityAnswer3 = 'NA'
+
+
+export const changeSecurityQuestions = (data: ChangeQuestionsWithPinInterface) => {
+  const localAction = {
+    type: CHANGE_QUESTIONS_WITH_PIN
+  }
+  return (dispatch,getState) => {
+    dispatch(localAction);
+    if(__IS_CORDOVA_BUILD__){
+      const changeAnswersJSON = {
+         "KEY_PIN": data.currentPin,
+         "KEY_SECURITY_ANSWER_1": data.answer1,
+         "KEY_SECURITY_ANSWER_2": data.answer2,
+         "KEY_SECURITY_ANSWER_3": SecurityAnswer3
+      };
+      (window as any).t2crypto.changeAnswersUsingPin(
+        changeAnswersJSON,
+        function(args){
+          if(args.RESULT === 0) {
+            dispatch(editAllQuestions(data.question1, data.question2));
+            dispatch(cordovaGetRiKey(data.currentPin));
+          } else {
+            dispatch(sendErrorMessage('Invalid Pin',410));
+          }
+        },
+        function(error){
+          if(__DEVTOOLS__){
+            console.log('error changeAnswersUsingPin');
+            console.log(error);
+          }
+          dispatch(sendErrorMessage('Invalid Pin',411));
+        }
+      );
+    }else{
+      dispatch(editAllQuestions(data.question1, data.question2));
+      dispatch(getDummyRiKey(data.currentPin));
+    }
+  }
+}
 
 export const cordovaInitLoginStart = () => {
   console.log('cordovaInitLoginStart');
@@ -226,8 +274,8 @@ export const cordovaInitLogin = (loginData: SetPinFormInterface) => {
         (window as any).t2crypto.initializeLogin(loginjson,function(args){
           console.log(args);
               if(args.RESULT === 0) {
-                dispatch(cordovaGetRiKey(loginData.pin));
                 dispatch(editAllQuestions(loginData.question1, loginData.question2));
+                dispatch(cordovaGetRiKey(loginData.pin));
               } else {
                 dispatch(cordovaInitLoginFail('Login Initialization Failed.',400));
               }
