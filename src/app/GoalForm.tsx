@@ -4,14 +4,49 @@ import {Field, reduxForm} from 'redux-form';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import {connect} from 'react-redux';
-import {GoalReducerInterface, WorkbookReducerInterface} from './data/workbook';
+import DatePicker from 'material-ui/DatePicker';
+import Checkbox from 'material-ui/Checkbox';
+import {Transforms,Validators} from './lib/helpers';
 
-const validate = values => {
-  const errors:any = {}
-  if (!values.goal) {
-    errors.goal = 'Required'
-  }
-  return errors
+import {GoalReducerInterface, WorkbookReducerInterface} from './data/workbook';
+interface GoalFormInterface {
+  title: string;
+  dueDate: any;
+}
+const validateForm = (values:{title: string,dueDate: any}): any => {
+  let fields = Object.keys(values).reduce((accum,current) => {
+                                               accum[current] = '';
+                                               return accum;
+                                            },{});
+
+
+  const results = {...{fields},isValid: false, errorMessage: ''};
+  let isFormValid = true;
+  Object.keys(fields).map(function(propName){
+    switch(propName){
+      case 'title':
+        if(values.title.length === 0){
+          results.fields[propName] = 'Required.'
+        }
+        break;
+      case 'dueDate':
+        console.log('dueDate');
+        console.log(values);
+        console.log(values.dueDate);
+        if(values.dueDate !== null && !Validators.isDate(values.dueDate)){
+          results.fields[propName] = 'Please select a date.'
+        }
+        break;
+      default: //unexpected value
+        results.errorMessage = 'Unexpected form field "' + propName +'".'
+    }
+    if(results.fields[propName].length > 0){
+       isFormValid = false;
+    }
+  });
+  results.isValid = isFormValid && results.errorMessage.length === 0;
+
+  return results;
 }
 const styles = {
   layout: {
@@ -25,21 +60,31 @@ const styles = {
     justifyContent: 'space-between'
   }
 }
+const CalendarToggle = (props) => {
+  const {checked,label,dueDateChecked} = props;
 
+  return <Checkbox onCheck={dueDateChecked} checked={checked} label={label} />;
+}
 interface MyProps {
   goal: GoalReducerInterface;
   workbook: WorkbookReducerInterface;
-  handleSubmit(goal: GoalReducerInterface): any;
+  submitData(goal: GoalReducerInterface): any;
 }
 
 interface MyState {
-   title: string;
+   dueDateChecked: boolean;
+   errors: GoalFormInterface;
+   values: GoalFormInterface;
 }
 export default class GoalForm extends React.Component<MyProps, MyState>{
   constructor (props, context) {
     super(props, context);
+    console.log(props.goal);
+
     this.state = {
-      title: props.goal.title,
+      dueDateChecked: Validators.isDate(props.goal.dueDate),
+      errors: {title: '', dueDate: ''},
+      values: {title: props.goal.title, dueDate: props.goal.dueDate}
     };
   }
   componentDidMount(){
@@ -51,21 +96,53 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
     this.setState({
-      title: value
+      values: {...this.state.values,[name]: value},
+      errors: {...this.state.errors,[name]: ''}
     } as any);
   }
-  render(){
-    const {handleSubmit,goal} = this.props;
-    const formSubmit = (event) => {
 
-      handleSubmit({id: this.props.goal.id, title: this.state.title, desc: ''});
-      event.preventDefault();
+
+  handleDateChange = (name) => {
+    return (event, date) => {
+      console.log('handleDateChange');
+      console.log(date);
+      this.setState({
+        values: {...this.state.values,[name]: date}
+      } as any);
+    }
+  }
+
+  handleDueDateCheck = (event, isInputChecked) => {
+    if(!isInputChecked){
+      this.setState({
+        values: {...this.state.values,dueDate: null},
+        dueDateChecked: isInputChecked
+      } as any);
+    }else{
+      this.setState({
+        dueDateChecked: isInputChecked
+      } as any);
+    }
+  }
+  handleSubmit = (event) => {
+    const {submitData} = this.props;
+    const result = validateForm(this.state.values);
+
+    if(result.isValid){
+      let data = {...this.state.values,id: this.props.goal.id}
+      submitData(data);
     }
     
-    const touched = false;
-    const error = false;
+    this.setState({
+      errors: {...result.fields}
+    } as any);
+    
+    event.preventDefault();
+  }
+  render(){
+
     return (
-      <form onSubmit={formSubmit}>
+      <form onSubmit={this.handleSubmit}>
       <div style={styles.layout as any}>
         <div>
         <TextField 
@@ -75,11 +152,32 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
               rows={1}
               rowsMax={2}
               name='title'
-              value={this.state.title}
+              value={this.state.values.title}
               fullWidth={true}
               onChange={this.handleChange}
               ref={(input) => { (this as any).textInput = input; }}
-              errorText={touched && error} />
+              errorText={this.state.errors.title} />
+        </div>
+        <div>
+          <div>
+            <CalendarToggle 
+              date={this.state.values.dueDate} 
+              label="Set Due Date" 
+              dueDateChecked={this.handleDueDateCheck}
+              checked={this.state.dueDateChecked}
+              />
+          </div>
+          <div>
+            <DatePicker 
+                value={this.state.values.dueDate}
+                hintText="Due Date" 
+                locale={'en-US'}
+                errorText={this.state.errors.dueDate}
+                onChange={this.handleDateChange('dueDate')}
+                disabled={!this.state.dueDateChecked} 
+                name='dueDate'
+                autoOk={true} />
+          </div>
         </div>
         <div>
           <RaisedButton type="submit" label="Save" />
@@ -89,13 +187,3 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
     );
   }
 }
-
-
-
-/* redux-form too slow 
-
-GoalForm = reduxForm({
-  form: 'goalsForm',
-  validate
-})((GoalForm  as any));
-*/

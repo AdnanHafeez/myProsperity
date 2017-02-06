@@ -178,7 +178,7 @@ export const noteCreate = (note: string) => {
 export const goalEdit = (workbookId,goalId, goal: GoalReducerInterface): {type:string, goal: GoalReducerInterface, workbookId: number} => {
   return {
     type: GOAL_EDIT,
-    goal: goalFactory(goalId, goal.title),
+    goal: goalFactory(goalId, goal.title,0, goal.dueDate),
     workbookId
   };
 }

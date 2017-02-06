@@ -23,12 +23,13 @@ const workBookListSchema = new schema.Array(workbook);
 const normalizedData = normalize(wbData, workBookListSchema);
 console.log(normalizedData);
 
-export const goalFactory = (id: number, title: string, desc: string = '', status = 0): GoalReducerInterface => {
+export const goalFactory = (id: number, title: string, status = 0, dueDate = -1): GoalReducerInterface => {
   return {
     id,
     title,
-    desc,
-    status
+    desc: '',
+    status,
+    dueDate
   }
 }
 

@@ -32,9 +32,11 @@ export interface WorkbookReducerInterface {
 export interface GoalReducerInterface {
   id: number;
   title: string;
-  desc: string;
+  desc?: string;
   reminder?: any;
-  date_created?: any;
+  dateCreated?: any;
+  dateUpdated?: any;
+  dueDate: number;
   status?: number;
 }
 

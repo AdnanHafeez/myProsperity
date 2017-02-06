@@ -12,6 +12,7 @@ import {goalSubmitted,goalEdit,goalLoad} from './actions';
 import {goalFactory } from './reducers/workbook';
 import {WorkbookReducerInterface, GoalReducerInterface} from './data/workbook';
 import {foatingButtonStyle, fullWidthDialagStyle} from './commonStyles';
+import {Transforms,Validators} from './lib/helpers';
 
 const style = {
 
@@ -71,7 +72,7 @@ class GoalCreateDialog extends React.Component<MyProps, MyState> {
             contentStyle={fullWidthDialagStyle}
           >
 
-          <GoalForm handleSubmit={addGoal} workbook={workbook} goal={goal} ref='goalForm' />
+          <GoalForm submitData={addGoal} workbook={workbook} goal={goal} ref='goalForm' />
         </Dialog>
       </div>
     );
@@ -79,16 +80,17 @@ class GoalCreateDialog extends React.Component<MyProps, MyState> {
 }
 
 const stateToProps = (state) => {
+  let newGoal = goalFactory(0,'');
   return {
     open: state.loadedGoalId === 0,
-    goal: goalFactory(0,'')
+    goal: {...newGoal,dueDate: Transforms.msToDate(newGoal.dueDate)}
   }
 }
 
 const dispatchToProps = (dispatch,ownProps) => {
   return {
      addGoal: (goal: GoalReducerInterface) => { 
-       dispatch(goalSubmitted(ownProps.workbook.id,goal)) 
+       dispatch(goalSubmitted(ownProps.workbook.id,{...goal, dueDate: Transforms.dateToMS(goal.dueDate)})) 
        dispatch(goalLoad(-1)); //resets and closes form
      },
      handleOpen: () => {

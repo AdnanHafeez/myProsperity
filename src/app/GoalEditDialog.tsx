@@ -10,7 +10,7 @@ import {connect} from 'react-redux';
 import {goalEdit,goalLoad} from './actions';
 import {goalFactory} from './reducers/workbook'
 import {foatingButtonStyle, fullWidthDialagStyle} from './commonStyles';
-
+import {Transforms,Validators} from './lib/helpers';
 
 interface MyProps {
   editGoal(goal: GoalReducerInterface): any;
@@ -60,7 +60,7 @@ class GoalEditDialog extends React.Component<MyProps, MyState> {
           contentStyle={fullWidthDialagStyle}
         >
 
-          <GoalForm workbook={workbook} goal={goal} handleSubmit={editGoal(goal)} />
+          <GoalForm workbook={workbook} goal={goal} submitData={editGoal(goal)} />
         </Dialog>
       </div>
     );
@@ -68,9 +68,12 @@ class GoalEditDialog extends React.Component<MyProps, MyState> {
 }
 
 const stateToProps = (state) => {
+  let goal = state.loadedGoalId > 0 ? state.goals[state.loadedGoalId + ''] : goalFactory(0,'');
+
+
   return {
     open: state.loadedGoalId > 0,
-    goal: state.loadedGoalId > 0 ? state.goals[state.loadedGoalId + ''] : goalFactory(0,'')
+    goal: {...goal,dueDate: Transforms.msToDate(goal.dueDate)}
   }
 }
 
@@ -78,7 +81,10 @@ const dispatchToProps = (dispatch,ownProps) => {
   return {
      editGoal: (goal) => { 
        return (goal: GoalReducerInterface) => {
-         dispatch(goalEdit(ownProps.workbook.id,goal.id,goal)) 
+         console.log(goal);
+         dispatch(goalEdit(ownProps.workbook.id,
+             goal.id,
+             {...goal, dueDate: Transforms.dateToMS(goal.dueDate)})); 
          dispatch(goalLoad(-1));
        }
      },

@@ -12,10 +12,12 @@ import EditIcon from 'material-ui/svg-icons/content/create';
 import DoneIcon from 'material-ui/svg-icons/action/done';
 import ToggoleCheckBox from 'material-ui/svg-icons/toggle/check-box';
 import ToggoleCheckBoxOutline from 'material-ui/svg-icons/toggle/check-box-outline-blank';
+import ErrorIcon from 'material-ui/svg-icons/alert/error';
 import Checkbox from 'material-ui/Checkbox';
 import IconButton from 'material-ui/IconButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import {topRightButtonStyle, subMenuFlexContainerStyle} from './commonStyles';
+import {Transforms,Validators,Formats} from './lib/helpers';
 const styles = {
   video: {
     width: '100%',
@@ -58,24 +60,37 @@ class Workbook extends React.Component<MyProps, MyState> {
     this.setState({editMode: newToggleState});
   }
 
+
+
   render () {
     const {workbook, isOnline, examples, goals, goalEditClick, goalStatusClick, goalDelete} = this.props;
     let listItems;
     let actionToggleButton;
+
+    const makeTitle = (item) => {
+      return item.dueDate >= 0 ? item.title + ' - ' + Formats.msToString(item.dueDate) : item.title;
+    } 
+    const isPastDue = (msChallenge,msNow) => {
+      return msNow > msChallenge;
+    }
+    const dateNow = new Date();
+    const dateNowMs = dateNow.getTime();
+
     if(this.state.editMode){
       actionToggleButton = <RaisedButton  primary={true} onTouchTap={this.handleEditToggle} label="Done" />;
       listItems = goals.map((item) => {
-            return (<ListItem key={item.id} primaryText={item.title}  
+            return (<ListItem key={item.id} primaryText={makeTitle(item)} 
                               onTouchTap={() => goalEditClick(item)}
                               rightIcon={<EditIcon  />}  />)
           });
     }else{
       actionToggleButton = <RaisedButton  onTouchTap={this.handleEditToggle} label="Edit Goals" />;;
       listItems = goals.map((item) => {
-            console.log(item);
-            return (<ListItem key={item.id} primaryText={item.title} 
+
+            return (<ListItem key={item.id} primaryText={makeTitle(item)} 
                               onTouchTap={() => goalStatusClick(item)}
-                           
+                              color='red'
+                              rightIcon={item.dueDate >= 0 && isPastDue(item.dueDate,dateNowMs) && item.status !== 1 ? <ErrorIcon color='red' /> : null}
                               leftIcon={item.status === 1 ? <ToggoleCheckBox color="green" /> : <ToggoleCheckBoxOutline color="grey"/>} 
                                 />)
           });
