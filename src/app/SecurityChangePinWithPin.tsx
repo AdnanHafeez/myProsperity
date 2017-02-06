@@ -6,7 +6,7 @@ import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Link } from 'react-router';
-import {switchToAppProvider, ChangePinWithPinFormInterface} from './actions/security';
+import {switchToAppProvider, ChangePinWithPinFormInterface, changePinWithPin} from './actions/security';
 
 const validateForm = (values: ChangePinWithPinFormInterface): any => {
   let fields = Object.keys(values).reduce((accum,current) => {
@@ -125,12 +125,12 @@ class SecurityChangePinWithPin extends React.Component<MyProps, MyState>{
                 onChange={this.handleChange} />
             </div>
             <div>
-              <RaisedButton primary={true} label="Login" type="submit" />
+              <RaisedButton primary={true} label="Change" type="submit" />
             </div>
          </form>
        </div>
        <div style={{float: 'right'}}>
-         <FlatButton label="Forgot Pin" containerElement={<Link to={'security/forgotpin'} />} />
+         <FlatButton label="Cancel" containerElement={<Link to={'/'} />} />
        </div>
     </div>);
   }
@@ -144,7 +144,7 @@ const stateToProps = () => {
 const dispatchToProps = (dispatch) => {
   return {
     submitData: (data: ChangePinWithPinFormInterface) => {
-
+      dispatch(changePinWithPin(data));
     }
   }
 }

@@ -60,8 +60,6 @@ class Workbook extends React.Component<MyProps, MyState> {
     this.setState({editMode: newToggleState});
   }
 
-
-
   render () {
     const {workbook, isOnline, examples, goals, goalEditClick, goalStatusClick, goalDelete} = this.props;
     let listItems;

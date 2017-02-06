@@ -14,8 +14,9 @@ export const CORDOVA_INIT_LOGIN_FAIL = 'T2.SECURITY.CORDOVA_INIT_LOGIN_FAIL';
 export const CORDOVA_LOGIN_PIN = 'T2.SECURITY.CORDOVA_LOGIN_PIN';
 export const CORDOVA_LOGIN_RIKEY = 'T2.SECURITY.CORDOVA_LOGIN_RIKEY';
 export const ERROR_MESSAGE = 'T2.SECURITY.ERROR_MESSAGE';
-export const CHANGE_PIN_WITH_ANSWERS = 'T2.SECURITY.CHANGE_PIN_WITH_ANSWERS ';
-
+export const CHANGE_PIN_WITH_ANSWERS = 'T2.SECURITY.CHANGE_PIN_WITH_ANSWERS';
+export const CHANGE_PIN_WITH_PIN = 'T2.SECURITY.CHANGE_PIN_WITH_PIN';
+//changePinUsingPin
 export interface SetPinFormInterface {
   question1: string;
   question2: string;
@@ -81,6 +82,42 @@ export const cordovaLoginWithRikey = (rikey) => {
   }
 }
 
+export const changePinWithPin = (data: ChangePinWithPinFormInterface) => {
+  const localAction = {
+    type: CHANGE_PIN_WITH_PIN
+  };
+  if(__DEVTOOLS__){
+    console.log('changePinWithPin');
+  }
+  return (dispatch,getState) => {
+    dispatch(localAction);
+    if(__IS_CORDOVA_BUILD__){
+      const changePinJSON = {
+         "KEY_PIN": data.currentPin,
+         "KEY_NEW_PIN": data.newPin
+      };
+      if(__DEVTOOLS__){
+        console.log(changePinJSON);
+      }
+      (window as any).t2crypto.changePinUsingPin(
+        changePinJSON,
+        function(args){
+          if(args.RESULT === 0) {
+            dispatch(cordovaLoginWithPin(data.newPin));
+          }else{
+            dispatch(sendErrorMessage('Invalid Pin',408));
+          }
+        },
+        function(error){
+          dispatch(sendErrorMessage('Invalid Pin',409));
+        }
+      );
+    } else {
+      dispatch(cordovaLoginWithPin(data.newPin));
+    }
+  }
+}
+
 export const changePinWithAnswers = (data: ChangePinWithQuestionsFormInterface) => {
   let localAction = {
     type: CHANGE_PIN_WITH_ANSWERS
@@ -102,7 +139,7 @@ export const changePinWithAnswers = (data: ChangePinWithQuestionsFormInterface) 
         if(result.RESULT === 0){
           dispatch(cordovaLoginWithPin(data.newPin));
         } else {
-            dispatch(sendErrorMessage('Invalid Answers',406));
+          dispatch(sendErrorMessage('Invalid Answers',406));
         }
       },
       (error)=>{
