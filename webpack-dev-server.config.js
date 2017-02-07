@@ -34,7 +34,8 @@ const config = {
     new webpack.DefinePlugin({
       '__DEVTOOLS__': true,
       '__INCLUDE_SERVICE_WORKER__': false,
-      '__IS_CORDOVA_BUILD__': false
+      '__IS_CORDOVA_BUILD__': false,
+      '__CORDOVA_TEST_ONLY__': false
     }),
     // Enables Hot Modules Replacement
     new webpack.HotModuleReplacementPlugin(),

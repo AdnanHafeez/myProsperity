@@ -28,7 +28,8 @@ const config = {
       },
       '__DEVTOOLS__': false,
       '__INCLUDE_SERVICE_WORKER__': true,
-      '__IS_CORDOVA_BUILD__': false
+      '__IS_CORDOVA_BUILD__': false,
+      '__CORDOVA_TEST_ONLY__': false
     }),
     new webpack.optimize.CommonsChunkPlugin({
       children: true, // Look for common dependencies in all children,

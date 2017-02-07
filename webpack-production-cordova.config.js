@@ -27,7 +27,8 @@ const config = {
       },
       '__DEVTOOLS__': true,
       '__INCLUDE_SERVICE_WORKER__': false,
-      '__IS_CORDOVA_BUILD__': true
+      '__IS_CORDOVA_BUILD__': true,
+      '__CORDOVA_TEST_ONLY__': true
     }),
     // Allows error warnings but does not stop compiling.
     new webpack.NoErrorsPlugin(),

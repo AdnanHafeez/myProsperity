@@ -6,10 +6,13 @@ import createSagaMiddleware from 'redux-saga';
 import {
   SetPinFormInterface,
   ChangePinWithPinFormInterface,
+  ChangePinWithQuestionsFormInterface,
   SecurityAnswer3,
   cordovaInitLogin,
   changePinWithPin,
-  switchToSecurityProvider
+  switchToSecurityProvider,
+  cordovaLoginWithPin,
+  changePinWithAnswers
 } from './actions/security';
 import * as assert from 'assert';
 
@@ -46,6 +49,12 @@ const invalidPinChange1:ChangePinWithPinFormInterface = {
   newPin: '9876',
   confirmNewPin: '9876'
 }
+
+const validPinChangeWithAnswers: ChangePinWithQuestionsFormInterface = {
+  answer1: validLoginInit1.answer1,
+  answer2: validLoginInit1.answer2,
+  newPin: '1892'
+};
 
 const ensureCordovaAndPlugins = () => {
   return new Promise((resolve,reject) => {
@@ -144,27 +153,26 @@ const changePinWithPinTest = (initState) => {
       const unsubscribe = securityStoreTest.subscribe(function(){
           unsubscribe();
           let state = securityStoreTest.getState();
-          console.log("````");
+
           assert.equal(state.mode,1,'state.mode should be set to 1 after witchToSecurityProvider dispatched');
-           console.log("gggg");
+          
           securityStoreTest.dispatch(changePinWithPin(invalidPinChange1)).then(() => {
             console.log('changePinWithPin(invalidPinChange1) test promise fullfiled');
-            state = securityStoreTest.getState();
-            return state;
+            return securityStoreTest.getState();
           },(e) => {
             console.log('expected error this is ok');
             console.log(e);
           }).then(function(state){
             assert.equal(securityStoreTest.getState().mode ,1,'state.mode should still be set to 1 after invalid login');
             console.log("state.mode === 1");
-            return true
+            return true;
           }).then(() => {
             return securityStoreTest.dispatch(changePinWithPin(validPinChange1));
           }).then(() => {
             assert.equal(securityStoreTest.getState().mode,0,'state.mode should be set to 0 after valid pin change');
 
             console.log("state.mode === 0");
-            resolve(state);
+            resolve(validPinChange1.newPin);
           }).catch((e) => {
             console.log(e);
             reject(e);
@@ -177,6 +185,61 @@ const changePinWithPinTest = (initState) => {
   });
 }
 
+
+const loginWithCorrectPinTest = (validPin) => {
+  console.log('loginWithCorrectPinTest called');
+
+
+  
+  return new Promise((resolve, reject) => {
+      const unsubscribe = securityStoreTest.subscribe(function(){
+          unsubscribe();
+          assert.equal(securityStoreTest.getState().mode,1,'state.mode should be set to 1 after switchToSecurityProvider dispatched 400');
+          securityStoreTest.dispatch(cordovaLoginWithPin(validPin)).then(() => {
+            assert.equal(securityStoreTest.getState().mode,0,'state.mode should be set to 0 after valid Login 401');
+            resolve();
+            return true;
+          }).catch((e) => {
+            if(__DEVTOOLS__){
+              console.log("error caught in loginWithCorrectPinTest");
+              console.log(e);
+            }
+            
+            reject(e);
+          });
+      });
+
+      securityStoreTest.dispatch(switchToSecurityProvider());
+  });
+}
+
+const changePinWithAnswersTest = () => {
+  console.log('changePinWithAnswersTest called');
+  return new Promise((resolve, reject) => {
+      const unsubscribe = securityStoreTest.subscribe(function(){
+          unsubscribe();
+          assert.equal(securityStoreTest.getState().mode,1,'state.mode should be set to 1 after switchToSecurityProvider (aka logout) dispatched 402');
+          securityStoreTest.dispatch(changePinWithAnswers(validPinChangeWithAnswers)).then(() => {
+            assert.equal(securityStoreTest.getState().mode,0,'state.mode should be set to 0 after valid Login 401');
+            return validPinChangeWithAnswers.newPin;
+          }).then(function(newPin){
+            return loginWithCorrectPinTest(newPin);
+          })
+          .then(function(){
+            resolve(true);
+          })
+          .catch(function(e){
+            if(__DEVTOOLS__){
+              console.log("error caught in changePinWithAnswersTest");
+              console.log(e);
+            }
+            reject(e);
+          });
+      });
+
+      securityStoreTest.dispatch(switchToSecurityProvider());
+  });
+}
 
 
 export class CordovaTests{
@@ -208,8 +271,16 @@ export class CordovaTests{
           console.log('PASSED: initLoginTest');
           return changePinWithPinTest(result);
         })
-        .then(function(result){
+        .then((newPin) => {
           console.log('PASSED: changePinWithPinTest');
+          return loginWithCorrectPinTest(newPin)
+        })
+        .then(function(result){
+          console.log('PASSED: loginWithCorrectPinTest');
+          return changePinWithAnswersTest();
+        })
+        .then(() => {
+          console.log('PASSED: changePinWithAnswersTest');
           return true;
         })
         .then(function(result){

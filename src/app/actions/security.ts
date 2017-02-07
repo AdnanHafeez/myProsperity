@@ -71,7 +71,7 @@ export const changeSecurityQuestions = (data: ChangeQuestionsWithPinInterface) =
         function(args){
           if(args.RESULT === 0) {
             dispatch(editAllQuestions(data.question1, data.question2));
-            dispatch(cordovaGetRiKey(data.currentPin));
+            dispatch(cordovaGetRiKey(data.currentPin)); //TODO
           } else {
             dispatch(sendErrorMessage('Invalid Pin',410));
           }
@@ -191,27 +191,41 @@ export const changePinWithAnswers = (data: ChangePinWithQuestionsFormInterface) 
     if(__DEVTOOLS__){
       console.log(data);
     }
-    if(__IS_CORDOVA_BUILD__){
-      var changejson = {
-        "KEY_NEW_PIN": data.newPin,
-        "KEY_SECURITY_ANSWER_1": data.answer1,
-        "KEY_SECURITY_ANSWER_2": data.answer2,
-        "KEY_SECURITY_ANSWER_3": SecurityAnswer3
-      };
+    return new Promise((resolveChangePinAnswers,rejectChangePinAnswers) => {
+        if(__IS_CORDOVA_BUILD__){
+          var changejson = {
+            "KEY_NEW_PIN": data.newPin,
+            "KEY_SECURITY_ANSWER_1": data.answer1,
+            "KEY_SECURITY_ANSWER_2": data.answer2,
+            "KEY_SECURITY_ANSWER_3": SecurityAnswer3
+          };
 
-      (window as any).t2crypto.changePinUsingAnswers(changejson,(result)=>{
-        if(result.RESULT === 0){
-          dispatch(cordovaLoginWithPin(data.newPin));
-        } else {
-          dispatch(sendErrorMessage('Invalid Answers',406));
+          (window as any).t2crypto.changePinUsingAnswers(changejson,(result)=>{
+            if(result.RESULT === 0){
+              dispatch(cordovaLoginWithPin(data.newPin)).then(function(){
+                 if(__DEVTOOLS__){
+                   console.log('cordovaLoginWithPin called from changePinWithAnswers');
+                 }
+                 resolveChangePinAnswers(true);
+              });
+            } else {
+              if(__DEVTOOLS__){
+                console.log(sendErrorMessage('Invalid Answers',406));
+              }
+              dispatch(sendErrorMessage('Invalid Answers',406));
+              rejectChangePinAnswers(sendErrorMessage('Invalid Answers',406))
+            }
+          },
+          (error)=>{
+            dispatch(sendErrorMessage('Invalid Answers',407));
+            rejectChangePinAnswers(sendErrorMessage('Invalid Answers',407));
+          });
+        }else{
+          dispatch(cordovaLoginWithPin(data.newPin)).then(() => {
+            resolveChangePinAnswers(true);
+          });
         }
-      },
-      (error)=>{
-        dispatch(sendErrorMessage('Invalid Answers',407));
-      });
-    }else{
-      dispatch(cordovaLoginWithPin(data.newPin));
-    }
+    });
   }
 }
 
@@ -236,8 +250,18 @@ export const cordovaLoginWithPin = (pin) => {
           if(result.RESULT === 0){
               dispatch(cordovaGetRiKey(pin)).then(() => {
                 resolveLoginPin(true);
+              }).catch((e) => {
+                if(__DEVTOOLS__){
+                  console.log('promise rejected from cordovaLoginWithPin');
+                  console.log(e);
+                }
+                
+                rejectLoginPin(e);
               });
           } else {
+                if(__DEVTOOLS__){
+                  console.log(sendErrorMessage('Invalid Pin',404));
+                }
               dispatch(sendErrorMessage('Invalid Pin',404));
               rejectLoginPin(sendErrorMessage('Invalid Pin',404));
           }
@@ -277,6 +301,11 @@ export const cordovaGetRiKey = (pin) => {
                     resolveRiKey(true);
                   });
            }
+        },function(e){
+          if(__DEVTOOLS__){
+            console.log(e);
+          }
+          rejectRiKey(cordovaInitLoginFail('Login Failed.',412));
         });
       });
   }
@@ -307,7 +336,7 @@ export const cordovaInitLogin = (loginData: SetPinFormInterface) => {
                   dispatch(editAllQuestions(loginData.question1, loginData.question2));
                   dispatch(cordovaGetRiKey(loginData.pin)).then(() => {
                     if(__DEVTOOLS__){
-                      console.log('cordovaGetRiKey promise resolved');
+                      console.log('cordovaGetRiKey promise resolved 2');
                     }
                     resolveInit(true);
                   });
