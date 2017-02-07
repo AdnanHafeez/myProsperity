@@ -124,9 +124,17 @@ export const cordovaInitLoginSuccess = (pin) => {
 }
 
 export const cordovaLoginWithRikey = (rikey) => {
-  return {
+  const localAction = {
     type: CORDOVA_LOGIN_RIKEY,
     rikey
+  }
+  return (dispatch,getState) => {
+      dispatch(localAction);
+      return new Promise((resolve,reject) => {
+        setTimeout(() => {
+          resolve(true);
+        },1000)
+      });
   }
 }
 
@@ -139,30 +147,38 @@ export const changePinWithPin = (data: ChangePinWithPinFormInterface) => {
   }
   return (dispatch,getState) => {
     dispatch(localAction);
-    if(__IS_CORDOVA_BUILD__){
-      const changePinJSON = {
-         "KEY_PIN": data.currentPin,
-         "KEY_NEW_PIN": data.newPin
-      };
-      if(__DEVTOOLS__){
-        console.log(changePinJSON);
-      }
-      (window as any).t2crypto.changePinUsingPin(
-        changePinJSON,
-        function(args){
-          if(args.RESULT === 0) {
-            dispatch(cordovaLoginWithPin(data.newPin));
-          }else{
-            dispatch(sendErrorMessage('Invalid Pin',408));
-          }
-        },
-        function(error){
-          dispatch(sendErrorMessage('Invalid Pin',409));
+    return new Promise((resolvePin,rejectPin) => {
+      if(__IS_CORDOVA_BUILD__){
+        const changePinJSON = {
+           "KEY_PIN": data.currentPin,
+           "KEY_NEW_PIN": data.newPin
+        };
+        if(__DEVTOOLS__){
+          console.log(changePinJSON);
         }
-      );
-    } else {
-      dispatch(cordovaLoginWithPin(data.newPin));
-    }
+        (window as any).t2crypto.changePinUsingPin(
+          changePinJSON,
+          function(args){
+            if(args.RESULT === 0) {
+              dispatch(cordovaLoginWithPin(data.newPin)).then(() => {
+                resolvePin(true);
+              });
+            }else{
+              dispatch(sendErrorMessage('Invalid Pin',408));
+              rejectPin(sendErrorMessage('Invalid Pin',408));
+            }
+          },
+          function(error){
+            dispatch(sendErrorMessage('Invalid Pin',409));
+            rejectPin(sendErrorMessage('Invalid Pin',409));
+          }
+        );
+      } else {
+        dispatch(cordovaLoginWithPin(data.newPin));
+        resolvePin(true);
+      }
+    });
+
   }
 }
 
@@ -210,25 +226,31 @@ export const cordovaLoginWithPin = (pin) => {
   return (dispatch,getState) => {
 
     dispatch(localAction);
+    return new Promise((resolveLoginPin,rejectLoginPin) => {
+      if(__IS_CORDOVA_BUILD__){
+        const pinJSON = {
+          "KEY_PIN": pin
+        };
 
-    if(__IS_CORDOVA_BUILD__){
-      const pinJSON = {
-        "KEY_PIN": pin
-      };
-      (window as any).t2crypto.checkPin(pinJSON,(result)=>{
-        if(result.RESULT === 0){
-            dispatch(cordovaGetRiKey(pin));
-        } else {
-            dispatch(sendErrorMessage('Invalid Pin',404));
-        }
-      },
-      (error)=>{
-        dispatch(sendErrorMessage('Invalid Pin',405));
-      });
-    } else {
-      dispatch(getDummyRiKey(pin));
-    }
-    
+        (window as any).t2crypto.checkPin(pinJSON,(result)=>{
+          if(result.RESULT === 0){
+              dispatch(cordovaGetRiKey(pin)).then(() => {
+                resolveLoginPin(true);
+              });
+          } else {
+              dispatch(sendErrorMessage('Invalid Pin',404));
+              rejectLoginPin(sendErrorMessage('Invalid Pin',404));
+          }
+        },
+        (error)=>{
+          dispatch(sendErrorMessage('Invalid Pin',405));
+          rejectLoginPin(sendErrorMessage('Invalid Pin',405));
+        });
+      } else {
+        dispatch(getDummyRiKey(pin));
+        resolveLoginPin(true);
+      }
+    });
   }
 }
 
@@ -239,16 +261,23 @@ export const cordovaGetRiKey = (pin) => {
         "KEY_PIN": pin
       };
       console.log(dbKeyJson);
-      (window as any).t2crypto.getDatabaseKeyUsingPin(dbKeyJson,function(args){
-         const rikey = args.RESULT; 
-         if(__DEVTOOLS__){
-           console.log(rikey);
-         }
-         if(!rikey){
-              dispatch(cordovaInitLoginFail('Login Failed.',401));
-         }else{
-              dispatch(cordovaLoginWithRikey(rikey));
-         }
+      return new Promise((resolveRiKey,rejectRiKey) => {
+        (window as any).t2crypto.getDatabaseKeyUsingPin(dbKeyJson,function(args){
+           const rikey = args.RESULT; 
+           if(__DEVTOOLS__){
+             console.log(rikey);
+           }
+           if(!rikey){
+                dispatch(cordovaInitLoginFail('Login Failed.',401));
+                rejectRiKey(cordovaInitLoginFail('Login Failed.',401));
+           }else{
+                dispatch(cordovaLoginWithRikey(rikey))
+                  .then(() => {
+                    console.log('cordovaLoginWithRikey promise resolved');
+                    resolveRiKey(true);
+                  });
+           }
+        });
       });
   }
 }
@@ -270,27 +299,37 @@ export const cordovaInitLogin = (loginData: SetPinFormInterface) => {
         "KEY_SECURITY_ANSWER_3" : SecurityAnswer3
       };
       console.log(loginjson);
-      if(__IS_CORDOVA_BUILD__){
-        (window as any).t2crypto.initializeLogin(loginjson,function(args){
-          console.log(args);
-              if(args.RESULT === 0) {
-                dispatch(editAllQuestions(loginData.question1, loginData.question2));
-                dispatch(cordovaGetRiKey(loginData.pin));
-              } else {
-                dispatch(cordovaInitLoginFail('Login Initialization Failed.',400));
-              }
-        },
-        function(error){
-          if(__DEVTOOLS__){
-            console.log('initializeLogin Error');
-            console.log(error);
-          }
-          dispatch(cordovaInitLoginFail('Login Initialization Failed.',403));
-        });
-      } else {
-         dispatch(editAllQuestions(loginData.question1, loginData.question2));
-         dispatch(getDummyRiKey(loginData.pin));
-      }
+      return new Promise(function(resolveInit,rejectInit){
+        if(__IS_CORDOVA_BUILD__){
+          (window as any).t2crypto.initializeLogin(loginjson,function(args){
+            console.log(args);
+                if(args.RESULT === 0) {
+                  dispatch(editAllQuestions(loginData.question1, loginData.question2));
+                  dispatch(cordovaGetRiKey(loginData.pin)).then(() => {
+                    if(__DEVTOOLS__){
+                      console.log('cordovaGetRiKey promise resolved');
+                    }
+                    resolveInit(true);
+                  });
+                } else {
+                  dispatch(cordovaInitLoginFail('Login Initialization Failed.',400));
+                  rejectInit(cordovaInitLoginFail('Login Initialization Failed.',400));
+                }
+          },
+          function(error){
+            if(__DEVTOOLS__){
+              console.log('initializeLogin Error');
+              console.log(error);
+            }
+            dispatch(cordovaInitLoginFail('Login Initialization Failed.',403));
+            rejectInit(cordovaInitLoginFail('Login Initialization Failed.',403))
+          });
+        } else {
+           dispatch(editAllQuestions(loginData.question1, loginData.question2));
+           dispatch(getDummyRiKey(loginData.pin));
+           resolveInit(true);
+        }
+      });
   }
 }
 

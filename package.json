@@ -7,7 +7,8 @@
     "build": "webpack --display-error-details --config webpack-production.config.js --progress --colors",
     "build-cordova": "webpack --display-error-details --config webpack-production-cordova.config.js --progress --colors",
     "serve": "node server.js",
-    "lint": "./node_modules/.bin/eslint src"
+    "lint": "./node_modules/.bin/eslint src",
+    "test": "jest"
   },
   "types": "./src/app/index.d.ts",
   "private": true,
@@ -19,6 +20,7 @@
     "@types/react-tap-event-plugin": "0.0.30",
     "@types/redux-form": "^6.3.2",
     "@types/redux-thunk": "^2.1.31",
+    "assert": "^1.4.1",
     "babel-core": "^6.13.2",
     "babel-eslint": "^6.1.2",
     "babel-loader": "^6.2.4",
@@ -34,11 +36,14 @@
     "express": "^4.14.0",
     "file-loader": "^0.9.0",
     "html-webpack-plugin": "^2.22.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^18.1.0",
     "react-hot-loader": "^1.3.1",
     "rimraf": "^2.5.3",
     "send-seekable": "^1.0.3",
     "sw-precache-webpack-plugin": "^0.5.1",
     "transfer-webpack-plugin": "^0.1.4",
+    "ts-jest": "^18.0.3",
     "ts-loader": "^1.3.3",
     "typescript": "^2.1.5",
     "url-loader": "^0.5.7",
@@ -95,5 +100,16 @@
     "redux-persist-transform-filter": "0.0.6",
     "redux-saga": "^0.11.0",
     "redux-thunk": "^2.1.0"
+  },
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/src/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ]
   }
 }

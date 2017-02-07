@@ -4,6 +4,7 @@ const {render} = ReactDOM;
 import * as injectTapEventPlugin from 'react-tap-event-plugin';
 import Routes, {onCordovaDeviceReady} from './PlainRoutes'; // Our custom react component
 import './reducers';
+import {CordovaTests} from './CordovaTests'
 require('file?name=manifest.json!json-file!json!../www/manifest.json');
 require('../www/index.html');
 require('../www/main.css');
@@ -17,9 +18,16 @@ injectTapEventPlugin();
 // Render the main app react component into the app div.
 // For more details see: https://facebook.github.io/react/docs/top-level-api.html#react.render
 function onPageLoad() {
-  document.addEventListener("deviceready", function(){
-    if(__DEVTOOLS__){
 
+  document.addEventListener("deviceready", function(){
+
+
+    
+    if(__DEVTOOLS__){
+      //const ctest = new CordovaTests();
+      //ctest.start();
+
+      
        /*
       console.log("Running t2crypto test");
       console.log(t2crypto);
@@ -91,11 +99,13 @@ function onPageLoad() {
        */
 
 
-    }
+    }else{
 
+    }
 
     render(<Routes />, document.getElementById('app'));
     onCordovaDeviceReady();
+
   }, false);
 }
 
@@ -104,6 +114,7 @@ onPageLoad();
 if(!__IS_CORDOVA_BUILD__){
     if(__DEVTOOLS__){
       console.log("App root rendered via browser");
+
     }
   render(<Routes />, document.getElementById('app'));
 }
