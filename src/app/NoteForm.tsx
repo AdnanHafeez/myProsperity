@@ -42,7 +42,7 @@ export default class NoteForm extends React.Component<MyProps, MyState> {
     } as any);
   }
   componentDidMount(){
-    (this as any).textInput.focus();
+   
   }
   render(){
     const {handleSubmit,note} = this.props;

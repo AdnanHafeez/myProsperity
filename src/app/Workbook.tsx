@@ -65,8 +65,22 @@ class Workbook extends React.Component<MyProps, MyState> {
     let listItems;
     let actionToggleButton;
 
+    const goalOpenEdit = (item) => {
+
+      return (event) => {
+        if(__DEVTOOLS__){
+          console.log('goal edit click triggered');
+        }
+        goalEditClick(item);
+        event.preventDefault();
+        event.stopPropagation();
+        
+      }
+    }
+
     const makeTitle = (item) => {
-      return item.dueDate >= 0 ? item.title + ' - ' + Formats.msToString(item.dueDate) : item.title;
+
+      return item.dueDate && item.dueDate > 0 ? item.title + ' - ' + Formats.msToString(item.dueDate) : item.title;
     } 
     const isPastDue = (msChallenge,msNow) => {
       return msNow > msChallenge;
@@ -78,7 +92,7 @@ class Workbook extends React.Component<MyProps, MyState> {
       actionToggleButton = <RaisedButton  primary={true} onTouchTap={this.handleEditToggle} label="Done" />;
       listItems = goals.map((item) => {
             return (<ListItem key={item.id} primaryText={makeTitle(item)} 
-                              onTouchTap={() => goalEditClick(item)}
+                              onTouchTap={goalOpenEdit(item)}
                               rightIcon={<EditIcon  />}  />)
           });
     }else{
@@ -88,7 +102,7 @@ class Workbook extends React.Component<MyProps, MyState> {
             return (<ListItem key={item.id} primaryText={makeTitle(item)} 
                               onTouchTap={() => goalStatusClick(item)}
                               color='red'
-                              rightIcon={item.dueDate >= 0 && isPastDue(item.dueDate,dateNowMs) && item.status !== 1 ? <ErrorIcon color='red' /> : null}
+                              rightIcon={item.dueDate >= 0 && item.dueDate < dateNowMs && item.status !== 1 ? <ErrorIcon color='red' /> : null}
                               leftIcon={item.status === 1 ? <ToggoleCheckBox color="green" /> : <ToggoleCheckBoxOutline color="grey"/>} 
                                 />)
           });

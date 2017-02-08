@@ -68,16 +68,16 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
     console.log(props.goal);
 
     this.state = {
-      dueDateChecked: Validators.isDate(props.goal.dueDate),
+      dueDateChecked: props.goal.dueDate && props.goal.dueDate > 0,
       errors: {title: '', dueDate: ''},
       values: {title: props.goal.title, dueDate: props.goal.dueDate}
     };
   }
   componentDidMount(){
-    (this as any).textInput.focus();
+    //(this as any).textInput.focus(); doesn't work
   }
   handleChange = (event) => {
-    console.log("Change event");
+   
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
@@ -90,8 +90,6 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
 
   handleDateChange = (name) => {
     return (event, date) => {
-      console.log('handleDateChange');
-      console.log(date);
       this.setState({
         values: {...this.state.values,[name]: Transforms.dateToMS(date,null)}
       } as any);
@@ -126,8 +124,7 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
     event.preventDefault();
   }
   render(){
-    console.log('------');
-    console.log(this.props.goal.dueDate);
+
     return (
       <div>
       <form onSubmit={this.handleSubmit}>

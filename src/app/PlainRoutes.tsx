@@ -65,15 +65,24 @@ const encryptorTransform = createEncryptor({
   whitelist: ['goals']
 });
 */
-var tempKeyPin = 'asdfasdf343'
+const getRiPin = () => {
+   const fullKey =  (securityStore as any).getState().rikey
+   return fullKey.substring(0,30);
+}
+
 if(__IS_CORDOVA_BUILD__){
 var transformEncryptTransform = createPromiseTransform(
     // transform state coming from redux on its way to being serialized and stored
+
     (inboundState, key) => {
      console.log(inboundState);
+      if(__DEVTOOLS__){
+        console.log(inboundState);
+        console.log(getRiPin());
+      }
       return new Promise(function(res,rej){
           let dataJSON = {
-                      "KEY_PIN": tempKeyPin,
+                      "KEY_PIN": getRiPin(),
                       "KEY_INPUT": inboundState
                     };
           (window as any).t2crypto.encryptRaw(dataJSON,function success(result){
@@ -108,6 +117,7 @@ var transformEncryptTransform = createPromiseTransform(
 var transformEncryptTransform = createPromiseTransform(
     // transform state coming from redux on its way to being serialized and stored
     (inboundState, key) => {
+
       return new Promise(function(res,rej){
             res(inboundState);
       }).then(function(rs){
@@ -267,8 +277,8 @@ function onPause() {
 }
 
 function onResume() {
-    console.log('cordova resume');
-    securityStore.dispatch(push('/'));
+   // console.log('cordova resume');
+   // securityStore.dispatch(push('/'));
 }
 
 function onMenuKeyDown() {
@@ -347,9 +357,13 @@ class AppProvider extends React.Component<MyProps, MyState> {
                Object.keys(storedState).forEach((objectKey) => {
                
                   let field = new Promise((resolve,reject) => {
+                        if(__DEVTOOLS__){
+                          console.log('outgoing data rikey');
+                          console.log(getRiPin());
+                        }
                       if(__IS_CORDOVA_BUILD__){
                         let dataJSON = {
-                          "KEY_PIN": tempKeyPin,
+                          "KEY_PIN": getRiPin(),
                           "KEY_INPUT": storedState[objectKey]
                         };
                         if(__DEVTOOLS__){

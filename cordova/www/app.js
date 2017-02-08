@@ -28698,15 +28698,22 @@
 	  whitelist: ['goals']
 	});
 	*/
-	var tempKeyPin = 'asdfasdf343';
+	var getRiPin = function () {
+	    var fullKey = SecurityProvider_1.securityStore.getState().rikey;
+	    return fullKey.substring(0, 30);
+	};
 	if (true) {
 	    var transformEncryptTransform = createPromiseTransform_1.default(
 	    // transform state coming from redux on its way to being serialized and stored
 	    function (inboundState, key) {
 	        console.log(inboundState);
+	        if (true) {
+	            console.log(inboundState);
+	            console.log(getRiPin());
+	        }
 	        return new Promise(function (res, rej) {
 	            var dataJSON = {
-	                "KEY_PIN": tempKeyPin,
+	                "KEY_PIN": getRiPin(),
 	                "KEY_INPUT": inboundState
 	            };
 	            window.t2crypto.encryptRaw(dataJSON, function success(result) {
@@ -28861,8 +28868,8 @@
 	    console.log('cordova pause');
 	}
 	function onResume() {
-	    console.log('cordova resume');
-	    SecurityProvider_1.securityStore.dispatch(react_router_redux_1.push('/'));
+	    // console.log('cordova resume');
+	    // securityStore.dispatch(push('/'));
 	}
 	function onMenuKeyDown() {
 	    console.log('cordova onMenuKeyDown');
@@ -28912,8 +28919,12 @@
 	                    Object.keys(storedState).forEach(function (objectKey) {
 	                        var field = new Promise(function (resolve, reject) {
 	                            if (true) {
+	                                console.log('outgoing data rikey');
+	                                console.log(getRiPin());
+	                            }
+	                            if (true) {
 	                                var dataJSON = {
-	                                    "KEY_PIN": tempKeyPin,
+	                                    "KEY_PIN": getRiPin(),
 	                                    "KEY_INPUT": storedState[objectKey]
 	                                };
 	                                if (true) {
@@ -53205,7 +53216,7 @@
 	            }
 	            break;
 	        case actions_1.GOAL_SUBMITTED:
-	            state[action.id + ''] = exports.goalFactory(action.id, action.goal.title);
+	            state[action.id + ''] = exports.goalFactory(action.id, action.goal.title, action.goal.status, action.goal.dueDate);
 	            state = objectAssign({}, state);
 	            break;
 	        case actions_1.GOAL_EDIT:
@@ -93847,8 +93858,18 @@
 	        var _a = this.props, workbook = _a.workbook, isOnline = _a.isOnline, examples = _a.examples, goals = _a.goals, goalEditClick = _a.goalEditClick, goalStatusClick = _a.goalStatusClick, goalDelete = _a.goalDelete;
 	        var listItems;
 	        var actionToggleButton;
+	        var goalOpenEdit = function (item) {
+	            return function (event) {
+	                if (true) {
+	                    console.log('goal edit click triggered');
+	                }
+	                goalEditClick(item);
+	                event.preventDefault();
+	                event.stopPropagation();
+	            };
+	        };
 	        var makeTitle = function (item) {
-	            return item.dueDate >= 0 ? item.title + ' - ' + helpers_1.Formats.msToString(item.dueDate) : item.title;
+	            return item.dueDate && item.dueDate > 0 ? item.title + ' - ' + helpers_1.Formats.msToString(item.dueDate) : item.title;
 	        };
 	        var isPastDue = function (msChallenge, msNow) {
 	            return msNow > msChallenge;
@@ -93858,14 +93879,14 @@
 	        if (this.state.editMode) {
 	            actionToggleButton = React.createElement(RaisedButton_1.default, { primary: true, onTouchTap: this.handleEditToggle, label: "Done" });
 	            listItems = goals.map(function (item) {
-	                return (React.createElement(List_1.ListItem, { key: item.id, primaryText: makeTitle(item), onTouchTap: function () { return goalEditClick(item); }, rightIcon: React.createElement(create_1.default, null) }));
+	                return (React.createElement(List_1.ListItem, { key: item.id, primaryText: makeTitle(item), onTouchTap: goalOpenEdit(item), rightIcon: React.createElement(create_1.default, null) }));
 	            });
 	        }
 	        else {
 	            actionToggleButton = React.createElement(RaisedButton_1.default, { onTouchTap: this.handleEditToggle, label: "Edit Goals" });
 	            ;
 	            listItems = goals.map(function (item) {
-	                return (React.createElement(List_1.ListItem, { key: item.id, primaryText: makeTitle(item), onTouchTap: function () { return goalStatusClick(item); }, color: 'red', rightIcon: item.dueDate >= 0 && isPastDue(item.dueDate, dateNowMs) && item.status !== 1 ? React.createElement(error_1.default, { color: 'red' }) : null, leftIcon: item.status === 1 ? React.createElement(check_box_1.default, { color: "green" }) : React.createElement(check_box_outline_blank_1.default, { color: "grey" }) }));
+	                return (React.createElement(List_1.ListItem, { key: item.id, primaryText: makeTitle(item), onTouchTap: function () { return goalStatusClick(item); }, color: 'red', rightIcon: item.dueDate >= 0 && item.dueDate < dateNowMs && item.status !== 1 ? React.createElement(error_1.default, { color: 'red' }) : null, leftIcon: item.status === 1 ? React.createElement(check_box_1.default, { color: "green" }) : React.createElement(check_box_outline_blank_1.default, { color: "grey" }) }));
 	            });
 	        }
 	        return (React.createElement("div", null,
@@ -93912,7 +93933,6 @@
 	var actions_1 = __webpack_require__(807);
 	var workbook_1 = __webpack_require__(808);
 	var commonStyles_1 = __webpack_require__(1140);
-	var helpers_1 = __webpack_require__(1242);
 	var style = {
 	    floatingAction: {
 	        margin: 0,
@@ -93945,13 +93965,13 @@
 	    var newGoal = workbook_1.goalFactory(0, '');
 	    return {
 	        open: state.loadedGoalId === 0,
-	        goal: __assign({}, newGoal, { dueDate: helpers_1.Transforms.msToDate(newGoal.dueDate) })
+	        goal: __assign({}, workbook_1.goalFactory(0, ''), { dueDate: null })
 	    };
 	};
 	var dispatchToProps = function (dispatch, ownProps) {
 	    return {
 	        addGoal: function (goal) {
-	            dispatch(actions_1.goalSubmitted(ownProps.workbook.id, __assign({}, goal, { dueDate: helpers_1.Transforms.dateToMS(goal.dueDate) })));
+	            dispatch(actions_1.goalSubmitted(ownProps.workbook.id, goal));
 	            dispatch(actions_1.goalLoad(-1)); //resets and closes form
 	        },
 	        handleOpen: function () {
@@ -94448,10 +94468,7 @@
 	                }
 	                break;
 	            case 'dueDate':
-	                console.log('dueDate');
-	                console.log(values);
-	                console.log(values.dueDate);
-	                if (values.dueDate !== null && !helpers_1.Validators.isDate(values.dueDate)) {
+	                if (values.dueDate !== null && !helpers_1.Validators.isNumeric(values.dueDate)) {
 	                    results.fields[propName] = 'Please select a date.';
 	                }
 	                break;
@@ -94474,7 +94491,6 @@
 	    function GoalForm(props, context) {
 	        var _this = _super.call(this, props, context) || this;
 	        _this.handleChange = function (event) {
-	            console.log("Change event");
 	            var target = event.target;
 	            var value = target.type === 'checkbox' ? target.checked : target.value;
 	            var name = target.name;
@@ -94486,10 +94502,8 @@
 	        };
 	        _this.handleDateChange = function (name) {
 	            return function (event, date) {
-	                console.log('handleDateChange');
-	                console.log(date);
 	                _this.setState({
-	                    values: __assign({}, _this.state.values, (_a = {}, _a[name] = date, _a))
+	                    values: __assign({}, _this.state.values, (_a = {}, _a[name] = helpers_1.Transforms.dateToMS(date, null), _a))
 	                });
 	                var _a;
 	            };
@@ -94521,14 +94535,14 @@
 	        };
 	        console.log(props.goal);
 	        _this.state = {
-	            dueDateChecked: helpers_1.Validators.isDate(props.goal.dueDate),
+	            dueDateChecked: props.goal.dueDate && props.goal.dueDate > 0,
 	            errors: { title: '', dueDate: '' },
 	            values: { title: props.goal.title, dueDate: props.goal.dueDate }
 	        };
 	        return _this;
 	    }
 	    GoalForm.prototype.componentDidMount = function () {
-	        this.textInput.focus();
+	        //(this as any).textInput.focus(); doesn't work
 	    };
 	    GoalForm.prototype.render = function () {
 	        var _this = this;
@@ -94542,7 +94556,7 @@
 	                    React.createElement("div", null,
 	                        React.createElement(CalendarToggle, { date: this.state.values.dueDate, label: "Set Due Date", dueDateChecked: this.handleDueDateCheck, checked: this.state.dueDateChecked })),
 	                    React.createElement("div", null,
-	                        React.createElement(DatePicker_1.default, { value: this.state.values.dueDate, hintText: "Due Date", locale: 'en-US', errorText: this.state.errors.dueDate, onChange: this.handleDateChange('dueDate'), disabled: !this.state.dueDateChecked, name: 'dueDate', autoOk: false }))))));
+	                        React.createElement(DatePicker_1.default, { value: helpers_1.Transforms.msToDate(this.state.values.dueDate), hintText: "Due Date", locale: 'en-US', errorText: this.state.errors.dueDate, onChange: this.handleDateChange('dueDate'), disabled: !this.state.dueDateChecked, name: 'dueDate', autoOk: false }))))));
 	    };
 	    return GoalForm;
 	}(React.Component));
@@ -98483,6 +98497,8 @@
 	            tmpdate.setTime(input);
 	            return tmpdate;
 	        }
+	        console.log('invalid date');
+	        console.log(input);
 	        return ifInvalid;
 	    };
 	})(Transforms = exports.Transforms || (exports.Transforms = {}));
@@ -98511,14 +98527,6 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var __assign = (this && this.__assign) || Object.assign || function(t) {
-	    for (var s, i = 1, n = arguments.length; i < n; i++) {
-	        s = arguments[i];
-	        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-	            t[p] = s[p];
-	    }
-	    return t;
-	};
 	var React = __webpack_require__(299);
 	var Dialog_1 = __webpack_require__(744);
 	var FlatButton_1 = __webpack_require__(763);
@@ -98527,7 +98535,6 @@
 	var actions_1 = __webpack_require__(807);
 	var workbook_1 = __webpack_require__(808);
 	var commonStyles_1 = __webpack_require__(1140);
-	var helpers_1 = __webpack_require__(1242);
 	var GoalEditDialog = (function (_super) {
 	    __extends(GoalEditDialog, _super);
 	    function GoalEditDialog() {
@@ -98535,7 +98542,6 @@
 	    }
 	    GoalEditDialog.prototype.render = function () {
 	        var _a = this.props, editGoal = _a.editGoal, goalDelete = _a.goalDelete, open = _a.open, handleClose = _a.handleClose, goal = _a.goal, workbook = _a.workbook;
-	        console.log(goal);
 	        var actions = [
 	            React.createElement(FlatButton_1.default, { label: "Cancel", primary: true, onTouchTap: handleClose }),
 	            React.createElement(FlatButton_1.default, { label: "Delete", primary: true, onTouchTap: function () {
@@ -98551,10 +98557,9 @@
 	}(React.Component));
 	var getGoal = function (loadedGoalId, goals) {
 	    var goal = workbook_1.goalFactory(0, '');
-	    if (loadedGoalId > 0 && typeof goals[loadedGoalId + ''] !== 'undefined') {
+	    if (typeof goals[loadedGoalId + ''] !== 'undefined') {
 	        goal = goals[loadedGoalId + ''];
 	    }
-	    goal.dueDate = helpers_1.Transforms.msToDate(goal.dueDate);
 	    return goal;
 	};
 	var stateToProps = function (state) {
@@ -98567,7 +98572,8 @@
 	    return {
 	        editGoal: function (goal) {
 	            return function (goal) {
-	                dispatch(actions_1.goalEdit(ownProps.workbook.id, goal.id, __assign({}, goal, { dueDate: helpers_1.Transforms.dateToMS(goal.dueDate) })));
+	                console.log(goal);
+	                dispatch(actions_1.goalEdit(ownProps.workbook.id, goal.id, goal));
 	                dispatch(actions_1.goalLoad(-1));
 	            };
 	        },
@@ -99120,7 +99126,6 @@
 	        return _this;
 	    }
 	    NoteForm.prototype.componentDidMount = function () {
-	        this.textInput.focus();
 	    };
 	    NoteForm.prototype.render = function () {
 	        var _this = this;
