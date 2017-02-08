@@ -31,9 +31,13 @@ export const labelStyle = {
     letterSpacing: '0px',
     textTransform: 'uppercase',
     fontWeight: 500,
-    fontSize: '14px'
+    fontSize: '12px'
 };
 
 export const fieldErrorStyle = {
   color: 'red'
+}
+
+export const fieldRowStyle = {
+  marginBottom: '5px'
 }

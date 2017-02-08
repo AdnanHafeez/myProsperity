@@ -6,7 +6,7 @@ import TextField from 'material-ui/TextField';
 import MenuItem from 'material-ui/MenuItem';
 import FlatButton from 'material-ui/FlatButton';
 import {SetPinFormInterface} from './actions/security';
-import {labelStyle,fieldErrorStyle} from './commonStyles';
+import {labelStyle,fieldErrorStyle,fieldRowStyle} from './commonStyles';
 
 interface FormErrors {
   isValid: boolean;
@@ -129,7 +129,7 @@ export default class SecuritySetQuestionsContainer extends React.Component<MyPro
 
     return (
       <form onSubmit={this.handleSubmit}>
-        <div>
+        <div style={fieldRowStyle}>
           <label>
             <div style={labelStyle}>Pin</div>
             <input type="text" name='pin' value={this.state.values.pin} onChange={this.handleChange}  />
@@ -137,15 +137,15 @@ export default class SecuritySetQuestionsContainer extends React.Component<MyPro
           </label>
           <div style={fieldErrorStyle}>{this.state.errors.pin}</div>
         </div>
-        <div>
-          <TextField 
-                floatingLabelText={'Confirm Pin'} 
-                hintText={''} 
-                multiLine={false}
-                name='pinConfirm'
-                errorText={this.state.errors.pinConfirm} value={this.state.values.pinConfirm} onChange={this.handleChange} />
+        <div style={fieldRowStyle}>
+          <label>
+            <div style={labelStyle}>Confirm Pin</div>
+            <input type="text" name='pinConfirm' value={this.state.values.pinConfirm} onChange={this.handleChange}  />
+
+          </label>
+          <div style={fieldErrorStyle}>{this.state.errors.pinConfirm}</div>
         </div>
-        <div>
+        <div style={fieldRowStyle}>
             <div><label>Question 1</label></div>
             <select 
               value={this.state.values.question1} 
@@ -157,17 +157,17 @@ export default class SecuritySetQuestionsContainer extends React.Component<MyPro
                   return <option key={'q1_' + question.id} value={question.id}>{question.title}</option>
               })}
             </select>
-            <div>{this.state.errors.question1}</div>
+            <div style={fieldErrorStyle}>{this.state.errors.question1}</div>
         </div>
-        <div>
-          <TextField 
-                floatingLabelText={'Answer 1'} 
-                hintText={''} 
-                multiLine={false}
-                name='answer1'
-                errorText={this.state.errors.answer1} value={this.state.values.answer1} onChange={this.handleChange} />
+        <div style={fieldRowStyle}>
+          <label>
+            <div style={labelStyle}>Answer</div>
+            <input type="text" name='answer1' value={this.state.values.answer1} onChange={this.handleChange}  />
+
+          </label>
+          <div style={fieldErrorStyle}>{this.state.errors.answer1}</div>
         </div>
-        <div>
+        <div style={fieldRowStyle}>
             <div><label>Question 2</label></div>
             
             <select 
@@ -182,15 +182,15 @@ export default class SecuritySetQuestionsContainer extends React.Component<MyPro
             </select>
             <div>{this.state.errors.question2}</div>
         </div>
-        <div>
-        <TextField 
-              floatingLabelText={'Answer 2'} 
-              hintText={''} 
-              multiLine={false}
-              name='answer2'
-              errorText={this.state.errors.answer2} value={this.state.values.answer2} onChange={this.handleChange} />
+        <div style={fieldRowStyle}>
+          <label>
+            <div style={labelStyle}>Answer</div>
+            <input type="text" name='answer2' value={this.state.values.answer2} onChange={this.handleChange}  />
+
+          </label>
+          <div style={fieldErrorStyle}>{this.state.errors.answer2}</div>
         </div>
-        <div>
+        <div style={fieldRowStyle}>
           <FlatButton label="Submit" type="submit" />
         </div>
       </form>

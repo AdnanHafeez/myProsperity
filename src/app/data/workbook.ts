@@ -41,7 +41,7 @@ export interface GoalReducerInterface {
   reminder?: any;
   dateCreated?: any;
   dateUpdated?: any;
-  dueDate: number;
+  dueDate: any;
   status?: number;
 }
 

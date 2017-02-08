@@ -30,10 +30,7 @@ const validateForm = (values:{title: string,dueDate: any}): any => {
         }
         break;
       case 'dueDate':
-        console.log('dueDate');
-        console.log(values);
-        console.log(values.dueDate);
-        if(values.dueDate !== null && !Validators.isDate(values.dueDate)){
+        if(values.dueDate !== null && !Validators.isNumeric(values.dueDate)){
           results.fields[propName] = 'Please select a date.'
         }
         break;
@@ -96,7 +93,7 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
       console.log('handleDateChange');
       console.log(date);
       this.setState({
-        values: {...this.state.values,[name]: date}
+        values: {...this.state.values,[name]: Transforms.dateToMS(date,null)}
       } as any);
     }
   }
@@ -129,7 +126,8 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
     event.preventDefault();
   }
   render(){
-
+    console.log('------');
+    console.log(this.props.goal.dueDate);
     return (
       <div>
       <form onSubmit={this.handleSubmit}>
@@ -162,7 +160,7 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
           </div>
           <div>
             <DatePicker 
-                value={this.state.values.dueDate}
+                value={Transforms.msToDate(this.state.values.dueDate)}
                 hintText="Due Date" 
                 locale={'en-US'}
                 errorText={this.state.errors.dueDate}

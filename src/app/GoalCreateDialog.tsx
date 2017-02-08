@@ -36,6 +36,7 @@ interface MyProps {
   goal: GoalReducerInterface;
 }
 
+
 interface MyState {
 
 }
@@ -83,14 +84,14 @@ const stateToProps = (state) => {
   let newGoal = goalFactory(0,'');
   return {
     open: state.loadedGoalId === 0,
-    goal: {...newGoal,dueDate: Transforms.msToDate(newGoal.dueDate)}
+    goal: {...goalFactory(0,''),dueDate: null}
   }
 }
 
 const dispatchToProps = (dispatch,ownProps) => {
   return {
      addGoal: (goal: GoalReducerInterface) => { 
-       dispatch(goalSubmitted(ownProps.workbook.id,{...goal, dueDate: Transforms.dateToMS(goal.dueDate)})) 
+       dispatch(goalSubmitted(ownProps.workbook.id,goal)) 
        dispatch(goalLoad(-1)); //resets and closes form
      },
      handleOpen: () => {

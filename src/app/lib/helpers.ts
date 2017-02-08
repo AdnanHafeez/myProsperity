@@ -18,11 +18,15 @@ export namespace Transforms {
   }
 
   export const msToDate = (input, ifInvalid = null) => {
+
     if(Validators.isNumeric(input) && input >= 0){
       let tmpdate = new Date();
       tmpdate.setTime(input);
       return tmpdate;
     }
+    console.log('invalid date');
+    console.log(input);
+
     return ifInvalid;
   }
 }

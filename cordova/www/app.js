@@ -84597,6 +84597,21 @@
 	    width: '100%',
 	    maxWidth: '700px',
 	};
+	exports.labelStyle = {
+	    position: 'relative',
+	    paddingRight: '16px',
+	    verticalAlign: 'middle',
+	    letterSpacing: '0px',
+	    textTransform: 'uppercase',
+	    fontWeight: 500,
+	    fontSize: '12px'
+	};
+	exports.fieldErrorStyle = {
+	    color: 'red'
+	};
+	exports.fieldRowStyle = {
+	    marginBottom: '5px'
+	};
 
 
 /***/ },
@@ -86523,8 +86538,8 @@
 	    return t;
 	};
 	var React = __webpack_require__(299);
-	var TextField_1 = __webpack_require__(1145);
 	var FlatButton_1 = __webpack_require__(763);
+	var commonStyles_1 = __webpack_require__(1140);
 	var validateForm = function (values) {
 	    var fields = Object.keys(values).reduce(function (accum, current) {
 	        accum[current] = '';
@@ -86537,6 +86552,9 @@
 	            case 'pin':
 	                if (values.pin !== values.pinConfirm) {
 	                    results.fields[propName] = 'Your pins must match.';
+	                }
+	                else if (values.pin.length < 4) {
+	                    results.fields[propName] = 'Your pin must be at least 4 characters';
 	                }
 	                break;
 	            case 'pinConfirm':
@@ -86619,33 +86637,45 @@
 	    SecuritySetQuestionsContainer.prototype.render = function () {
 	        var questions = this.props.questions;
 	        return (React.createElement("form", { onSubmit: this.handleSubmit },
-	            React.createElement("div", null,
-	                React.createElement(TextField_1.default, { floatingLabelText: 'Enter Pin', hintText: '', multiLine: false, name: 'pin', errorText: this.state.errors.pin, value: this.state.values.pin, onChange: this.handleChange })),
-	            React.createElement("div", null,
-	                React.createElement(TextField_1.default, { floatingLabelText: 'Confirm Pin', hintText: '', multiLine: false, name: 'pinConfirm', errorText: this.state.errors.pinConfirm, value: this.state.values.pinConfirm, onChange: this.handleChange })),
-	            React.createElement("div", null,
+	            React.createElement("div", { style: commonStyles_1.fieldRowStyle },
+	                React.createElement("label", null,
+	                    React.createElement("div", { style: commonStyles_1.labelStyle }, "Pin"),
+	                    React.createElement("input", { type: "text", name: 'pin', value: this.state.values.pin, onChange: this.handleChange })),
+	                React.createElement("div", { style: commonStyles_1.fieldErrorStyle }, this.state.errors.pin)),
+	            React.createElement("div", { style: commonStyles_1.fieldRowStyle },
+	                React.createElement("label", null,
+	                    React.createElement("div", { style: commonStyles_1.labelStyle }, "Confirm Pin"),
+	                    React.createElement("input", { type: "text", name: 'pinConfirm', value: this.state.values.pinConfirm, onChange: this.handleChange })),
+	                React.createElement("div", { style: commonStyles_1.fieldErrorStyle }, this.state.errors.pinConfirm)),
+	            React.createElement("div", { style: commonStyles_1.fieldRowStyle },
 	                React.createElement("div", null,
 	                    React.createElement("label", null, "Question 1")),
-	                React.createElement("div", null, this.state.errors.question1),
 	                React.createElement("select", { value: this.state.values.question1, onChange: this.questionSelectChange('question1'), name: 'question1' },
 	                    React.createElement("option", { key: 'q1_none' }, "Select a question"),
 	                    questions.map(function (question) {
 	                        return React.createElement("option", { key: 'q1_' + question.id, value: question.id }, question.title);
-	                    }))),
-	            React.createElement("div", null,
-	                React.createElement(TextField_1.default, { floatingLabelText: 'Answer 1', hintText: '', multiLine: false, name: 'answer1', errorText: this.state.errors.answer1, value: this.state.values.answer1, onChange: this.handleChange })),
-	            React.createElement("div", null,
+	                    })),
+	                React.createElement("div", { style: commonStyles_1.fieldErrorStyle }, this.state.errors.question1)),
+	            React.createElement("div", { style: commonStyles_1.fieldRowStyle },
+	                React.createElement("label", null,
+	                    React.createElement("div", { style: commonStyles_1.labelStyle }, "Answer"),
+	                    React.createElement("input", { type: "text", name: 'answer1', value: this.state.values.answer1, onChange: this.handleChange })),
+	                React.createElement("div", { style: commonStyles_1.fieldErrorStyle }, this.state.errors.answer1)),
+	            React.createElement("div", { style: commonStyles_1.fieldRowStyle },
 	                React.createElement("div", null,
 	                    React.createElement("label", null, "Question 2")),
-	                React.createElement("div", null, this.state.errors.question2),
 	                React.createElement("select", { value: this.state.values.question2, onChange: this.questionSelectChange('question2'), name: 'question2' },
 	                    React.createElement("option", { key: 'q2_none' }, "Select a question"),
 	                    questions.map(function (question) {
 	                        return React.createElement("option", { key: 'q2_' + question.id, value: question.id }, question.title);
-	                    }))),
-	            React.createElement("div", null,
-	                React.createElement(TextField_1.default, { floatingLabelText: 'Answer 2', hintText: '', multiLine: false, name: 'answer2', errorText: this.state.errors.answer2, value: this.state.values.answer2, onChange: this.handleChange })),
-	            React.createElement("div", null,
+	                    })),
+	                React.createElement("div", null, this.state.errors.question2)),
+	            React.createElement("div", { style: commonStyles_1.fieldRowStyle },
+	                React.createElement("label", null,
+	                    React.createElement("div", { style: commonStyles_1.labelStyle }, "Answer"),
+	                    React.createElement("input", { type: "text", name: 'answer2', value: this.state.values.answer2, onChange: this.handleChange })),
+	                React.createElement("div", { style: commonStyles_1.fieldErrorStyle }, this.state.errors.answer2)),
+	            React.createElement("div", { style: commonStyles_1.fieldRowStyle },
 	                React.createElement(FlatButton_1.default, { label: "Submit", type: "submit" }))));
 	    };
 	    return SecuritySetQuestionsContainer;
@@ -94402,6 +94432,7 @@
 	var DatePicker_1 = __webpack_require__(1220);
 	var Checkbox_1 = __webpack_require__(1237);
 	var helpers_1 = __webpack_require__(1242);
+	var commonStyles_1 = __webpack_require__(1140);
 	var validateForm = function (values) {
 	    var fields = Object.keys(values).reduce(function (accum, current) {
 	        accum[current] = '';
@@ -94433,18 +94464,6 @@
 	    });
 	    results.isValid = isFormValid && results.errorMessage.length === 0;
 	    return results;
-	};
-	var styles = {
-	    layout: {
-	        display: 'flex',
-	        flexFlow: 'column wrap',
-	        justifyContent: 'space-around',
-	    },
-	    buttonContainer: {
-	        display: 'flex',
-	        flexFlow: 'row wrap',
-	        justifyContent: 'space-between'
-	    }
 	};
 	var CalendarToggle = function (props) {
 	    var checked = props.checked, label = props.label, dueDateChecked = props.dueDateChecked;
@@ -94513,17 +94532,17 @@
 	    };
 	    GoalForm.prototype.render = function () {
 	        var _this = this;
-	        return (React.createElement("form", { onSubmit: this.handleSubmit },
-	            React.createElement("div", { style: styles.layout },
+	        return (React.createElement("div", null,
+	            React.createElement("form", { onSubmit: this.handleSubmit },
+	                React.createElement("div", { style: commonStyles_1.topRightButtonStyle },
+	                    React.createElement(RaisedButton_1.default, { type: "submit", label: "Save" })),
 	                React.createElement("div", null,
 	                    React.createElement(TextField_1.default, { floatingLabelText: 'Goal', hintText: 'Enter Text Here', multiLine: true, rows: 1, rowsMax: 2, name: 'title', value: this.state.values.title, fullWidth: true, onChange: this.handleChange, ref: function (input) { _this.textInput = input; }, errorText: this.state.errors.title })),
 	                React.createElement("div", null,
 	                    React.createElement("div", null,
 	                        React.createElement(CalendarToggle, { date: this.state.values.dueDate, label: "Set Due Date", dueDateChecked: this.handleDueDateCheck, checked: this.state.dueDateChecked })),
 	                    React.createElement("div", null,
-	                        React.createElement(DatePicker_1.default, { value: this.state.values.dueDate, hintText: "Due Date", locale: 'en-US', errorText: this.state.errors.dueDate, onChange: this.handleDateChange('dueDate'), disabled: !this.state.dueDateChecked, name: 'dueDate', autoOk: true }))),
-	                React.createElement("div", null,
-	                    React.createElement(RaisedButton_1.default, { type: "submit", label: "Save" })))));
+	                        React.createElement(DatePicker_1.default, { value: this.state.values.dueDate, hintText: "Due Date", locale: 'en-US', errorText: this.state.errors.dueDate, onChange: this.handleDateChange('dueDate'), disabled: !this.state.dueDateChecked, name: 'dueDate', autoOk: false }))))));
 	    };
 	    return GoalForm;
 	}(React.Component));
@@ -98516,6 +98535,7 @@
 	    }
 	    GoalEditDialog.prototype.render = function () {
 	        var _a = this.props, editGoal = _a.editGoal, goalDelete = _a.goalDelete, open = _a.open, handleClose = _a.handleClose, goal = _a.goal, workbook = _a.workbook;
+	        console.log(goal);
 	        var actions = [
 	            React.createElement(FlatButton_1.default, { label: "Cancel", primary: true, onTouchTap: handleClose }),
 	            React.createElement(FlatButton_1.default, { label: "Delete", primary: true, onTouchTap: function () {
@@ -98529,18 +98549,24 @@
 	    };
 	    return GoalEditDialog;
 	}(React.Component));
+	var getGoal = function (loadedGoalId, goals) {
+	    var goal = workbook_1.goalFactory(0, '');
+	    if (loadedGoalId > 0 && typeof goals[loadedGoalId + ''] !== 'undefined') {
+	        goal = goals[loadedGoalId + ''];
+	    }
+	    goal.dueDate = helpers_1.Transforms.msToDate(goal.dueDate);
+	    return goal;
+	};
 	var stateToProps = function (state) {
-	    var goal = state.loadedGoalId > 0 ? state.goals[state.loadedGoalId + ''] : workbook_1.goalFactory(0, '');
 	    return {
 	        open: state.loadedGoalId > 0,
-	        goal: __assign({}, goal, { dueDate: helpers_1.Transforms.msToDate(goal.dueDate) })
+	        goal: getGoal(state.loadedGoalId, state.goals)
 	    };
 	};
 	var dispatchToProps = function (dispatch, ownProps) {
 	    return {
 	        editGoal: function (goal) {
 	            return function (goal) {
-	                console.log(goal);
 	                dispatch(actions_1.goalEdit(ownProps.workbook.id, goal.id, __assign({}, goal, { dueDate: helpers_1.Transforms.dateToMS(goal.dueDate) })));
 	                dispatch(actions_1.goalLoad(-1));
 	            };
@@ -99014,10 +99040,17 @@
 	    };
 	    return NoteEditDialog;
 	}(React.Component));
+	var getNote = function (loadedNoteId, notes) {
+	    var note = note_1.noteFactory(0, '');
+	    if (loadedNoteId > 0 && typeof notes[loadedNoteId + ''] !== 'undefined') {
+	        note = notes[loadedNoteId + ''];
+	    }
+	    return note;
+	};
 	var stateToProps = function (state) {
 	    return {
 	        open: state.loadedNoteId > -1,
-	        note: state.loadedNoteId > 0 ? state.notes[state.loadedNoteId + ''] : note_1.noteFactory(0, '')
+	        note: getNote(state.loadedNoteId, state.notes)
 	    };
 	};
 	var dispatchToProps = function (dispatch, ownProps) {
@@ -99060,24 +99093,13 @@
 	var React = __webpack_require__(299);
 	var TextField_1 = __webpack_require__(1145);
 	var RaisedButton_1 = __webpack_require__(1151);
+	var commonStyles_1 = __webpack_require__(1140);
 	var validate = function (values) {
 	    var errors = {};
 	    if (!values.note) {
 	        errors.note = 'Required';
 	    }
 	    return errors;
-	};
-	var styles = {
-	    layout: {
-	        display: 'flex',
-	        flexFlow: 'column wrap',
-	        justifyContent: 'space-around',
-	    },
-	    buttonContainer: {
-	        display: 'flex',
-	        flexFlow: 'row wrap',
-	        justifyContent: 'space-between'
-	    }
 	};
 	var NoteForm = (function (_super) {
 	    __extends(NoteForm, _super);
@@ -99107,13 +99129,12 @@
 	            handleSubmit({ text: _this.state.text });
 	            event.preventDefault();
 	        };
-	        return (React.createElement("form", { onSubmit: formSubmit },
-	            React.createElement("div", { style: styles.layout },
+	        return (React.createElement("div", null,
+	            React.createElement("form", { onSubmit: formSubmit },
+	                React.createElement("div", { style: commonStyles_1.topRightButtonStyle },
+	                    React.createElement(RaisedButton_1.default, { type: "submit", primary: true, disabled: false, label: "Save" })),
 	                React.createElement("div", null,
-	                    React.createElement(TextField_1.default, { floatingLabelText: 'Note', hintText: 'Enter Text Here', multiLine: true, rows: 1, rowsMax: 2, name: 'text', value: this.state.text, fullWidth: true, ref: function (input) { _this.textInput = input; }, onChange: this.handleChange, errorText: false })),
-	                React.createElement("div", { style: styles.buttonContainer },
-	                    React.createElement("div", null,
-	                        React.createElement(RaisedButton_1.default, { type: "submit", primary: true, disabled: false, label: "Save" }))))));
+	                    React.createElement(TextField_1.default, { floatingLabelText: 'Note', hintText: 'Enter Text Here', multiLine: true, rows: 1, rowsMax: 2, name: 'text', value: this.state.text, fullWidth: true, ref: function (input) { _this.textInput = input; }, onChange: this.handleChange, errorText: false })))));
 	    };
 	    return NoteForm;
 	}(React.Component));
