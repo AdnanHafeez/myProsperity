@@ -10,6 +10,7 @@ import { Link } from 'react-router';
 import Divider from 'material-ui/Divider';
 import Drawer from 'material-ui/Drawer';
 
+
 /**
  * AppBarMenuIcon provides the left icon in the top navigation bar
  * @param  {[type]} options.paths   [description]
@@ -53,10 +54,13 @@ class AppBarMenuIconDrawer extends React.Component<MyProps, MyState> {
               onRequestChange={(open) => this.setState({open})}
             >
 
-              <MenuItem key={'directors_message'} primaryText="Director's Message" onTouchTap={this.handleClose} containerElement={<Link to={'/main/message'} />}  />
+              <MenuItem key={'static_directors_message'} primaryText="Director's Message" onTouchTap={this.handleClose} containerElement={<Link to={'/main/message'} />}  />
+              <MenuItem key={'static_smart_goals'} primaryText={'S.M.A.R.T. Goals'} onTouchTap={this.handleClose} containerElement={<Link to='/main/home' />} />
+            
               {workbooks.map((item) => (
                  <MenuItem key={'workbook_' + item.id} primaryText={item.title} onTouchTap={this.handleClose} containerElement={<Link to={'/main/workbook/'+item.id} />}  />
               ))}
+
               <MenuItem key={'notes_landing'} primaryText="Notes" onTouchTap={this.handleClose} containerElement={<Link to={'/main/notes'} />}  />
             </Drawer>
           </div>
