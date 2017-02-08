@@ -5,6 +5,7 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import {List, ListItem} from 'material-ui/List';
+import {listItemTitle, listItemSubTitle, fullWidthDialagStyle} from './commonStyles'
 
 interface MyProps {
   title: string;
@@ -48,10 +49,19 @@ export default class BasicDialog extends React.Component<MyProps, MyState> {
           open={this.state.open}
           onRequestClose={this.handleClose}
           autoScrollBodyContent={true}
+          contentStyle={fullWidthDialagStyle}
         >
-        <List>
-          {items.map((item) => (<ListItem key={item.id} primaryText={item.title} secondaryText={item.desc} />))}
-        </List>
+
+        <div>
+          {items.map((item) => (
+            <div key={item.id} >
+                <h3 style={listItemTitle}>{item.title}</h3>
+                <p style={listItemSubTitle}>{item.desc}</p>
+            </div>
+            ))}
+        </div>
+          
+
         </Dialog>
       </div>
     );

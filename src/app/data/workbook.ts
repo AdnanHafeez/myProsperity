@@ -82,7 +82,7 @@ export const wbData: WorkbookRawInterface[] = [
           goals: []
         },
         { id:3, title: 'Personal', examples: [
-            {id: 15, title: 'Activity', desc: ': (Overall Fitness, Yoga, 10,000 Steps Per Day)'},
+            {id: 15, title: 'Activity', desc: '(Overall Fitness, Yoga, 10,000 Steps Per Day)'},
             {id: 16, title: 'Nutrition:', desc: '(Good Nutritional Choices, Reduce Fat Intake, Increase Fiber)'},
             {id: 17, title: 'Sleep', desc: '(7-9 hrs/day, Good Sleep Hygiene, Limited Caffeine)'},
             {id: 18, title: 'Community Service', desc: '(USO, Red Cross, Habitat for Humanity)'},
