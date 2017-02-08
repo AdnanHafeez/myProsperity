@@ -8,7 +8,7 @@ import * as ReactDOM from 'react-dom';
 import Paper from 'material-ui/Paper';
 import AppBar from 'material-ui/AppBar';
 import Toggle from 'material-ui/Toggle';
-import AppSnackBar from './AppSnackBar';
+import SnackBarNotice from './SnackBarNoticeComponent';
 import AppBarMenuIcon from './AppBarMenuIconDrawer';
 import HomeIcon from 'material-ui/svg-icons/action/home';
 import IconButton from 'material-ui/IconButton';
@@ -16,13 +16,12 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import {push, replace} from 'react-router-redux';
 import { withRouter } from 'react-router';
-import {UpdateDialogContainer} from 'local-t2-app-redux/lib/components';
-
+import {FlashMessageInterface} from './data/workbook';
 import {deviceActions} from 'local-t2-device-redux';
 
 import {userLogin,userLogout} from './actions';
 import Eula from './Eula';
-var {windowResize} = deviceActions;
+
 
 const styles = {
   wrapper: {
@@ -42,6 +41,7 @@ interface MyProps {
   isAuthed: boolean;
   children: any;
   authToggle(isAuthed: boolean): any;
+  flash: FlashMessageInterface;
 }
 
 interface MyState {
@@ -65,7 +65,7 @@ export default class MainComponent extends React.Component<MyProps, MyState>{
   }
 
   componentWillMount () {
-    this.props.dispatch(windowResize(window.innerWidth, window.innerHeight));
+    //this.props.dispatch(windowResize(window.innerWidth, window.innerHeight));
   }
   handleRequestClose () {
     this.setState({
@@ -86,7 +86,7 @@ export default class MainComponent extends React.Component<MyProps, MyState>{
   }
 
   render () {
-    var {isAuthed, authToggle} = this.props;
+    var {isAuthed, authToggle, flash} = this.props;
     return (
         <div style={styles.wrapper}>
             <AppBar
@@ -97,6 +97,7 @@ export default class MainComponent extends React.Component<MyProps, MyState>{
                  />
                 <div style={styles.content as any}>{React.cloneElement(this.props.children, { appBarTitle: this.handleTitle })}</div>
                 <Eula />
+                <SnackBarNotice flash={flash} />
         </div>
     );
   }

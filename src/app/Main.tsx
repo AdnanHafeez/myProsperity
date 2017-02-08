@@ -28,6 +28,8 @@ import ArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
 import { Link } from 'react-router';
 import Divider from 'material-ui/Divider';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import SnackBarNotice from './SnackBarNoticeComponent';
+import {FlashMessageInterface} from './data/workbook';
 
 var {windowResize} = deviceActions;
 
@@ -64,6 +66,7 @@ interface MyProps {
   children: any;
   isAuthed: boolean;
   turnAppOffRedirect(path: string): any;
+  flash: FlashMessageInterface
 }
 
 interface MyState {
@@ -110,7 +113,7 @@ class Main extends React.Component<MyProps, MyState>{
   }
 
   render () {
-    var {isAuthed, turnAppOffRedirect} = this.props;
+    var {isAuthed, turnAppOffRedirect, flash} = this.props;
     return (
         <div style={styles.wrapper}>
             <AppBar
@@ -120,8 +123,8 @@ class Main extends React.Component<MyProps, MyState>{
                 iconElementRight={<Logged isAuthed={isAuthed} turnAppOffRedirect={turnAppOffRedirect} />}
                  />
                 <div style={styles.content as any}>{React.cloneElement(this.props.children, { appBarTitle: this.handleTitle })}</div>
-          <UpdateDialogContainer />
-          <AppSnackBar />
+
+          <SnackBarNotice flash={flash} />
         </div>
     );
   }
@@ -130,7 +133,8 @@ class Main extends React.Component<MyProps, MyState>{
 export default connect(
   (state) => ({
     device: state.device,
-    isAuthed: state.mode === 1
+    isAuthed: state.mode === 1,
+    flash: state.view.flash
   }),
   (dispatch, ownProps) => {
     return {

@@ -14,6 +14,7 @@ export const CORDOVA_INIT_LOGIN_FAIL = 'T2.SECURITY.CORDOVA_INIT_LOGIN_FAIL';
 export const CORDOVA_LOGIN_PIN = 'T2.SECURITY.CORDOVA_LOGIN_PIN';
 export const CORDOVA_LOGIN_RIKEY = 'T2.SECURITY.CORDOVA_LOGIN_RIKEY';
 export const ERROR_MESSAGE = 'T2.SECURITY.ERROR_MESSAGE';
+export const ERROR_MESSAGE_CLEAR = 'T2.SECURITY.ERROR_MESSAGE_CLEAR';
 export const CHANGE_PIN_WITH_ANSWERS = 'T2.SECURITY.CHANGE_PIN_WITH_ANSWERS';
 export const CHANGE_PIN_WITH_PIN = 'T2.SECURITY.CHANGE_PIN_WITH_PIN';
 export const CHANGE_QUESTIONS_WITH_PIN = 'T2.SECURITY.CHANGE_QUESTIONS_WITH_PIN';
@@ -59,35 +60,49 @@ export const changeSecurityQuestions = (data: ChangeQuestionsWithPinInterface) =
   }
   return (dispatch,getState) => {
     dispatch(localAction);
-    if(__IS_CORDOVA_BUILD__){
-      const changeAnswersJSON = {
-         "KEY_PIN": data.currentPin,
-         "KEY_SECURITY_ANSWER_1": data.answer1,
-         "KEY_SECURITY_ANSWER_2": data.answer2,
-         "KEY_SECURITY_ANSWER_3": SecurityAnswer3
-      };
-      (window as any).t2crypto.changeAnswersUsingPin(
-        changeAnswersJSON,
-        function(args){
-          if(args.RESULT === 0) {
-            dispatch(editAllQuestions(data.question1, data.question2));
-            dispatch(cordovaGetRiKey(data.currentPin)); //TODO
-          } else {
-            dispatch(sendErrorMessage('Invalid Pin',410));
+    return new Promise((resolveChangeAnswer,rejectChangeAnswers) => {
+      if(__IS_CORDOVA_BUILD__){
+        const changeAnswersJSON = {
+           "KEY_PIN": data.currentPin,
+           "KEY_SECURITY_ANSWER_1": data.answer1,
+           "KEY_SECURITY_ANSWER_2": data.answer2,
+           "KEY_SECURITY_ANSWER_3": SecurityAnswer3
+        };
+
+        (window as any).t2crypto.changeAnswersUsingPin(
+          changeAnswersJSON,
+          function(args){
+            if(args.RESULT === 0) {
+              dispatch(editAllQuestions(data.question1, data.question2));
+              dispatch(cordovaGetRiKey(data.currentPin)).then(() => {
+                resolveChangeAnswer()
+              }).catch(() => {
+                rejectChangeAnswers(sendErrorMessage('Invalid Pin',413));
+                dispatch(sendErrorMessage('Invalid Pin',413));
+              });
+            } else {
+              rejectChangeAnswers(sendErrorMessage('Invalid Pin',410));
+            }
+          },
+          function(error){
+            if(__DEVTOOLS__){
+              console.log('error changeAnswersUsingPin');
+              console.log(error);
+            }
+            rejectChangeAnswers(sendErrorMessage('Invalid Pin',411));
           }
-        },
-        function(error){
-          if(__DEVTOOLS__){
-            console.log('error changeAnswersUsingPin');
-            console.log(error);
-          }
-          dispatch(sendErrorMessage('Invalid Pin',411));
+        );
+      }else{
+        dispatch(editAllQuestions(data.question1, data.question2));
+        dispatch(getDummyRiKey(data.currentPin));
+        resolveChangeAnswer();
+      }
+    }).catch(function(eMessage){ //dispatchable error message
+        if(__DEVTOOLS__){
+          console.log(eMessage);
         }
-      );
-    }else{
-      dispatch(editAllQuestions(data.question1, data.question2));
-      dispatch(getDummyRiKey(data.currentPin));
-    }
+        dispatch(eMessage);
+    });
   }
 }
 
@@ -108,13 +123,30 @@ export const cordovaInitLoginFail = (message, code = 0) => {
       dispatch(sendErrorMessage(message,code));
   }
 }
-
-export const sendErrorMessage = (message,code) => {
+export const clearErrorMessage = () => {
   return {
+    type: ERROR_MESSAGE_CLEAR
+  }
+}
+export const sendErrorMessage = (message,code) => {
+  const localMessage = {
     type: ERROR_MESSAGE,
     message,
     code
   }
+  let timeoutId;
+  return (dispatch,getState) => {
+    dispatch(localMessage);
+    if(timeoutId){
+      window.clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+        timeoutId = null;
+        dispatch(clearErrorMessage());
+    },3000);
+    return localMessage;
+  }
+
 }
 
 export const cordovaInitLoginSuccess = (pin) => {
@@ -129,11 +161,10 @@ export const cordovaLoginWithRikey = (rikey) => {
     rikey
   }
   return (dispatch,getState) => {
-      dispatch(localAction);
+      
       return new Promise((resolve,reject) => {
-        setTimeout(() => {
+        dispatch(localAction);
           resolve(true);
-        },1000)
       });
   }
 }
@@ -262,13 +293,11 @@ export const cordovaLoginWithPin = (pin) => {
                 if(__DEVTOOLS__){
                   console.log(sendErrorMessage('Invalid Pin',404));
                 }
-              dispatch(sendErrorMessage('Invalid Pin',404));
-              rejectLoginPin(sendErrorMessage('Invalid Pin',404));
+              rejectLoginPin(dispatch(sendErrorMessage('Invalid Pin',404)));
           }
         },
         (error)=>{
-          dispatch(sendErrorMessage('Invalid Pin',405));
-          rejectLoginPin(sendErrorMessage('Invalid Pin',405));
+          rejectLoginPin(dispatch(sendErrorMessage('Invalid Pin',405)));
         });
       } else {
         dispatch(getDummyRiKey(pin));

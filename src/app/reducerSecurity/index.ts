@@ -1,7 +1,6 @@
 import {combineReducers} from 'redux';
 import {routerReducer} from 'react-router-redux';
 import {REHYDRATE} from 'redux-persist/constants';
-
 import * as objectAssign from 'object-assign';
 import {
   EDIT_QUESTION_1,
@@ -14,7 +13,8 @@ import {
   EULA_REJECTED,
   FIPS_IS_SETUP,
   CORDOVA_LOGIN_RIKEY,
-  ERROR_MESSAGE
+  ERROR_MESSAGE,
+  ERROR_MESSAGE_CLEAR
 } from '../actions/security'
 /*
 * The data below could come from a rest server
@@ -191,11 +191,15 @@ export const view = function (state = defaultView, action){
       if(__DEVTOOLS__){
         console.log(action);
       }
-      state.flash.message = action.message;
-      state.flash.open = true;
-      state.flash.type = 'error';
-      state = objectAssign({}, state); 
-      break; 
+      let newFlash = {...state.flash,message: action.message,open: true, type: 'error'};
+      state.flash = newFlash;
+      state = {...state}; 
+      break;
+    case ERROR_MESSAGE_CLEAR:
+      let newFlashClear = {...state.flash,message: '',open: false, type: 'error'};
+      state.flash = newFlashClear;
+      state = {...state};
+      break;
   }
   return state;
 }

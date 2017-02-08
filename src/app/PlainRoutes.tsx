@@ -277,7 +277,7 @@ function onMenuKeyDown() {
 }
 var persistEncryptedConfig =  {
                                       keyPrefix: 't2encryptedPersist',
-                                      blacklist: ['mode','cordova'],
+                                      blacklist: ['mode','cordova','view'],
                                       storage: localForage,
                                       inboundTransform: transformEncryptTransform
                                     };
@@ -352,15 +352,18 @@ class AppProvider extends React.Component<MyProps, MyState> {
                           "KEY_PIN": tempKeyPin,
                           "KEY_INPUT": storedState[objectKey]
                         };
-
-                        console.log('calling decryptRaw for objectKey');
-                        console.log(dataJSON);
-              
+                        if(__DEVTOOLS__){
+                          console.log('calling decryptRaw for objectKey');
+                          console.log(dataJSON);
+                        }
                         (window as any).t2crypto.decryptRaw(dataJSON,(result) => {
                             if(result.RESULT !== -1){
-                                console.log('decrypting');
-                                console.log(result.RESULT);
-                                let parsedResult
+                                if(__DEVTOOLS__){
+                                  console.log('decrypting');
+                                  console.log(result.RESULT);
+                                }
+
+                                let parsedResult;
                                 try {
                                     parsedResult = JSON.parse(result.RESULT);
                                 } catch(e) {
@@ -391,34 +394,34 @@ class AppProvider extends React.Component<MyProps, MyState> {
                   hydratePromises.push(field);
                 });
                 if(isStateEmpty){
-                     console.log("stored state is empty");
+                      if(__DEVTOOLS__){
+                        console.log("stored state is empty");
+                      }
+                      
                       appStore.dispatch(loadAppState(storedState));
                       appStorePersistor.resume();
                       this.setState({ locked: false } as any);
                 } else {
-                 console.log("stored state has data");
+                 if(__DEVTOOLS__){
+                   console.log("stored state has data");
+                 }
                  Promise.all(hydratePromises).then((results) => {
                       let finalStoredState = results.reduce(function(accum,result){
                             let [key,value] = result;
                             accum[key] = value
                             return accum;
                       },{});
-                      console.log('promise array complete');
-                      console.log(finalStoredState);
+                      if(__DEVTOOLS__){
+                        console.log('promise array complete');
+                        console.log(finalStoredState);
+                      }
                       appStore.dispatch(loadAppState(finalStoredState));
                       appStorePersistor.resume();
                       this.setState({ locked: false } as any);
                   }).catch(function(err){
-                    console.log(err);
+                    console.log(err); //TODO handle problems
                   });
                 }
-
-
-                 // store database loaded to reducer here
-                
-                
-                
-                
 
             }).catch(function(err){
                 console.log(err);

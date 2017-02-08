@@ -12,7 +12,9 @@ import {
   changePinWithPin,
   switchToSecurityProvider,
   cordovaLoginWithPin,
-  changePinWithAnswers
+  changePinWithAnswers,
+  changeSecurityQuestions,
+  ChangeQuestionsWithPinInterface
 } from './actions/security';
 import * as assert from 'assert';
 
@@ -55,6 +57,14 @@ const validPinChangeWithAnswers: ChangePinWithQuestionsFormInterface = {
   answer2: validLoginInit1.answer2,
   newPin: '1892'
 };
+
+const validChangeQuestionsWithPin: ChangeQuestionsWithPinInterface = {
+  currentPin: validPinChangeWithAnswers.newPin,
+  answer1: 'hotdog',
+  answer2: 'fluffykitty',
+  question1: '',
+  question2: ''
+}
 
 const ensureCordovaAndPlugins = () => {
   return new Promise((resolve,reject) => {
@@ -197,14 +207,13 @@ const loginWithCorrectPinTest = (validPin) => {
           assert.equal(securityStoreTest.getState().mode,1,'state.mode should be set to 1 after switchToSecurityProvider dispatched 400');
           securityStoreTest.dispatch(cordovaLoginWithPin(validPin)).then(() => {
             assert.equal(securityStoreTest.getState().mode,0,'state.mode should be set to 0 after valid Login 401');
-            resolve();
+            resolve(validPin);
             return true;
           }).catch((e) => {
             if(__DEVTOOLS__){
               console.log("error caught in loginWithCorrectPinTest");
               console.log(e);
             }
-            
             reject(e);
           });
       });
@@ -213,20 +222,20 @@ const loginWithCorrectPinTest = (validPin) => {
   });
 }
 
-const changePinWithAnswersTest = () => {
+const changePinWithAnswersTest = (validPinChangeData) => {
   console.log('changePinWithAnswersTest called');
   return new Promise((resolve, reject) => {
       const unsubscribe = securityStoreTest.subscribe(function(){
           unsubscribe();
           assert.equal(securityStoreTest.getState().mode,1,'state.mode should be set to 1 after switchToSecurityProvider (aka logout) dispatched 402');
-          securityStoreTest.dispatch(changePinWithAnswers(validPinChangeWithAnswers)).then(() => {
+          securityStoreTest.dispatch(changePinWithAnswers(validPinChangeData)).then(() => {
             assert.equal(securityStoreTest.getState().mode,0,'state.mode should be set to 0 after valid Login 401');
-            return validPinChangeWithAnswers.newPin;
+            return validPinChangeData.newPin;
           }).then(function(newPin){
             return loginWithCorrectPinTest(newPin);
           })
-          .then(function(){
-            resolve(true);
+          .then(function(correctPin){
+            resolve(correctPin);
           })
           .catch(function(e){
             if(__DEVTOOLS__){
@@ -239,6 +248,20 @@ const changePinWithAnswersTest = () => {
 
       securityStoreTest.dispatch(switchToSecurityProvider());
   });
+}
+
+const changeSecurityQuestionsTest = (validPin) => {
+  assert.equal(validChangeQuestionsWithPin.currentPin,validPin,'Invalid Pin change from previous test');
+  return securityStoreTest.dispatch(changeSecurityQuestions(validChangeQuestionsWithPin))
+        .then(() => {
+            let newPinChangeWithAnsers:ChangePinWithQuestionsFormInterface = {
+              answer1: validChangeQuestionsWithPin.answer1,
+              answer2: validChangeQuestionsWithPin.answer2,
+              newPin: validPin
+            };
+            return changePinWithAnswersTest(newPinChangeWithAnsers);
+        })
+
 }
 
 
@@ -277,10 +300,14 @@ export class CordovaTests{
         })
         .then(function(result){
           console.log('PASSED: loginWithCorrectPinTest');
-          return changePinWithAnswersTest();
+          return changePinWithAnswersTest(validPinChangeWithAnswers);
+        })
+        .then((validPin) => {
+          console.log('PASSED: changePinWithAnswersTest');
+          return changeSecurityQuestionsTest(validPin);
         })
         .then(() => {
-          console.log('PASSED: changePinWithAnswersTest');
+          console.log('PASSED: changeSecurityQuestionsTest');
           return true;
         })
         .then(function(result){

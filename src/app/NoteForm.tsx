@@ -5,6 +5,7 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import {connect} from 'react-redux';
 import {NoteReducerInterface} from './data/workbook';
+import {topRightButtonStyle} from './commonStyles'
 const validate = values => {
   const errors:any = {}
   if (!values.note) {
@@ -13,19 +14,6 @@ const validate = values => {
   return errors
 }
 
-
-const styles = {
-  layout: {
-    display: 'flex',
-    flexFlow: 'column wrap',
-    justifyContent: 'space-around',
-  },
-  buttonContainer: {
-    display: 'flex',
-    flexFlow: 'row wrap',
-    justifyContent: 'space-between'
-  }
-}
 interface MyProps {
   note: NoteReducerInterface;
   handleSubmit({text: string}): any;
@@ -63,29 +51,28 @@ export default class NoteForm extends React.Component<MyProps, MyState> {
       event.preventDefault();
     }
     return (
-      <form onSubmit={formSubmit}>
-        <div style={styles.layout as any}>
+      <div>
+        <form onSubmit={formSubmit}>
+          <div style={topRightButtonStyle}>
+            <RaisedButton type="submit" primary={true} disabled={false} label="Save" />
+          </div>
+
           <div>
-        <TextField 
-              floatingLabelText={'Note'} 
-              hintText={'Enter Text Here'} 
-              multiLine={true}
-              rows={1}
-              rowsMax={2}
-              name='text'
-              value={this.state.text}
-              fullWidth={true}
-              ref={(input) => { (this as any).textInput = input; }}
-              onChange={this.handleChange}
-              errorText={false} />
+            <TextField 
+                  floatingLabelText={'Note'} 
+                  hintText={'Enter Text Here'} 
+                  multiLine={true}
+                  rows={1}
+                  rowsMax={2}
+                  name='text'
+                  value={this.state.text}
+                  fullWidth={true}
+                  ref={(input) => { (this as any).textInput = input; }}
+                  onChange={this.handleChange}
+                  errorText={false} />
           </div>
-          <div style={styles.buttonContainer as any}>
-            <div>
-              <RaisedButton type="submit" primary={true} disabled={false} label="Save" />
-            </div>
-          </div>
-        </div>
-      </form>
+        </form>
+      </div>
     );
   }
 }

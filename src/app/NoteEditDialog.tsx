@@ -67,10 +67,17 @@ class NoteEditDialog extends React.Component<MyProps, MyState> {
   }
 }
 
+const getNote = (loadedNoteId, notes) => {
+  let note = noteFactory(0,'')
+  if(loadedNoteId > 0 && typeof notes[loadedNoteId + ''] !== 'undefined'){
+     note = notes[loadedNoteId + ''];
+  }
+  return note;
+}
 const stateToProps = (state) => {
   return {
     open: state.loadedNoteId > -1,
-    note: state.loadedNoteId > 0 ? state.notes[state.loadedNoteId + ''] : noteFactory(0,'')
+    note: getNote(state.loadedNoteId,state.notes)
   }
 }
 

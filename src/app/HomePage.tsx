@@ -5,8 +5,9 @@ import {GridList, GridTile} from 'material-ui/GridList';
 
 import Subheader from 'material-ui/Subheader';
 import { Link, browserHistory } from 'react-router';
+import RaisedButton from 'material-ui/RaisedButton';
 import { connect } from 'react-redux';
-import {showFlashMessage } from './actions';
+import {showFlashMessage , sendErrorMessage} from './actions';
 import { push } from 'react-router-redux';
 
 const styles = {
@@ -25,7 +26,6 @@ const styles = {
 
 interface MyProps {
   appBarTitle(msg: string): any;
-  device: any;
   flashMessage(msg: string): any;
   onTileClick(path: string): any;
 }
@@ -44,7 +44,7 @@ class HomePage extends React.Component<MyProps, MyState> {
   }
 
   render () {
-    var {flashMessage, appBarTitle, onTileClick, device} = this.props;
+    var {flashMessage, appBarTitle, onTileClick} = this.props;
 
 
     return (
@@ -60,14 +60,14 @@ class HomePage extends React.Component<MyProps, MyState> {
       <p><b>Timeline</b> – A goal should be grounded within a time frame. If you want to lose 10 pounds, by when do you want to achieve this goal?
       </p>
       </div>
+     
     </div>);
   }
 
 };
-
+let errCount = 0;
 const mapStateToProps = (state) => {
   return {
-    device: state.device
   };
 };
 

@@ -30,7 +30,7 @@ class GoalEditDialog extends React.Component<MyProps, MyState> {
   render() {
     const {editGoal, goalDelete, open, handleClose, goal, workbook} = this.props;
 
-
+    console.log(goal);
 
     const actions = [
       <FlatButton
@@ -66,14 +66,19 @@ class GoalEditDialog extends React.Component<MyProps, MyState> {
     );
   }
 }
-
+const getGoal = (loadedGoalId, goals) => {
+  let goal = goalFactory(0,'');
+  if(loadedGoalId > 0 && typeof goals[loadedGoalId + ''] !== 'undefined'){
+    goal = goals[loadedGoalId + ''];
+  }
+  goal.dueDate = Transforms.msToDate(goal.dueDate);
+  return goal;
+}
 const stateToProps = (state) => {
-  let goal = state.loadedGoalId > 0 ? state.goals[state.loadedGoalId + ''] : goalFactory(0,'');
-
 
   return {
     open: state.loadedGoalId > 0,
-    goal: {...goal,dueDate: Transforms.msToDate(goal.dueDate)}
+    goal: getGoal(state.loadedGoalId, state.goals)
   }
 }
 
@@ -81,7 +86,7 @@ const dispatchToProps = (dispatch,ownProps) => {
   return {
      editGoal: (goal) => { 
        return (goal: GoalReducerInterface) => {
-         console.log(goal);
+
          dispatch(goalEdit(ownProps.workbook.id,
              goal.id,
              {...goal, dueDate: Transforms.dateToMS(goal.dueDate)})); 

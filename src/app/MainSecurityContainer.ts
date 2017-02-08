@@ -4,7 +4,8 @@ import { connect } from 'react-redux';
 
 const stateToProps = (state) => {
   return {
-    isAuthed: state.sUser.isAuthenticated
+    isAuthed: state.sUser.isAuthenticated,
+    flash: state.view.flash
   }
 }
 

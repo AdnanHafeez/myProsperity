@@ -6,7 +6,7 @@ import TextField from 'material-ui/TextField';
 import MenuItem from 'material-ui/MenuItem';
 import FlatButton from 'material-ui/FlatButton';
 import {SetPinFormInterface} from './actions/security';
-
+import {labelStyle,fieldErrorStyle} from './commonStyles';
 
 interface FormErrors {
   isValid: boolean;
@@ -28,6 +28,8 @@ const validateForm = (values: SetPinFormInterface): any => {
       case 'pin':
         if(values.pin !== values.pinConfirm){
           results.fields[propName] = 'Your pins must match.';
+        } else if (values.pin.length < 4){
+          results.fields[propName] = 'Your pin must be at least 4 characters';
         }
         break;
       case 'pinConfirm':
@@ -128,12 +130,12 @@ export default class SecuritySetQuestionsContainer extends React.Component<MyPro
     return (
       <form onSubmit={this.handleSubmit}>
         <div>
-          <TextField 
-                floatingLabelText={'Enter Pin'} 
-                hintText={''} 
-                multiLine={false}
-                name='pin'
-                errorText={this.state.errors.pin} value={this.state.values.pin} onChange={this.handleChange} />
+          <label>
+            <div style={labelStyle}>Pin</div>
+            <input type="text" name='pin' value={this.state.values.pin} onChange={this.handleChange}  />
+
+          </label>
+          <div style={fieldErrorStyle}>{this.state.errors.pin}</div>
         </div>
         <div>
           <TextField 
@@ -145,7 +147,6 @@ export default class SecuritySetQuestionsContainer extends React.Component<MyPro
         </div>
         <div>
             <div><label>Question 1</label></div>
-            <div>{this.state.errors.question1}</div>
             <select 
               value={this.state.values.question1} 
               onChange={this.questionSelectChange('question1') as any}
@@ -156,6 +157,7 @@ export default class SecuritySetQuestionsContainer extends React.Component<MyPro
                   return <option key={'q1_' + question.id} value={question.id}>{question.title}</option>
               })}
             </select>
+            <div>{this.state.errors.question1}</div>
         </div>
         <div>
           <TextField 
@@ -167,7 +169,7 @@ export default class SecuritySetQuestionsContainer extends React.Component<MyPro
         </div>
         <div>
             <div><label>Question 2</label></div>
-            <div>{this.state.errors.question2}</div>
+            
             <select 
               value={this.state.values.question2} 
               onChange={this.questionSelectChange('question2') as any}
@@ -178,6 +180,7 @@ export default class SecuritySetQuestionsContainer extends React.Component<MyPro
                   return <option key={'q2_' + question.id} value={question.id}>{question.title}</option>
               })}
             </select>
+            <div>{this.state.errors.question2}</div>
         </div>
         <div>
         <TextField 

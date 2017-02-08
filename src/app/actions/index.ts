@@ -22,12 +22,39 @@ export const LOAD_APP_STATE = 'T2.LOAD_APP_STATE';
 export const SWITCH_TO_APP_PROVIDER = 'T2.APP.SWITCH_TO_APP_PROVIDER';
 export const SWITCH_TO_SECURITY_PROVIDER = 'T2.APP.SWITCH_TO_SECURITY_PROVIDER';
 export const CORDOVA_DEVICE_READY = 'T2.APP.CORDOVA_DEVICE_READY';
+export const ERROR_MESSAGE = 'T2.ERROR_MESSAGE';
+export const ERROR_MESSAGE_CLEAR = 'T2.ERROR_MESSAGE_CLEAR';
 
 import {WorkbookReducerInterface, GoalReducerInterface, GoalFormItemInterface, NoteFormItemInterface, NoteReducerInterface} from '../data/workbook';
 import {nextId} from '../reducers';
 import {goalFactory} from '../reducers/workbook';
 import {noteFactory} from '../reducers/note';
 
+export const clearErrorMessage = () => {
+  return {
+    type: ERROR_MESSAGE_CLEAR
+  }
+}
+export const sendErrorMessage = (message,code) => {
+  const localMessage = {
+    type: ERROR_MESSAGE,
+    message,
+    code
+  }
+  let timeoutId;
+  return (dispatch,getState) => {
+    dispatch(localMessage);
+    if(timeoutId){
+      window.clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+        timeoutId = null;
+        dispatch(clearErrorMessage());
+    },3000);
+    return localMessage;
+  }
+
+}
 
 export const goalCompleted = (goal: GoalReducerInterface) => {
   return goalStatusChange(goal.id,1);

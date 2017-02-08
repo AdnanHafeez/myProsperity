@@ -1,6 +1,7 @@
 import {
 	SHOW_FLASH_MESSAGE,
-	HIDE_FLASH_MESSAGE
+	HIDE_FLASH_MESSAGE,
+	ERROR_MESSAGE
 } from '../actions'
 
 import {deviceReducer, deviceActions} from 'local-t2-device-redux';
@@ -13,17 +14,23 @@ import * as objectAssign from 'object-assign';
 * and should be kept separate from rest of the state.
 */
 const defaultView = {
-	flash: {
-		message: '',
-		open: false
-	},
-	tabs: {
-		mainTab: 0
-	}
+  flash: {
+    message: '',
+    open: false,
+    type: 'notice'
+  }
 };
 
 export const view = function (state = defaultView, action){
-	switch(action.type){
+  switch(action.type){
+    case ERROR_MESSAGE: //Display an action message
+      if(__DEVTOOLS__){
+        console.log(action);
+      }
+      let newFlash = {...state.flash,message: action.message,open: true, type: 'error'};
+      state.flash = newFlash;
+      state = {...state}; 
+      break; 
 		case SHOW_FLASH_MESSAGE: //Display an action message
 			state.flash.message = action.text;
 			state.flash.open = true;
@@ -32,14 +39,6 @@ export const view = function (state = defaultView, action){
 			state.flash.message = '';
 			state.flash.open = false;
 			return objectAssign({}, state);
-		case TAB_CHANGE_INDEX:
-			//console.log();
-			if(typeof state.tabs[action.id] !== 'undefined'){
-				state.tabs[action.id] = action.index;
-				return objectAssign({}, state);
-			}
-			return state;
-			 
-	}
-	return state;
+  }
+  return state;
 }

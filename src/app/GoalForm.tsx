@@ -7,7 +7,7 @@ import {connect} from 'react-redux';
 import DatePicker from 'material-ui/DatePicker';
 import Checkbox from 'material-ui/Checkbox';
 import {Transforms,Validators} from './lib/helpers';
-
+import {topRightButtonStyle} from './commonStyles'
 import {GoalReducerInterface, WorkbookReducerInterface} from './data/workbook';
 interface GoalFormInterface {
   title: string;
@@ -48,18 +48,7 @@ const validateForm = (values:{title: string,dueDate: any}): any => {
 
   return results;
 }
-const styles = {
-  layout: {
-    display: 'flex',
-    flexFlow: 'column wrap',
-    justifyContent: 'space-around',
-  },
-  buttonContainer: {
-    display: 'flex',
-    flexFlow: 'row wrap',
-    justifyContent: 'space-between'
-  }
-}
+
 const CalendarToggle = (props) => {
   const {checked,label,dueDateChecked} = props;
 
@@ -142,8 +131,12 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
   render(){
 
     return (
+      <div>
       <form onSubmit={this.handleSubmit}>
-      <div style={styles.layout as any}>
+      
+        <div style={topRightButtonStyle}>
+          <RaisedButton type="submit" label="Save" />
+        </div>
         <div>
         <TextField 
               floatingLabelText={'Goal'} 
@@ -176,14 +169,13 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
                 onChange={this.handleDateChange('dueDate')}
                 disabled={!this.state.dueDateChecked} 
                 name='dueDate'
-                autoOk={true} />
+                autoOk={false} />
           </div>
         </div>
-        <div>
-          <RaisedButton type="submit" label="Save" />
-        </div>
-      </div>
+
+      
       </form>
+      </div>
     );
   }
 }

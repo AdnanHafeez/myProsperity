@@ -128,8 +128,11 @@ const rootReducer = (state, action) => {
       state.notes = undefined;
       state.noteIds = undefined;
   } else if (action.type === LOAD_APP_STATE) {
-    console.log(action.storedState);
-    console.log(state);
+    if(__DEVTOOLS__){
+      console.log(action.storedState);
+      console.log(state);
+    }
+
     return objectAssign({},state,action.storedState,{mode: 1});
   }
 

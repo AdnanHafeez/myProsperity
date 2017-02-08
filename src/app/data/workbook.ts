@@ -8,6 +8,11 @@ export interface GoalRawInterface {
   title: string;
   desc: string;
 }
+export interface FlashMessageInterface {
+  message: number;
+  type?: string;
+  open: boolean;
+}
 export interface WorkbookRawInterface {
   id: number;
   title: string;
