@@ -8,7 +8,7 @@ import {List, ListItem} from 'material-ui/List';
 
 interface MyProps {
   title: string;
-  items: {id: any, title: string}[];
+  items: {id: any, title: string, desc: string}[];
 }
 
 interface MyState {
@@ -50,7 +50,7 @@ export default class BasicDialog extends React.Component<MyProps, MyState> {
           autoScrollBodyContent={true}
         >
         <List>
-          {items.map((item) => (<ListItem key={item.id} primaryText={item.title} />))}
+          {items.map((item) => (<ListItem key={item.id} primaryText={item.title} secondaryText={item.desc} />))}
         </List>
         </Dialog>
       </div>
