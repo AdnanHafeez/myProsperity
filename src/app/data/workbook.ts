@@ -62,7 +62,7 @@ export const wbData: WorkbookRawInterface[] = [
         { id:1, title: 'Relationships', examples: [
             {id: 1,title: 'Community', desc: '(Lead, Organize, Support Agencies, Volunteer, Cultural Arts)'},
             {id: 2,title: 'Leisure', desc: '("Down Time," Activities, Sports, Vacations)"'},
-            {id: 3,title: 'Family',desc: ': (Prioritize, Quality Time, Special/Important Events)'},
+            {id: 3,title: 'Family',desc: '(Prioritize, Quality Time, Special/Important Events)'},
             {id: 4,title: 'Friendships',desc: '(Birthdays, Events, Interaction/Nurture)'},
             {id: 5,title: 'Diversity',desc: '(Cultural Events, Exchanges, Tours)'},
             {id: 6,title: 'Marital',desc: '(Anniversaries, Couples’ Retreats, Dating)'},
@@ -85,7 +85,7 @@ export const wbData: WorkbookRawInterface[] = [
             {id: 15, title: 'Activity', desc: ': (Overall Fitness, Yoga, 10,000 Steps Per Day)'},
             {id: 16, title: 'Nutrition:', desc: '(Good Nutritional Choices, Reduce Fat Intake, Increase Fiber)'},
             {id: 17, title: 'Sleep', desc: '(7-9 hrs/day, Good Sleep Hygiene, Limited Caffeine)'},
-            {id: 18, title: 'Community Service', desc: ': (USO, Red Cross, Habitat for Humanity)'},
+            {id: 18, title: 'Community Service', desc: '(USO, Red Cross, Habitat for Humanity)'},
             {id: 19, title: 'Emotional Wellness', desc: '(Mindfulness, Lunch Away from Desk, Relaxation Techniques, Artistic Expression, Seek Help/Advice)'},
             {id: 20, title: 'Financial Investment', desc: '(Savings Plan, Debt Reduction, Credit Management, Investment Plan)'},
             {id: 21, title: 'Wellness Exams', desc: '(Physical Exam, Dental, Well-Woman Exam )'},

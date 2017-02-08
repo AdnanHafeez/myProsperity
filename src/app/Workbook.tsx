@@ -102,7 +102,7 @@ class Workbook extends React.Component<MyProps, MyState> {
             return (<ListItem key={item.id} primaryText={makeTitle(item)} 
                               onTouchTap={() => goalStatusClick(item)}
                               color='red'
-                              rightIcon={item.dueDate >= 0 && item.dueDate < dateNowMs && item.status !== 1 ? <ErrorIcon color='red' /> : null}
+                              rightIcon={item.dueDate && item.dueDate > 0 && item.dueDate < dateNowMs && item.status !== 1 ? <ErrorIcon color='red' /> : null}
                               leftIcon={item.status === 1 ? <ToggoleCheckBox color="green" /> : <ToggoleCheckBoxOutline color="grey"/>} 
                                 />)
           });
