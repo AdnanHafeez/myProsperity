@@ -41,3 +41,16 @@ export const fieldErrorStyle = {
 export const fieldRowStyle = {
   marginBottom: '5px'
 }
+
+
+export const listItemRow = {
+
+}
+
+export const listItemTitle = { //intended for h3
+  marginBottom: 0
+}
+
+export const listItemSubTitle = { //intended for h3
+  marginTop: 0
+}
