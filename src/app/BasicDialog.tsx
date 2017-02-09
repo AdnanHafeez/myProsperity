@@ -45,7 +45,7 @@ export default class BasicDialog extends React.Component<MyProps, MyState> {
 
     return (
       <div>
-        <MenuItem key={'setting_' + title} primaryText={title} onTouchTap={this.toggleOpen} />
+        <FlatButton label={title} onTouchTap={this.handleOpen} />
         
 
         <Dialog

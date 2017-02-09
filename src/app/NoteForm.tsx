@@ -5,7 +5,7 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import {connect} from 'react-redux';
 import {NoteReducerInterface} from './data/workbook';
-import {topRightButtonStyle} from './commonStyles'
+import {subMenuFlexContainerStyle} from './commonStyles';
 const validate = values => {
   const errors:any = {}
   if (!values.note) {
@@ -17,6 +17,8 @@ const validate = values => {
 interface MyProps {
   note: NoteReducerInterface;
   handleSubmit({text: string}): any;
+  handleClose(any): any;
+  noteDelete(noteId: number): any;
 }
 
 interface MyState {
@@ -45,17 +47,18 @@ export default class NoteForm extends React.Component<MyProps, MyState> {
    
   }
   render(){
-    const {handleSubmit,note} = this.props;
+    const {handleSubmit,note,handleClose,noteDelete} = this.props;
     const formSubmit = (event) => {
       handleSubmit({text: this.state.text});
       event.preventDefault();
     }
+    let deleteButton = null;
+    if(note.id > 0){
+      deleteButton = <RaisedButton onTouchTap={() => noteDelete(note.id)} label="delete" />;
+    }
     return (
       <div>
         <form onSubmit={formSubmit}>
-          <div style={topRightButtonStyle}>
-            <RaisedButton type="submit" primary={true} disabled={false} label="Save" />
-          </div>
 
           <div>
             <TextField 
@@ -70,6 +73,17 @@ export default class NoteForm extends React.Component<MyProps, MyState> {
                   ref={(input) => { (this as any).textInput = input; }}
                   onChange={this.handleChange}
                   errorText={false} />
+          </div>
+          <div style={subMenuFlexContainerStyle as any}>
+            <div>
+              <RaisedButton primary={true} type="submit" label="Save" />
+            </div>
+            <div>
+              {deleteButton}
+            </div>
+            <div>
+              <RaisedButton onTouchTap={handleClose} type="button" label="Cancel" />
+            </div>
           </div>
         </form>
       </div>

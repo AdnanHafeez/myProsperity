@@ -7,7 +7,7 @@ import {connect} from 'react-redux';
 import DatePicker from 'material-ui/DatePicker';
 import Checkbox from 'material-ui/Checkbox';
 import {Transforms,Validators} from './lib/helpers';
-import {topRightButtonStyle} from './commonStyles'
+import {subMenuFlexContainerStyle} from './commonStyles'
 import {GoalReducerInterface, WorkbookReducerInterface} from './data/workbook';
 interface GoalFormInterface {
   title: string;
@@ -30,7 +30,7 @@ const validateForm = (values:{title: string,dueDate: any}): any => {
         }
         break;
       case 'dueDate':
-        if(values.dueDate !== null && !Validators.isNumeric(values.dueDate)){
+        if(!Validators.isNumeric(values.dueDate) || values.dueDate === -1){
           results.fields[propName] = 'Please select a date.'
         }
         break;
@@ -62,10 +62,10 @@ interface MyProps {
   workbook: WorkbookReducerInterface;
   submitData(goal: GoalReducerInterface): any;
   handleClose?():any;
+  goalDelete(workbookId:number,goalId:number): any;
 }
 
 interface MyState {
-   dueDateChecked: boolean;
    errors: GoalFormInterface;
    values: GoalFormInterface;
 }
@@ -81,7 +81,6 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
     console.log(props.goal);
 
     this.state = {
-      dueDateChecked: props.goal.dueDate && props.goal.dueDate > 0,
       errors: {title: '', dueDate: ''},
       values: {title: props.goal.title, dueDate: props.goal.dueDate}
     };
@@ -109,18 +108,7 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
     }
   }
 
-  handleDueDateCheck = (event, isInputChecked) => {
-    if(!isInputChecked){
-      this.setState({
-        values: {...this.state.values,dueDate: null},
-        dueDateChecked: isInputChecked
-      } as any);
-    }else{
-      this.setState({
-        dueDateChecked: isInputChecked
-      } as any);
-    }
-  }
+
   handleSubmit = (event) => {
     const {submitData} = this.props;
     const result = validateForm(this.state.values);
@@ -137,15 +125,17 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
     event.preventDefault();
   }
   render(){
-    const {handleClose} = this.props
+    const {handleClose,workbook,goal,goalDelete} = this.props
+    let deleteButton = null;
+    if(goal.id > 0){
+      deleteButton = <RaisedButton onTouchTap={() => goalDelete(workbook.id,goal.id)} label="delete" />;
+    }
+
     return (
       <div>
       <form onSubmit={this.handleSubmit}>
       
-        <div style={topRightButtonStyle}>
-          <RaisedButton type="submit" label="Save" />
-          <RaisedButton onTouchTap={handleClose} type="button" label="Cancel" />
-        </div>
+
         <div>
         <TextField 
               floatingLabelText={'Goal'} 
@@ -162,26 +152,28 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
         </div>
         <div>
           <div>
-            <CalendarToggle 
-              date={this.state.values.dueDate} 
-              label="Set Due Date" 
-              dueDateChecked={this.handleDueDateCheck}
-              checked={this.state.dueDateChecked}
-              />
-          </div>
-          <div>
             <DatePicker 
                 value={Transforms.msToDate(this.state.values.dueDate)}
                 hintText="Due Date" 
                 locale={'en-US'}
+                firstDayOfWeek={0}
                 errorText={this.state.errors.dueDate}
                 onChange={this.handleDateChange('dueDate')}
-                disabled={!this.state.dueDateChecked} 
                 name='dueDate'
                 autoOk={false} />
           </div>
         </div>
-
+        <div style={subMenuFlexContainerStyle as any}>
+          <div>
+          <RaisedButton primary={true} type="submit" label="Save" />
+          </div>
+          <div>
+            {deleteButton}
+          </div>
+          <div>
+          <RaisedButton onTouchTap={handleClose} type="button" label="Cancel" />
+          </div>
+        </div>
       
       </form>
       </div>

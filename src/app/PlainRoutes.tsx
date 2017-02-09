@@ -27,7 +27,7 @@ import * as objectAssign from 'object-assign';
 //import createEncryptor from 'redux-persist-transform-encrypt';
 import localForage from 'localForage';
 import createAsyncEncryptor from 'redux-persist-transform-encrypt/async';
-import {userLogout,encryptedDbPaused,loadAppState} from './actions';
+import {userLogout,encryptedDbPaused,loadAppState,turnAppOff} from './actions';
 
 import {securityStore,securityRoutes} from './SecurityProvider';
 import createPersistorAdapter from './persistStoreAdapter';
@@ -274,6 +274,7 @@ export const onCordovaDeviceReady = () => {
 
 function onPause() {
     console.log('cordova pause');
+    appStore.dispatch(turnAppOff('/'));
 }
 
 function onResume() {

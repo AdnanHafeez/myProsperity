@@ -102,12 +102,14 @@ const sortByMsDate = (goalsArray,direction = 'asc') => {
 
 const concatAllGoals = (goalIds,goalOb) => {
           /* list first */
+          /*
   if(__DEVTOOLS__){
       console.log(filterPastDueIncomplete(goalIds,goalOb));
       console.log(filterCommingDueIncomplete(goalIds,goalOb));
       console.log(filterNoDateAndIncomplete(goalIds,goalOb));
       console.log(filterComplete(goalIds,goalOb));
   }
+  */
   return filterPastDueIncomplete(goalIds,goalOb).
             concat(
               /* list second */
@@ -125,7 +127,6 @@ const mapStateToProps = (state, ownProps) => {
     workbook: state.workbooks[ownProps.params.id],
     examples: state.workbooks[ownProps.params.id].examples.map((eid) => (state.examples[eid + ''])),
     goals: concatAllGoals(state.workbooks[ownProps.params.id].goals,state.goals),
-    isOnline: true,
     goalEdit: state.loadedGoalId > -1,
   };
 };
@@ -138,7 +139,11 @@ const dispatchToProps = (dispatch) => {
     },
     goalDelete: (workbookId,goalId: number) => {
       dispatch(goalDeleted(workbookId,goalId))
-    }
+      dispatch(goalLoad(-1))
+    },
+     goalOpenNew: () => {
+       dispatch(goalLoad(0))
+     },
   }
 }
 

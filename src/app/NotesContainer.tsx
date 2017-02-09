@@ -5,14 +5,18 @@ import {WorkbookReducerInterface, NoteReducerInterface, NoteFormItemInterface} f
 const mapStateToProps = (state, ownProps) => {
   return {
     notes: state.noteIds.map((nid) => (state.notes[nid + ''])),
-    isOnline: true
+    isOnline: true,
+    noteEditMode: state.loadedNoteId > -1
   };
 };
 
 const dispatchToProps = (dispatch) => {
   return {
     noteEdit: (note: NoteReducerInterface) => dispatch(noteLoad(note.id)),
-    noteDelete: (noteId: number) => dispatch(noteDelete(noteId)),
+    noteDelete: (noteId: number) => {
+      dispatch(noteLoad(-1));
+      dispatch(noteDelete(noteId));
+    },
     noteLoad: () => dispatch(noteLoad(0))
   }
 }
