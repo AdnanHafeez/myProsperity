@@ -51,10 +51,17 @@ const CalendarToggle = (props) => {
 
   return <Checkbox onCheck={dueDateChecked} checked={checked} label={label} />;
 }
+
+
+
+
+
+
 interface MyProps {
   goal: GoalReducerInterface;
   workbook: WorkbookReducerInterface;
   submitData(goal: GoalReducerInterface): any;
+  handleClose?():any;
 }
 
 interface MyState {
@@ -62,6 +69,12 @@ interface MyState {
    errors: GoalFormInterface;
    values: GoalFormInterface;
 }
+
+
+
+
+
+
 export default class GoalForm extends React.Component<MyProps, MyState>{
   constructor (props, context) {
     super(props, context);
@@ -124,13 +137,14 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
     event.preventDefault();
   }
   render(){
-
+    const {handleClose} = this.props
     return (
       <div>
       <form onSubmit={this.handleSubmit}>
       
         <div style={topRightButtonStyle}>
           <RaisedButton type="submit" label="Save" />
+          <RaisedButton onTouchTap={handleClose} type="button" label="Cancel" />
         </div>
         <div>
         <TextField 

@@ -16,6 +16,7 @@ import ErrorIcon from 'material-ui/svg-icons/alert/error';
 import Checkbox from 'material-ui/Checkbox';
 import IconButton from 'material-ui/IconButton';
 import RaisedButton from 'material-ui/RaisedButton';
+import GoalEditComponent from './GoalEditComponent';
 import {topRightButtonStyle, subMenuFlexContainerStyle} from './commonStyles';
 import {Transforms,Validators,Formats} from './lib/helpers';
 
@@ -36,7 +37,7 @@ interface MyProps {
   goalEditClick(goal: GoalReducerInterface): any;
   goalStatusClick(goal: GoalReducerInterface): any;
   goalDelete(workbookId:number, goalId: number): any;
-
+  goalEdit: boolean;
 }
 
 interface MyState {
@@ -66,9 +67,14 @@ class Workbook extends React.Component<MyProps, MyState> {
   }
 
   render () {
-    const {workbook, isOnline, examples, goals, goalEditClick, goalStatusClick, goalDelete} = this.props;
+    const {goalEdit, workbook, isOnline, examples, goals, goalEditClick, goalStatusClick, goalDelete} = this.props;
     let listItems;
     let actionToggleButton;
+   
+    if(goalEdit){
+        return <GoalEditComponent workbook={workbook} />
+    }
+
 
     const goalOpenEdit = (item) => {
 
@@ -96,7 +102,7 @@ class Workbook extends React.Component<MyProps, MyState> {
     if(this.state.editMode){
       actionToggleButton = <RaisedButton  primary={true} onTouchTap={this.handleEditToggle} label="Done" />;
       listItems = goals.map((item) => {
-            return (<ListItem key={item.id} primaryText={makeTitle(item)} 
+            return (<ListItem key={'edit_' + item.id} primaryText={makeTitle(item)} 
                               onTouchTap={goalOpenEdit(item)}
                               rightIcon={<EditIcon  />}  />)
           });
@@ -104,7 +110,7 @@ class Workbook extends React.Component<MyProps, MyState> {
       actionToggleButton = <RaisedButton  onTouchTap={this.handleEditToggle} label="Edit Goals" />;;
       listItems = goals.map((item) => {
 
-            return (<ListItem key={item.id} primaryText={makeTitle(item)} 
+            return (<ListItem key={'view_' + item.id} primaryText={makeTitle(item)} 
                               onTouchTap={() => goalStatusClick(item)}
                               color='red'
                               rightIcon={item.dueDate && item.dueDate > 0 && item.dueDate < dateNowMs && item.status !== 1 ? <ErrorIcon color='red' /> : null}

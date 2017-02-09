@@ -60,7 +60,7 @@ class GoalEditDialog extends React.Component<MyProps, MyState> {
           contentStyle={fullWidthDialagStyle}
         >
 
-          <GoalForm workbook={workbook} goal={goal} submitData={editGoal(goal)} />
+          <GoalForm handleClose={handleClose} workbook={workbook} goal={goal} submitData={editGoal(goal)} />
         </Dialog>
       </div>
     );

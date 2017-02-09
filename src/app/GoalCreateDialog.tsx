@@ -73,7 +73,7 @@ class GoalCreateDialog extends React.Component<MyProps, MyState> {
             contentStyle={fullWidthDialagStyle}
           >
 
-          <GoalForm submitData={addGoal} workbook={workbook} goal={goal} ref='goalForm' />
+          <GoalForm handleClose={handleClose} submitData={addGoal} workbook={workbook} goal={goal} ref='goalForm' />
         </Dialog>
       </div>
     );

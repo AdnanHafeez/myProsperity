@@ -58,7 +58,7 @@ const filterHasDateAndIncomplete = (goalIds,goalsObject) => {
                   return false;
                 }
                 //has no date so we don't want it
-                if(!Validators.isNumeric(goal.dueDate)){
+                if(!Validators.isNumeric(goal.dueDate) || goal.dueDate < 0){
                   return false;
                 }
                 return true;
@@ -102,7 +102,12 @@ const sortByMsDate = (goalsArray,direction = 'asc') => {
 
 const concatAllGoals = (goalIds,goalOb) => {
           /* list first */
-
+  if(__DEVTOOLS__){
+      console.log(filterPastDueIncomplete(goalIds,goalOb));
+      console.log(filterCommingDueIncomplete(goalIds,goalOb));
+      console.log(filterNoDateAndIncomplete(goalIds,goalOb));
+      console.log(filterComplete(goalIds,goalOb));
+  }
   return filterPastDueIncomplete(goalIds,goalOb).
             concat(
               /* list second */
@@ -115,11 +120,13 @@ const concatAllGoals = (goalIds,goalOb) => {
 
 };
 const mapStateToProps = (state, ownProps) => {
+  console.log(concatAllGoals(state.workbooks[ownProps.params.id].goals,state.goals));
   return {
     workbook: state.workbooks[ownProps.params.id],
     examples: state.workbooks[ownProps.params.id].examples.map((eid) => (state.examples[eid + ''])),
     goals: concatAllGoals(state.workbooks[ownProps.params.id].goals,state.goals),
-    isOnline: true
+    isOnline: true,
+    goalEdit: state.loadedGoalId > -1,
   };
 };
 
