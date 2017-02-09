@@ -73,6 +73,7 @@ class Workbook extends React.Component<MyProps, MyState> {
     const {goalEdit, workbook, examples, goals, goalEditClick, goalStatusClick, goalDelete, goalOpenNew} = this.props;
     let listItems;
     let actionToggleButton;
+    let createNewGoalButton;
    
     if(goalEdit){
         return <GoalEditComponent workbook={workbook} goalDelete={goalDelete} />
@@ -103,6 +104,7 @@ class Workbook extends React.Component<MyProps, MyState> {
     const dateNowMs = dateNow.getTime();
 
     if(this.state.editMode){
+      createNewGoalButton = null;
       actionToggleButton = <RaisedButton  primary={true} onTouchTap={this.handleEditToggle} label="Done" />;
       listItems = goals.map((item) => {
             return (<ListItem key={'edit_' + item.id} primaryText={makeTitle(item)} 
@@ -110,6 +112,11 @@ class Workbook extends React.Component<MyProps, MyState> {
                               rightIcon={<EditIcon  />}  />)
           });
     }else{
+      createNewGoalButton = <FloatingActionButton  onTouchTap={goalOpenNew} style={foatingButtonStyle as any}>
+                              <ContentAdd />
+                            </FloatingActionButton>;
+
+
       actionToggleButton = <RaisedButton  onTouchTap={this.handleEditToggle} label="Edit Goals" />;;
       listItems = goals.map((item) => {
 
@@ -124,9 +131,7 @@ class Workbook extends React.Component<MyProps, MyState> {
 
     return (
       <div>
-        <FloatingActionButton  onTouchTap={goalOpenNew} style={foatingButtonStyle as any}>
-          <ContentAdd />
-        </FloatingActionButton>
+        {createNewGoalButton}
         <div style={subMenuFlexContainerStyle as any}>
           <div>
             <BasicDialog title={'Examples'} items={examples} />
