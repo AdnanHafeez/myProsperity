@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import NoteEditDialog from './NoteEditDialog';
 import {connect} from 'react-redux';
 import BasicDialog from './BasicDialog';
 import {WorkbookReducerInterface,NoteReducerInterface} from './data/workbook';
@@ -11,6 +10,7 @@ import IconButton from 'material-ui/IconButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import RaisedButton from 'material-ui/RaisedButton';
+import NoteEditComponent from './NoteEditComponent';
 import {foatingButtonStyle,topRightButtonStyle, subMenuFlexContainerStyle} from './commonStyles';
 
 const styles = {
@@ -27,6 +27,7 @@ interface MyProps {
   noteEdit(note: NoteReducerInterface): any;
   noteDelete(noteId: number): any;
   noteLoad(): any;
+  noteEditMode: boolean;
 }
 
 interface MyState {
@@ -38,8 +39,10 @@ class Workbook extends React.Component<MyProps, MyState> {
   }
 
   render () {
-    const {isOnline, noteEdit, notes, noteDelete,noteLoad} = this.props;
-
+    const {isOnline, noteEdit, notes, noteDelete,noteLoad,noteEditMode} = this.props;
+    if(noteEditMode){
+      return <NoteEditComponent />
+    }
     return (
       <div>
         <List>
@@ -53,7 +56,6 @@ class Workbook extends React.Component<MyProps, MyState> {
           <FloatingActionButton  onTouchTap={() => noteLoad()} style={foatingButtonStyle}>
             <ContentAdd />
           </FloatingActionButton>
-        <NoteEditDialog />
       </div>
     );
   }

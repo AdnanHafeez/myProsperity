@@ -43,35 +43,84 @@ const styles = {
   }
 };
 
-// const {isAuthed,authToggle} = props;
-const Logged = (props) => {
-  const {isAuthed,turnAppOffRedirect} = props;
-  return (<IconMenu
-    iconButtonElement={
-      <IconButton><MoreVertIcon /></IconButton>
-    }
-    targetOrigin={{horizontal: 'right', vertical: 'top'}}
-    anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-  >
-    <MenuItem  primaryText="Change Pin" onTouchTap={() => turnAppOffRedirect('/security/changepin')}  />
-    <MenuItem  primaryText="Edit Security Questions" onTouchTap={() => turnAppOffRedirect('/security/changequestions')} />
-    <MenuItem  primaryText="Sign Out" onTouchTap={() => turnAppOffRedirect('/')} />
-  </IconMenu>)
+
+interface SettingsMenuProps {
+  turnAppOffRedirect(path:string): any;
+  settingsMenu: any[];
+  open: boolean;
 }
+
+interface SettingsMenuState {
+  openMenu: boolean;
+}
+class SettingMenuComponent extends React.Component<SettingsMenuProps, SettingsMenuState> {
+  constructor(props){
+    super(props);
+    this.state = {
+      openMenu: false
+    }
+  }
+
+  componentWillReceiveProps(nextProps){
+    if(this.state.openMenu !== nextProps.open){
+      this.setState({
+        openMenu: nextProps.open
+      })
+    }
+  }
+  handleOnRequestChange = (openMenu) => {
+    console.log('handleOnRequestChange');
+    this.setState({
+      openMenu
+    });
+  }
+ 
+  handleItemTouchTap= (openMenu) => {
+    console.log('handleItemTouchTap');
+  }
+
+  handleOnChange = () => {
+    console.log('handleOnChange');
+  }
+  render(){
+    const {turnAppOffRedirect,settingsMenu} = this.props;
+
+    return (<IconMenu
+      iconButtonElement={
+        <IconButton><MoreVertIcon /></IconButton>
+      }
+      targetOrigin={{horizontal: 'right', vertical: 'top'}}
+      anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+      open={this.state.openMenu}
+      onRequestChange={this.handleOnRequestChange}
+      onChange={this.handleOnChange}
+      onItemTouchTap={this.handleItemTouchTap}
+
+    >
+      
+      <MenuItem key={'default_1'} primaryText="Change Pin" onTouchTap={() => turnAppOffRedirect('/security/changepin')}  />
+      <MenuItem key={'default_2'}  primaryText="Edit Security Questions" onTouchTap={() => turnAppOffRedirect('/security/changequestions')} />
+      <MenuItem key={'default_3'}  primaryText="Sign Out" onTouchTap={() => turnAppOffRedirect('/')} />
+    </IconMenu>)
+  }
+}
+
 
 interface MyProps {
   appBarTitle?(title: string): any;
   dispatch(arg: any): any;
   device: any;
   children: any;
-  isAuthed: boolean;
+
   turnAppOffRedirect(path: string): any;
   flash: FlashMessageInterface
 }
 
 interface MyState {
-  title?: any,
-  open?: boolean
+  title?: any;
+  open?: boolean;
+  settingsMenu?: any[];
+  settingsOpen: boolean;
 }
 
 
@@ -87,7 +136,9 @@ class Main extends React.Component<MyProps, MyState>{
     this.handleTitle = this.handleTitle.bind(this);
     this.state = {
       open: false,
-      title: ''
+      title: '',
+      settingsMenu: [],
+      settingsOpen: false
     };
   }
 
@@ -97,32 +148,49 @@ class Main extends React.Component<MyProps, MyState>{
   handleRequestClose () {
     this.setState({
       open: false
-    });
+    } as any);
   }
 
   handleTouchTap () {
     this.setState({
       open: true
-    });
+    }as any);
   }
 
   handleTitle (title) {
     this.setState({
       title: title
-    });
+    }as any);
+  }
+
+  handleSettingMenu = (settingsMenu:any = []) => {
+    this.setState({
+      settingsMenu
+    }as any);
+  }
+
+  handleSettingsMenuDropDown = (settingsOpen) => {
+    console.log(settingsOpen);
+    this.setState({
+      settingsOpen
+    }as any);
   }
 
   render () {
-    var {isAuthed, turnAppOffRedirect, flash} = this.props;
+    var {turnAppOffRedirect, flash} = this.props;
     return (
         <div style={styles.wrapper}>
             <AppBar
                 title={this.state.title}
                 titleStyle={{textAlign: 'center'}}
                 iconElementLeft={<AppBarMenuIcon/>}
-                iconElementRight={<Logged isAuthed={isAuthed} turnAppOffRedirect={turnAppOffRedirect} />}
+                iconElementRight={<SettingMenuComponent open={this.state.settingsOpen} settingsMenu={this.state.settingsMenu}  turnAppOffRedirect={turnAppOffRedirect} />}
                  />
-                <div style={styles.content as any}>{React.cloneElement(this.props.children, { appBarTitle: this.handleTitle })}</div>
+                <div style={styles.content as any}>{React.cloneElement(this.props.children, { 
+                                                                                              appBarTitle: this.handleTitle, 
+                                                                                              settingsMenu: this.handleSettingMenu,
+                                                                                              settingsMenuDropDown: this.handleSettingsMenuDropDown
+                                                                                            })}</div>
 
           <SnackBarNotice flash={flash} />
         </div>
@@ -133,7 +201,6 @@ class Main extends React.Component<MyProps, MyState>{
 export default connect(
   (state) => ({
     device: state.device,
-    isAuthed: state.mode === 1,
     flash: state.view.flash
   }),
   (dispatch, ownProps) => {

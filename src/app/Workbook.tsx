@@ -16,8 +16,12 @@ import ErrorIcon from 'material-ui/svg-icons/alert/error';
 import Checkbox from 'material-ui/Checkbox';
 import IconButton from 'material-ui/IconButton';
 import RaisedButton from 'material-ui/RaisedButton';
-import {topRightButtonStyle, subMenuFlexContainerStyle} from './commonStyles';
+import GoalEditComponent from './GoalEditComponent';
+import ContentAdd from 'material-ui/svg-icons/content/add';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import {topRightButtonStyle, subMenuFlexContainerStyle, foatingButtonStyle} from './commonStyles';
 import {Transforms,Validators,Formats} from './lib/helpers';
+
 const styles = {
   video: {
     width: '100%',
@@ -27,14 +31,16 @@ const styles = {
 
 interface MyProps {
   appBarTitle(title: string): any;
+  settingsMenu(items: any): any;
+  settingsMenuDropDown(): any;
   workbook: WorkbookReducerInterface;
   examples: any[];
   goals: GoalReducerInterface[];
-  isOnline: any;
   goalEditClick(goal: GoalReducerInterface): any;
   goalStatusClick(goal: GoalReducerInterface): any;
   goalDelete(workbookId:number, goalId: number): any;
-
+  goalEdit: boolean;
+  goalOpenNew():any
 }
 
 interface MyState {
@@ -42,17 +48,20 @@ interface MyState {
 }
 class Workbook extends React.Component<MyProps, MyState> {
   componentWillMount () {
-    var {workbook} = this.props;
+    var {workbook,examples} = this.props;
     this.props.appBarTitle && this.props.appBarTitle(workbook.title);
     this.state = {editMode: false}
+    //this.props.settingsMenu && this.props.settingsMenu([<BasicDialog dropDown={this.props.settingsMenuDropDown} title={'Goal Examples'} items={examples} />]);
   }
   componentWillUpdate(nextProps) {
-    var {workbook} = nextProps;
+    var {workbook,examples} = nextProps;
     this.props.appBarTitle && this.props.appBarTitle(workbook.title);
+    //this.props.settingsMenu && this.props.settingsMenu([<BasicDialog dropDown={this.props.settingsMenuDropDown} title={'Goal Examples'} items={examples} />]);
   }
 
   componentWillUnmount() {
     this.setState({editMode: false});
+    //this.props.settingsMenu && this.props.settingsMenu([]);
   }
 
   handleEditToggle = () => {
@@ -61,9 +70,14 @@ class Workbook extends React.Component<MyProps, MyState> {
   }
 
   render () {
-    const {workbook, isOnline, examples, goals, goalEditClick, goalStatusClick, goalDelete} = this.props;
+    const {goalEdit, workbook, examples, goals, goalEditClick, goalStatusClick, goalDelete, goalOpenNew} = this.props;
     let listItems;
     let actionToggleButton;
+   
+    if(goalEdit){
+        return <GoalEditComponent workbook={workbook} goalDelete={goalDelete} />
+    }
+
 
     const goalOpenEdit = (item) => {
 
@@ -91,7 +105,7 @@ class Workbook extends React.Component<MyProps, MyState> {
     if(this.state.editMode){
       actionToggleButton = <RaisedButton  primary={true} onTouchTap={this.handleEditToggle} label="Done" />;
       listItems = goals.map((item) => {
-            return (<ListItem key={item.id} primaryText={makeTitle(item)} 
+            return (<ListItem key={'edit_' + item.id} primaryText={makeTitle(item)} 
                               onTouchTap={goalOpenEdit(item)}
                               rightIcon={<EditIcon  />}  />)
           });
@@ -99,7 +113,7 @@ class Workbook extends React.Component<MyProps, MyState> {
       actionToggleButton = <RaisedButton  onTouchTap={this.handleEditToggle} label="Edit Goals" />;;
       listItems = goals.map((item) => {
 
-            return (<ListItem key={item.id} primaryText={makeTitle(item)} 
+            return (<ListItem key={'view_' + item.id} primaryText={makeTitle(item)} 
                               onTouchTap={() => goalStatusClick(item)}
                               color='red'
                               rightIcon={item.dueDate && item.dueDate > 0 && item.dueDate < dateNowMs && item.status !== 1 ? <ErrorIcon color='red' /> : null}
@@ -110,9 +124,12 @@ class Workbook extends React.Component<MyProps, MyState> {
 
     return (
       <div>
+        <FloatingActionButton  onTouchTap={goalOpenNew} style={foatingButtonStyle as any}>
+          <ContentAdd />
+        </FloatingActionButton>
         <div style={subMenuFlexContainerStyle as any}>
           <div>
-          <BasicDialog title="Examples" items= {examples} />
+            <BasicDialog title={'Examples'} items={examples} />
           </div>
           <div>
           {actionToggleButton}
@@ -122,8 +139,6 @@ class Workbook extends React.Component<MyProps, MyState> {
           <List>
             {listItems}
           </List>
-          <GoalCreateDialog workbook={workbook} />
-          <GoalEditDialog workbook={workbook} goalDelete={goalDelete} />
         </div>
       </div>
     );

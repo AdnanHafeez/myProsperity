@@ -392,8 +392,15 @@ export const cordovaInitLogin = (loginData: SetPinFormInterface) => {
 }
 
 export const eulaRejected = () => {
-  return {
+  const localAction = {
     type: EULA_REJECTED
+  }
+
+  return (dispatch,getState) => {
+    dispatch(localAction);
+    if(__IS_CORDOVA_BUILD__){
+      (window as any).navigator.app.exitApp();
+    }
   }
 }
 
