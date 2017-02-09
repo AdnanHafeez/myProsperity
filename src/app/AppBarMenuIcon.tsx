@@ -39,6 +39,7 @@ const AppBarMenuIcon = ({paths, submenu, parent, workbooks}) => {
         {submenu.filter((item) => (item.display)).map((item) => (
            <MenuItem key={'menu_' + item.id} primaryText={item.name} containerElement={<Link to={item.pathname} />} />
         ))}
+        <MenuItem key={'static_smart_goals'} primaryText={'S.M.A.R.T. Goals'} containerElement={<Link to='/main/home' />} />
         {workbooks.map((item) => (
            <MenuItem key={'workbook_' + item.id} primaryText={item.title} containerElement={<Link to={'/main/workbook/'+item.id} />}  />
         ))}
