@@ -102,10 +102,7 @@ const sortByMsDate = (goalsArray,direction = 'asc') => {
 
 const concatAllGoals = (goalIds,goalOb) => {
           /* list first */
-console.log(filterPastDueIncomplete(goalIds,goalOb));
-  console.log(filterCommingDueIncomplete(goalIds,goalOb));
-  console.log(filterNoDateAndIncomplete(goalIds,goalOb));
-  console.log(filterComplete(goalIds,goalOb));
+
   return filterPastDueIncomplete(goalIds,goalOb).
             concat(
               /* list second */
