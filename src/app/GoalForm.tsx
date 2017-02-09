@@ -154,7 +154,7 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
           <div>
             <DatePicker 
                 value={Transforms.msToDate(this.state.values.dueDate)}
-                hintText="Due Date" 
+                floatingLabelText={'Due Date'}
                 locale={'en-US'}
                 firstDayOfWeek={0}
                 errorText={this.state.errors.dueDate}
