@@ -18,6 +18,7 @@ import IconButton from 'material-ui/IconButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import {topRightButtonStyle, subMenuFlexContainerStyle} from './commonStyles';
 import {Transforms,Validators,Formats} from './lib/helpers';
+
 const styles = {
   video: {
     width: '100%',
@@ -27,6 +28,7 @@ const styles = {
 
 interface MyProps {
   appBarTitle(title: string): any;
+  settingsMenu(items: any): any
   workbook: WorkbookReducerInterface;
   examples: any[];
   goals: GoalReducerInterface[];
@@ -42,17 +44,20 @@ interface MyState {
 }
 class Workbook extends React.Component<MyProps, MyState> {
   componentWillMount () {
-    var {workbook} = this.props;
+    var {workbook,examples} = this.props;
     this.props.appBarTitle && this.props.appBarTitle(workbook.title);
     this.state = {editMode: false}
+    this.props.settingsMenu && this.props.settingsMenu(<BasicDialog title={'Goal Examples'} items={examples} />);
   }
   componentWillUpdate(nextProps) {
-    var {workbook} = nextProps;
+    var {workbook,examples} = nextProps;
     this.props.appBarTitle && this.props.appBarTitle(workbook.title);
+    this.props.settingsMenu && this.props.settingsMenu(<BasicDialog title={'Goal Examples'} items={examples} />);
   }
 
   componentWillUnmount() {
     this.setState({editMode: false});
+    this.props.settingsMenu && this.props.settingsMenu(null);
   }
 
   handleEditToggle = () => {
@@ -112,7 +117,7 @@ class Workbook extends React.Component<MyProps, MyState> {
       <div>
         <div style={subMenuFlexContainerStyle as any}>
           <div>
-          <BasicDialog title="Examples" items= {examples} />
+          <BasicDialog title={workbook.title + ' Examples'} items={examples} />
           </div>
           <div>
           {actionToggleButton}

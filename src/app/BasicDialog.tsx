@@ -6,7 +6,7 @@ import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import {List, ListItem} from 'material-ui/List';
 import {listItemTitle, listItemSubTitle, fullWidthDialagStyle} from './commonStyles'
-
+import MenuItem from 'material-ui/MenuItem';
 interface MyProps {
   title: string;
   items: {id: any, title: string, desc: string}[];
@@ -22,6 +22,10 @@ export default class BasicDialog extends React.Component<MyProps, MyState> {
 
   handleOpen = () => {
     this.setState({open: true});
+  };
+
+  toggleOpen = () => {
+    this.setState({open: !this.state.open});
   };
 
   handleClose = () => {
@@ -41,7 +45,9 @@ export default class BasicDialog extends React.Component<MyProps, MyState> {
 
     return (
       <div>
-        <RaisedButton label={title} onTouchTap={this.handleOpen} />
+        <MenuItem key={'setting_' + title} primaryText={title} onTouchTap={this.toggleOpen} />
+        
+
         <Dialog
           title={title}
           actions={actions}

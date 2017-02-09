@@ -45,7 +45,7 @@ const styles = {
 
 // const {isAuthed,authToggle} = props;
 const Logged = (props) => {
-  const {isAuthed,turnAppOffRedirect} = props;
+  const {isAuthed,turnAppOffRedirect,settingsMenu} = props;
   return (<IconMenu
     iconButtonElement={
       <IconButton><MoreVertIcon /></IconButton>
@@ -53,9 +53,10 @@ const Logged = (props) => {
     targetOrigin={{horizontal: 'right', vertical: 'top'}}
     anchorOrigin={{horizontal: 'right', vertical: 'top'}}
   >
-    <MenuItem  primaryText="Change Pin" onTouchTap={() => turnAppOffRedirect('/security/changepin')}  />
-    <MenuItem  primaryText="Edit Security Questions" onTouchTap={() => turnAppOffRedirect('/security/changequestions')} />
-    <MenuItem  primaryText="Sign Out" onTouchTap={() => turnAppOffRedirect('/')} />
+    {settingsMenu}
+    <MenuItem key={'default_1'} primaryText="Change Pin" onTouchTap={() => turnAppOffRedirect('/security/changepin')}  />
+    <MenuItem key={'default_2'}  primaryText="Edit Security Questions" onTouchTap={() => turnAppOffRedirect('/security/changequestions')} />
+    <MenuItem key={'default_3'}  primaryText="Sign Out" onTouchTap={() => turnAppOffRedirect('/')} />
   </IconMenu>)
 }
 
@@ -70,8 +71,9 @@ interface MyProps {
 }
 
 interface MyState {
-  title?: any,
-  open?: boolean
+  title?: any;
+  open?: boolean;
+  settingsMenu?: any;
 }
 
 
@@ -87,7 +89,8 @@ class Main extends React.Component<MyProps, MyState>{
     this.handleTitle = this.handleTitle.bind(this);
     this.state = {
       open: false,
-      title: ''
+      title: '',
+      settingsMenu: null
     };
   }
 
@@ -112,6 +115,12 @@ class Main extends React.Component<MyProps, MyState>{
     });
   }
 
+  handleSettingMenu = (settingsMenu:any = null) => {
+    this.setState({
+      settingsMenu
+    });
+  }
+
   render () {
     var {isAuthed, turnAppOffRedirect, flash} = this.props;
     return (
@@ -120,9 +129,9 @@ class Main extends React.Component<MyProps, MyState>{
                 title={this.state.title}
                 titleStyle={{textAlign: 'center'}}
                 iconElementLeft={<AppBarMenuIcon/>}
-                iconElementRight={<Logged isAuthed={isAuthed} turnAppOffRedirect={turnAppOffRedirect} />}
+                iconElementRight={<Logged settingsMenu={this.state.settingsMenu} isAuthed={isAuthed} turnAppOffRedirect={turnAppOffRedirect} />}
                  />
-                <div style={styles.content as any}>{React.cloneElement(this.props.children, { appBarTitle: this.handleTitle })}</div>
+                <div style={styles.content as any}>{React.cloneElement(this.props.children, { appBarTitle: this.handleTitle, settingsMenu: this.handleSettingMenu })}</div>
 
           <SnackBarNotice flash={flash} />
         </div>
