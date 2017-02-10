@@ -288,7 +288,7 @@ function onMenuKeyDown() {
 }
 var persistEncryptedConfig =  {
                                       keyPrefix: 't2encryptedPersist',
-                                      blacklist: ['mode','cordova','view'],
+                                      blacklist: ['mode','cordova','view','onLogout'],
                                       storage: localForage,
                                       inboundTransform: transformEncryptTransform
                                     };
@@ -385,6 +385,7 @@ class AppProvider extends React.Component<MyProps, MyState> {
                                     if(__DEVTOOLS__){
                                       console.log('could not parse the following');
                                       console.log(result.RESULT);
+                                      console.log('Field ' + objectKey);
                                     }
                                     parsedResult = null;
                                     //TODO decide what to do here

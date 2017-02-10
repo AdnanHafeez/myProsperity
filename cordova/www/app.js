@@ -28946,6 +28946,7 @@
 	                                            if (true) {
 	                                                console.log('could not parse the following');
 	                                                console.log(result.RESULT);
+	                                                console.log('Field ' + objectKey);
 	                                            }
 	                                            parsedResult = null;
 	                                        }
