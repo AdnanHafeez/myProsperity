@@ -8184,13 +8184,13 @@
 	var injectTapEventPlugin = __webpack_require__(463);
 	var PlainRoutes_1 = __webpack_require__(470); // Our custom react component
 	__webpack_require__(805);
-	var CordovaTests_1 = __webpack_require__(1257);
+	var CordovaTests_1 = __webpack_require__(1256);
+	__webpack_require__(1261);
 	__webpack_require__(1262);
-	__webpack_require__(1263);
-	__webpack_require__(1266);
 	__webpack_require__(1265);
 	__webpack_require__(1264);
-	__webpack_require__(1267);
+	__webpack_require__(1263);
+	__webpack_require__(1266);
 	// Needed for onTouchTap
 	// http://stackoverflow.com/a/34015469/988941
 	injectTapEventPlugin();
@@ -28822,7 +28822,7 @@
 	        childRoutes: [
 	            __webpack_require__(1167).default,
 	            __webpack_require__(1208).default,
-	            __webpack_require__(1255).default
+	            __webpack_require__(1254).default
 	        ]
 	    }
 	];
@@ -28866,6 +28866,7 @@
 	};
 	function onPause() {
 	    console.log('cordova pause');
+	    appStore.dispatch(actions_1.turnAppOff('/'));
 	}
 	function onResume() {
 	    // console.log('cordova resume');
@@ -53250,7 +53251,7 @@
 	    { id: 1, title: 'Relationships', examples: [
 	            { id: 1, title: 'Community', desc: '(Lead, Organize, Support Agencies, Volunteer, Cultural Arts)' },
 	            { id: 2, title: 'Leisure', desc: '("Down Time," Activities, Sports, Vacations)"' },
-	            { id: 3, title: 'Family', desc: ': (Prioritize, Quality Time, Special/Important Events)' },
+	            { id: 3, title: 'Family', desc: '(Prioritize, Quality Time, Special/Important Events)' },
 	            { id: 4, title: 'Friendships', desc: '(Birthdays, Events, Interaction/Nurture)' },
 	            { id: 5, title: 'Diversity', desc: '(Cultural Events, Exchanges, Tours)' },
 	            { id: 6, title: 'Marital', desc: '(Anniversaries, Couples’ Retreats, Dating)' },
@@ -53270,10 +53271,10 @@
 	        goals: []
 	    },
 	    { id: 3, title: 'Personal', examples: [
-	            { id: 15, title: 'Activity', desc: ': (Overall Fitness, Yoga, 10,000 Steps Per Day)' },
+	            { id: 15, title: 'Activity', desc: '(Overall Fitness, Yoga, 10,000 Steps Per Day)' },
 	            { id: 16, title: 'Nutrition:', desc: '(Good Nutritional Choices, Reduce Fat Intake, Increase Fiber)' },
 	            { id: 17, title: 'Sleep', desc: '(7-9 hrs/day, Good Sleep Hygiene, Limited Caffeine)' },
-	            { id: 18, title: 'Community Service', desc: ': (USO, Red Cross, Habitat for Humanity)' },
+	            { id: 18, title: 'Community Service', desc: '(USO, Red Cross, Habitat for Humanity)' },
 	            { id: 19, title: 'Emotional Wellness', desc: '(Mindfulness, Lunch Away from Desk, Relaxation Techniques, Artistic Expression, Seek Help/Advice)' },
 	            { id: 20, title: 'Financial Investment', desc: '(Savings Plan, Debt Reduction, Credit Management, Investment Plan)' },
 	            { id: 21, title: 'Wellness Exams', desc: '(Physical Exam, Dental, Well-Woman Exam )' },
@@ -65561,8 +65562,14 @@
 	    };
 	};
 	exports.eulaRejected = function () {
-	    return {
+	    var localAction = {
 	        type: exports.EULA_REJECTED
+	    };
+	    return function (dispatch, getState) {
+	        dispatch(localAction);
+	        if (true) {
+	            window.navigator.app.exitApp();
+	        }
 	    };
 	};
 	exports.fipsIsSetup = function () {
@@ -84623,6 +84630,13 @@
 	exports.fieldRowStyle = {
 	    marginBottom: '5px'
 	};
+	exports.listItemRow = {};
+	exports.listItemTitle = {
+	    marginBottom: 0
+	};
+	exports.listItemSubTitle = {
+	    marginTop: 0
+	};
 
 
 /***/ },
@@ -84631,22 +84645,22 @@
 
 	"use strict";
 	exports.eula = {
-	    title: "NATIONAL CENTER FOR TELEHEALTH AND TECHNOLOGY (T2)",
+	    title: "Defense Health Agency (DHA)",
 	    paragraphs: [
-	        "By agreeing to have any of T2 software products installed on to your device and by subsequent use of the Software, you agree to comply with the terms of this general End User License Agreement (EULA) where no specific agreement is in place between T2 and the user of the software. If you do not agree to the terms of this EULA, do not install or use the Software but uninstall it from your device. This EULA applies to any upgrades and supplements to the original Software provided and is referred to on your opening screen.",
-	        "1. The Licensed Software is owned by The National Center for Telehealth and Technology (T2), an agency of the United States Department of Defense (DOD). The Software is licensed, not sold, only on the terms of this EULA. Acceptance and installation of the software indicates your acceptance of the terms and conditions of this EULA.",
-	        "Upon installation of the software, you will acquire the right to use the Software, directly from T2. You assume responsibility for the selection of the program to achieve your intended results, and for the installation, use and results obtained from the Licensed Software.",
-	        "2. In consideration of your acceptance of the terms and conditions contained in this EULA, T2 grants you a non-exclusive license to use the Licensed Software and the associated documentation for your own needs on one device. You are not licensed to rent, lease, transfer or distribute the Software.",
-	        "3. Title to the Software, including media and documentation, remain with T2. You may not copy, reproduce or make data transmissions, in whole or in part, except as is necessary for back-up or archival purposes. You may not reverse engineer, translate, disassemble, decompile the Software or create similar software in whole or in part.",
-	        "4. The license is effective upon acceptance and installation of the Licensed Software and shall continue until terminated. You may terminate it at any time by uninstalling the Licensed Software. T2 has the right to terminate this Agreement if you fail to comply with any term or condition of this EULA. Upon termination you shall stop all use of the Software and uninstall the Licensed Software.",
+	        "By agreeing to have any of DHA software products installed on to your device and by subsequent use of the Software, you agree to comply with the terms of this general End User License Agreement (EULA) where no specific agreement is in place between DHA and the user of the software. If you do not agree to the terms of this EULA, do not install or use the Software but uninstall it from your device. This EULA applies to any upgrades and supplements to the original Software provided and is referred to on your opening screen.",
+	        "1. The Licensed Software is owned by The Defense Health Agency (DHA), an agency of the United States Department of Defense (DOD). The Software is licensed, not sold, only on the terms of this EULA. Acceptance and installation of the software indicates your acceptance of the terms and conditions of this EULA.",
+	        "Upon installation of the software, you will acquire the right to use the Software, directly from DHA. You assume responsibility for the selection of the program to achieve your intended results, and for the installation, use and results obtained from the Licensed Software.",
+	        "2. In consideration of your acceptance of the terms and conditions contained in this EULA, DHA grants you a non-exclusive license to use the Licensed Software and the associated documentation for your own needs on one device. You are not licensed to rent, lease, transfer or distribute the Software.",
+	        "3. Title to the Software, including media and documentation, remain with DHA. You may not copy, reproduce or make data transmissions, in whole or in part, except as is necessary for back-up or archival purposes. You may not reverse engineer, translate, disassemble, decompile the Software or create similar software in whole or in part.",
+	        "4. The license is effective upon acceptance and installation of the Licensed Software and shall continue until terminated. You may terminate it at any time by uninstalling the Licensed Software. DHA has the right to terminate this Agreement if you fail to comply with any term or condition of this EULA. Upon termination you shall stop all use of the Software and uninstall the Licensed Software.",
 	        "5. Confidentiality of the Software will survive any termination of this EULA, to include the application, design, and functionality.",
 	        "6. This Software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
-	        "7. In no event will T2 be liable for any loss of data, loss of use, or indirect, special, incidental or consequential damages in any way related to or arising out of the use of the Software. T2's maximum liability shall in no event exceed the amounts paid to T2 for the Licensed Software.",
-	        "8. The prevailing party in any action or proceeding between T2 and End-User Licensee arising out of or related to this Agreement shall be entitled to recover reasonable legal fees and costs, including lawyers'fees, which may be incurred.",
+	        "7. In no event will DHA be liable for any loss of data, loss of use, or indirect, special, incidental or consequential damages in any way related to or arising out of the use of the Software. DHA's maximum liability shall in no event exceed the amounts paid to DHA for the Licensed Software.",
+	        "8. The prevailing party in any action or proceeding between DHA and End-User Licensee arising out of or related to this Agreement shall be entitled to recover reasonable legal fees and costs, including lawyers'fees, which may be incurred.",
 	        "9. This Agreement shall be construed and enforced in accordance with the laws of the District of Columbia, United States of America and each party agrees to be subject to those relevant laws.",
 	        "10. You also acknowledge that it is your responsibility to protect and otherwise secure any information captured and stored by the software once installed on your device.",
 	        "11. Information captured and stored by the software program may be considered sensitive information. It is the end user’s responsibility to protect or otherwise secure the content captured and stored by the software once installed on the end user’s device.",
-	        "12. It is understood and acknowledged that T2 has the absolute right to obtain injunctive relief to protect T2's proprietary rights.",
+	        "12. It is understood and acknowledged that DHA has the absolute right to obtain injunctive relief to protect DHA's proprietary rights.",
 	        "13. By using the Software, you further agree that this is the complete and exclusive statement of the Agreement which supersedes any proposal or prior agreement, oral or written, and any other communications relating to the subject matter of this EULA.",
 	        "14. If any provision of this Agreement is held to be invalid or unenforceable the remaining provisions will not be affected.",
 	        "15. The information in the application is not intended as a substitute for any type of professional medical services or training and should not be used for such purposes. The information is provided as is and the author does not warrant the accuracy of the information. This information is not meant to diagnose or develop permanent treatment plans for health emergencies, health problems or diseases. If you are in an emergency or life-threatening medical situation, seek medical assistance immediately. Dial the number 911 in the USA for emergency medical services.",
@@ -87520,15 +87534,21 @@
 	        paddingTop: '10px'
 	    }
 	};
-	// const {isAuthed,authToggle} = props;
-	var Logged = function (props) {
-	    var isAuthed = props.isAuthed, turnAppOffRedirect = props.turnAppOffRedirect;
-	    return (React.createElement(IconMenu_1.default, { iconButtonElement: React.createElement(IconButton_1.default, null,
-	            React.createElement(more_vert_1.default, null)), targetOrigin: { horizontal: 'right', vertical: 'top' }, anchorOrigin: { horizontal: 'right', vertical: 'top' } },
-	        React.createElement(MenuItem_1.default, { primaryText: "Change Pin", onTouchTap: function () { return turnAppOffRedirect('/security/changepin'); } }),
-	        React.createElement(MenuItem_1.default, { primaryText: "Edit Security Questions", onTouchTap: function () { return turnAppOffRedirect('/security/changequestions'); } }),
-	        React.createElement(MenuItem_1.default, { primaryText: "Sign Out", onTouchTap: function () { return turnAppOffRedirect('/'); } })));
-	};
+	var SettingMenuComponent = (function (_super) {
+	    __extends(SettingMenuComponent, _super);
+	    function SettingMenuComponent() {
+	        return _super !== null && _super.apply(this, arguments) || this;
+	    }
+	    SettingMenuComponent.prototype.render = function () {
+	        var turnAppOffRedirect = this.props.turnAppOffRedirect;
+	        return (React.createElement(IconMenu_1.default, { iconButtonElement: React.createElement(IconButton_1.default, null,
+	                React.createElement(more_vert_1.default, null)), targetOrigin: { horizontal: 'right', vertical: 'top' }, anchorOrigin: { horizontal: 'right', vertical: 'top' } },
+	            React.createElement(MenuItem_1.default, { key: 'default_1', primaryText: "Change Pin", onTouchTap: function () { return turnAppOffRedirect('/security/changepin'); } }),
+	            React.createElement(MenuItem_1.default, { key: 'default_2', primaryText: "Edit Security Questions", onTouchTap: function () { return turnAppOffRedirect('/security/changequestions'); } }),
+	            React.createElement(MenuItem_1.default, { key: 'default_3', primaryText: "Sign Out", onTouchTap: function () { return turnAppOffRedirect('/'); } })));
+	    };
+	    return SettingMenuComponent;
+	}(React.Component));
 	var Main = (function (_super) {
 	    __extends(Main, _super);
 	    function Main(props, context) {
@@ -87561,10 +87581,12 @@
 	        });
 	    };
 	    Main.prototype.render = function () {
-	        var _a = this.props, isAuthed = _a.isAuthed, turnAppOffRedirect = _a.turnAppOffRedirect, flash = _a.flash;
+	        var _a = this.props, turnAppOffRedirect = _a.turnAppOffRedirect, flash = _a.flash;
 	        return (React.createElement("div", { style: styles.wrapper },
-	            React.createElement(AppBar_1.default, { title: this.state.title, titleStyle: { textAlign: 'center' }, iconElementLeft: React.createElement(AppBarMenuIconDrawer_1.default, null), iconElementRight: React.createElement(Logged, { isAuthed: isAuthed, turnAppOffRedirect: turnAppOffRedirect }) }),
-	            React.createElement("div", { style: styles.content }, React.cloneElement(this.props.children, { appBarTitle: this.handleTitle })),
+	            React.createElement(AppBar_1.default, { title: this.state.title, titleStyle: { textAlign: 'center' }, iconElementLeft: React.createElement(AppBarMenuIconDrawer_1.default, null), iconElementRight: React.createElement(SettingMenuComponent, { turnAppOffRedirect: turnAppOffRedirect }) }),
+	            React.createElement("div", { style: styles.content }, React.cloneElement(this.props.children, {
+	                appBarTitle: this.handleTitle
+	            })),
 	            React.createElement(SnackBarNoticeComponent_1.default, { flash: flash })));
 	    };
 	    return Main;
@@ -87575,7 +87597,6 @@
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = react_redux_1.connect(function (state) { return ({
 	    device: state.device,
-	    isAuthed: state.mode === 1,
 	    flash: state.view.flash
 	}); }, function (dispatch, ownProps) {
 	    return {
@@ -87625,7 +87646,8 @@
 	            React.createElement(IconButton_1.default, { onTouchTap: this.handleToggle },
 	                React.createElement(menu_1.default, null)),
 	            React.createElement(Drawer_1.default, { docked: false, width: 250, open: this.state.open, onRequestChange: function (open) { return _this.setState({ open: open }); } },
-	                React.createElement(MenuItem_1.default, { key: 'directors_message', primaryText: "Director's Message", onTouchTap: this.handleClose, containerElement: React.createElement(react_router_1.Link, { to: '/main/message' }) }),
+	                React.createElement(MenuItem_1.default, { key: 'static_directors_message', primaryText: "Director's Message", onTouchTap: this.handleClose, containerElement: React.createElement(react_router_1.Link, { to: '/main/message' }) }),
+	                React.createElement(MenuItem_1.default, { key: 'static_smart_goals', primaryText: 'S.M.A.R.T. Goals', onTouchTap: this.handleClose, containerElement: React.createElement(react_router_1.Link, { to: '/main/home' }) }),
 	                workbooks.map(function (item) { return (React.createElement(MenuItem_1.default, { key: 'workbook_' + item.id, primaryText: item.title, onTouchTap: _this.handleClose, containerElement: React.createElement(react_router_1.Link, { to: '/main/workbook/' + item.id }) })); }),
 	                React.createElement(MenuItem_1.default, { key: 'notes_landing', primaryText: "Notes", onTouchTap: this.handleClose, containerElement: React.createElement(react_router_1.Link, { to: '/main/notes' }) }))));
 	    };
@@ -93621,7 +93643,7 @@
 	  name: 'main',
 	  getChildRoutes: function getChildRoutes(partialNextState, cb) {
 	    //require.ensure([], function (require) {
-	    cb(null, [__webpack_require__(1191).default, __webpack_require__(1209).default, __webpack_require__(1211).default, __webpack_require__(1212).default, __webpack_require__(1249).default, __webpack_require__(1254).default]);
+	    cb(null, [__webpack_require__(1191).default, __webpack_require__(1209).default, __webpack_require__(1211).default, __webpack_require__(1212).default, __webpack_require__(1248).default, __webpack_require__(1253).default]);
 	    //});
 	  }
 	};
@@ -93781,12 +93803,118 @@
 	var Workbook_1 = __webpack_require__(1214);
 	var react_redux_1 = __webpack_require__(711);
 	var actions_1 = __webpack_require__(807);
+	var helpers_1 = __webpack_require__(1244);
+	var getGoalArray = function (goalIds, goalsObject) {
+	    return goalIds.map(function (id) { return goalsObject[id + '']; });
+	};
+	var filterNoDateAndIncomplete = function (goalIds, goalsObject) {
+	    return getGoalArray(goalIds, goalsObject).filter(function (goal) {
+	        //is Complete so we don't want it
+	        if (goal.status === 1) {
+	            return false;
+	        }
+	        //has date so we don't want it
+	        if (helpers_1.Validators.isNumeric(goal.dueDate) && goal.dueDate > 0) {
+	            return false;
+	        }
+	        return true;
+	    });
+	};
+	var filterNoDateAndComplete = function (goalIds, goalsObject) {
+	    return getGoalArray(goalIds, goalsObject).filter(function (goal) {
+	        //is Complete so we don't want it
+	        if (goal.status === 1) {
+	            return false;
+	        }
+	        //has date so we don't want it
+	        if (helpers_1.Validators.isNumeric(goal.dueDate) && goal.dueDate > 0) {
+	            return false;
+	        }
+	        return true;
+	    });
+	};
+	var filterComplete = function (goalIds, goalsObject) {
+	    return getGoalArray(goalIds, goalsObject)
+	        .filter(function (goal) {
+	        //is InComplete so we don't want it
+	        if (goal.status !== 1) {
+	            return false;
+	        }
+	        return true;
+	    });
+	};
+	var filterHasDateAndIncomplete = function (goalIds, goalsObject) {
+	    return sortByMsDate(getGoalArray(goalIds, goalsObject)
+	        .filter(function (goal) {
+	        //is Complete so we don't want it
+	        if (goal.status === 1) {
+	            return false;
+	        }
+	        //has no date so we don't want it
+	        if (!helpers_1.Validators.isNumeric(goal.dueDate) || goal.dueDate < 0) {
+	            return false;
+	        }
+	        return true;
+	    }));
+	};
+	var filterPastDueIncomplete = function (goalIds, goalsObject) {
+	    var currentDate = new Date();
+	    var currentMs = currentDate.getTime();
+	    return filterHasDateAndIncomplete(goalIds, goalsObject).filter(function (goal) {
+	        if (goal.dueDate > currentMs) {
+	            return false;
+	        }
+	        return true;
+	    });
+	};
+	var filterCommingDueIncomplete = function (goalIds, goalsObject) {
+	    var currentDate = new Date();
+	    var currentMs = currentDate.getTime();
+	    return filterHasDateAndIncomplete(goalIds, goalsObject).filter(function (goal) {
+	        if (goal.dueDate < currentMs) {
+	            return false;
+	        }
+	        return true;
+	    });
+	};
+	var sortByMsDate = function (goalsArray, direction) {
+	    if (direction === void 0) { direction = 'asc'; }
+	    return goalsArray.sort(function (a, b) {
+	        if (a.dueDate < b.dueDate) {
+	            return -1;
+	        }
+	        if (a.dueDate > b.dueDate) {
+	            return 1;
+	        }
+	        return 0;
+	    });
+	};
+	var concatAllGoals = function (goalIds, goalOb) {
+	    /* list first */
+	    /*
+	if(__DEVTOOLS__){
+	console.log(filterPastDueIncomplete(goalIds,goalOb));
+	console.log(filterCommingDueIncomplete(goalIds,goalOb));
+	console.log(filterNoDateAndIncomplete(goalIds,goalOb));
+	console.log(filterComplete(goalIds,goalOb));
+	}
+	*/
+	    return filterPastDueIncomplete(goalIds, goalOb).
+	        concat(
+	    /* list second */
+	    filterCommingDueIncomplete(goalIds, goalOb), 
+	    /* list third */
+	    filterNoDateAndIncomplete(goalIds, goalOb), 
+	    /* list fourth */
+	    filterComplete(goalIds, goalOb));
+	};
 	var mapStateToProps = function (state, ownProps) {
+	    console.log(concatAllGoals(state.workbooks[ownProps.params.id].goals, state.goals));
 	    return {
 	        workbook: state.workbooks[ownProps.params.id],
 	        examples: state.workbooks[ownProps.params.id].examples.map(function (eid) { return (state.examples[eid + '']); }),
-	        goals: state.workbooks[ownProps.params.id].goals.map(function (eid) { return (state.goals[eid + '']); }),
-	        isOnline: true
+	        goals: concatAllGoals(state.workbooks[ownProps.params.id].goals, state.goals),
+	        goalEdit: state.loadedGoalId > -1,
 	    };
 	};
 	var dispatchToProps = function (dispatch) {
@@ -93797,7 +93925,11 @@
 	        },
 	        goalDelete: function (workbookId, goalId) {
 	            dispatch(actions_1.goalDeleted(workbookId, goalId));
-	        }
+	            dispatch(actions_1.goalLoad(-1));
+	        },
+	        goalOpenNew: function () {
+	            dispatch(actions_1.goalLoad(0));
+	        },
 	    };
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -93815,17 +93947,18 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	var React = __webpack_require__(299);
-	var GoalCreateDialog_1 = __webpack_require__(1215);
-	var GoalEditDialog_1 = __webpack_require__(1243);
-	var BasicDialog_1 = __webpack_require__(1244);
-	var List_1 = __webpack_require__(1245);
-	var create_1 = __webpack_require__(1247);
-	var check_box_1 = __webpack_require__(1241);
-	var check_box_outline_blank_1 = __webpack_require__(1240);
-	var error_1 = __webpack_require__(1248);
+	var BasicDialog_1 = __webpack_require__(1215);
+	var List_1 = __webpack_require__(1216);
+	var create_1 = __webpack_require__(1218);
+	var check_box_1 = __webpack_require__(1219);
+	var check_box_outline_blank_1 = __webpack_require__(1220);
+	var error_1 = __webpack_require__(1221);
 	var RaisedButton_1 = __webpack_require__(1151);
+	var GoalEditComponent_1 = __webpack_require__(1222);
+	var add_1 = __webpack_require__(1245);
+	var FloatingActionButton_1 = __webpack_require__(1246);
 	var commonStyles_1 = __webpack_require__(1140);
-	var helpers_1 = __webpack_require__(1242);
+	var helpers_1 = __webpack_require__(1244);
 	var styles = {
 	    video: {
 	        width: '100%',
@@ -93843,21 +93976,28 @@
 	        return _this;
 	    }
 	    Workbook.prototype.componentWillMount = function () {
-	        var workbook = this.props.workbook;
+	        var _a = this.props, workbook = _a.workbook, examples = _a.examples;
 	        this.props.appBarTitle && this.props.appBarTitle(workbook.title);
 	        this.state = { editMode: false };
+	        //this.props.settingsMenu && this.props.settingsMenu([<BasicDialog dropDown={this.props.settingsMenuDropDown} title={'Goal Examples'} items={examples} />]);
 	    };
 	    Workbook.prototype.componentWillUpdate = function (nextProps) {
-	        var workbook = nextProps.workbook;
+	        var workbook = nextProps.workbook, examples = nextProps.examples;
 	        this.props.appBarTitle && this.props.appBarTitle(workbook.title);
+	        //this.props.settingsMenu && this.props.settingsMenu([<BasicDialog dropDown={this.props.settingsMenuDropDown} title={'Goal Examples'} items={examples} />]);
 	    };
 	    Workbook.prototype.componentWillUnmount = function () {
 	        this.setState({ editMode: false });
+	        //this.props.settingsMenu && this.props.settingsMenu([]);
 	    };
 	    Workbook.prototype.render = function () {
-	        var _a = this.props, workbook = _a.workbook, isOnline = _a.isOnline, examples = _a.examples, goals = _a.goals, goalEditClick = _a.goalEditClick, goalStatusClick = _a.goalStatusClick, goalDelete = _a.goalDelete;
+	        var _a = this.props, goalEdit = _a.goalEdit, workbook = _a.workbook, examples = _a.examples, goals = _a.goals, goalEditClick = _a.goalEditClick, goalStatusClick = _a.goalStatusClick, goalDelete = _a.goalDelete, goalOpenNew = _a.goalOpenNew;
 	        var listItems;
 	        var actionToggleButton;
+	        var createNewGoalButton;
+	        if (goalEdit) {
+	            return React.createElement(GoalEditComponent_1.default, { workbook: workbook, goalDelete: goalDelete });
+	        }
 	        var goalOpenEdit = function (item) {
 	            return function (event) {
 	                if (true) {
@@ -93877,27 +94017,29 @@
 	        var dateNow = new Date();
 	        var dateNowMs = dateNow.getTime();
 	        if (this.state.editMode) {
+	            createNewGoalButton = null;
 	            actionToggleButton = React.createElement(RaisedButton_1.default, { primary: true, onTouchTap: this.handleEditToggle, label: "Done" });
 	            listItems = goals.map(function (item) {
-	                return (React.createElement(List_1.ListItem, { key: item.id, primaryText: makeTitle(item), onTouchTap: goalOpenEdit(item), rightIcon: React.createElement(create_1.default, null) }));
+	                return (React.createElement(List_1.ListItem, { key: 'edit_' + item.id, primaryText: makeTitle(item), onTouchTap: goalOpenEdit(item), rightIcon: React.createElement(create_1.default, null) }));
 	            });
 	        }
 	        else {
+	            createNewGoalButton = React.createElement(FloatingActionButton_1.default, { onTouchTap: goalOpenNew, style: commonStyles_1.foatingButtonStyle },
+	                React.createElement(add_1.default, null));
 	            actionToggleButton = React.createElement(RaisedButton_1.default, { onTouchTap: this.handleEditToggle, label: "Edit Goals" });
 	            ;
 	            listItems = goals.map(function (item) {
-	                return (React.createElement(List_1.ListItem, { key: item.id, primaryText: makeTitle(item), onTouchTap: function () { return goalStatusClick(item); }, color: 'red', rightIcon: item.dueDate >= 0 && item.dueDate < dateNowMs && item.status !== 1 ? React.createElement(error_1.default, { color: 'red' }) : null, leftIcon: item.status === 1 ? React.createElement(check_box_1.default, { color: "green" }) : React.createElement(check_box_outline_blank_1.default, { color: "grey" }) }));
+	                return (React.createElement(List_1.ListItem, { key: 'view_' + item.id, primaryText: makeTitle(item), onTouchTap: function () { return goalStatusClick(item); }, color: 'red', rightIcon: item.dueDate && item.dueDate > 0 && item.dueDate < dateNowMs && item.status !== 1 ? React.createElement(error_1.default, { color: 'red' }) : null, leftIcon: item.status === 1 ? React.createElement(check_box_1.default, { color: "green" }) : React.createElement(check_box_outline_blank_1.default, { color: "grey" }) }));
 	            });
 	        }
 	        return (React.createElement("div", null,
+	            createNewGoalButton,
 	            React.createElement("div", { style: commonStyles_1.subMenuFlexContainerStyle },
 	                React.createElement("div", null,
-	                    React.createElement(BasicDialog_1.default, { title: "Examples", items: examples })),
+	                    React.createElement(BasicDialog_1.default, { title: 'Examples', items: examples })),
 	                React.createElement("div", null, actionToggleButton)),
 	            React.createElement("div", null,
-	                React.createElement(List_1.List, null, listItems),
-	                React.createElement(GoalCreateDialog_1.default, { workbook: workbook }),
-	                React.createElement(GoalEditDialog_1.default, { workbook: workbook, goalDelete: goalDelete }))));
+	                React.createElement(List_1.List, null, listItems))));
 	    };
 	    return Workbook;
 	}(React.Component));
@@ -93915,75 +94057,44 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var __assign = (this && this.__assign) || Object.assign || function(t) {
-	    for (var s, i = 1, n = arguments.length; i < n; i++) {
-	        s = arguments[i];
-	        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-	            t[p] = s[p];
-	    }
-	    return t;
-	};
 	var React = __webpack_require__(299);
 	var Dialog_1 = __webpack_require__(744);
 	var FlatButton_1 = __webpack_require__(763);
-	var FloatingActionButton_1 = __webpack_require__(1216);
-	var add_1 = __webpack_require__(1218);
-	var GoalForm_1 = __webpack_require__(1219);
-	var react_redux_1 = __webpack_require__(711);
-	var actions_1 = __webpack_require__(807);
-	var workbook_1 = __webpack_require__(808);
 	var commonStyles_1 = __webpack_require__(1140);
-	var style = {
-	    floatingAction: {
-	        margin: 0,
-	        top: 'auto',
-	        right: 20,
-	        bottom: 20,
-	        left: 'auto',
-	        position: 'fixed'
+	var BasicDialog = (function (_super) {
+	    __extends(BasicDialog, _super);
+	    function BasicDialog() {
+	        var _this = _super !== null && _super.apply(this, arguments) || this;
+	        _this.state = {
+	            open: false,
+	        };
+	        _this.handleOpen = function () {
+	            _this.setState({ open: true });
+	        };
+	        _this.toggleOpen = function () {
+	            _this.setState({ open: !_this.state.open });
+	        };
+	        _this.handleClose = function () {
+	            _this.setState({ open: false });
+	        };
+	        return _this;
 	    }
-	};
-	var GoalCreateDialog = (function (_super) {
-	    __extends(GoalCreateDialog, _super);
-	    function GoalCreateDialog() {
-	        return _super !== null && _super.apply(this, arguments) || this;
-	    }
-	    GoalCreateDialog.prototype.render = function () {
-	        var _a = this.props, addGoal = _a.addGoal, workbook = _a.workbook, handleClose = _a.handleClose, handleOpen = _a.handleOpen, open = _a.open, goal = _a.goal;
+	    BasicDialog.prototype.render = function () {
+	        var _a = this.props, title = _a.title, items = _a.items;
 	        var actions = [
-	            React.createElement(FlatButton_1.default, { label: "Cancel", primary: true, onTouchTap: handleClose }),
+	            React.createElement(FlatButton_1.default, { label: "Close", primary: true, keyboardFocused: true, onTouchTap: this.handleClose }),
 	        ];
 	        return (React.createElement("div", null,
-	            React.createElement(FloatingActionButton_1.default, { onTouchTap: handleOpen, style: commonStyles_1.foatingButtonStyle },
-	                React.createElement(add_1.default, null)),
-	            React.createElement(Dialog_1.default, { actions: actions, modal: true, open: open, onRequestClose: handleClose, contentStyle: commonStyles_1.fullWidthDialagStyle },
-	                React.createElement(GoalForm_1.default, { submitData: addGoal, workbook: workbook, goal: goal, ref: 'goalForm' }))));
+	            React.createElement(FlatButton_1.default, { label: title, onTouchTap: this.handleOpen }),
+	            React.createElement(Dialog_1.default, { title: title, actions: actions, modal: false, open: this.state.open, onRequestClose: this.handleClose, autoScrollBodyContent: true, contentStyle: commonStyles_1.fullWidthDialagStyle },
+	                React.createElement("div", null, items.map(function (item) { return (React.createElement("div", { key: item.id },
+	                    React.createElement("h3", { style: commonStyles_1.listItemTitle }, item.title),
+	                    React.createElement("p", { style: commonStyles_1.listItemSubTitle }, item.desc))); })))));
 	    };
-	    return GoalCreateDialog;
+	    return BasicDialog;
 	}(React.Component));
-	var stateToProps = function (state) {
-	    var newGoal = workbook_1.goalFactory(0, '');
-	    return {
-	        open: state.loadedGoalId === 0,
-	        goal: __assign({}, workbook_1.goalFactory(0, ''), { dueDate: null })
-	    };
-	};
-	var dispatchToProps = function (dispatch, ownProps) {
-	    return {
-	        addGoal: function (goal) {
-	            dispatch(actions_1.goalSubmitted(ownProps.workbook.id, goal));
-	            dispatch(actions_1.goalLoad(-1)); //resets and closes form
-	        },
-	        handleOpen: function () {
-	            dispatch(actions_1.goalLoad(0));
-	        },
-	        handleClose: function () {
-	            dispatch(actions_1.goalLoad(-1));
-	        }
-	    };
-	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = react_redux_1.connect(stateToProps, dispatchToProps)(GoalCreateDialog);
+	exports.default = BasicDialog;
 
 
 /***/ },
@@ -93995,15 +94106,26 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.default = undefined;
+	exports.default = exports.makeSelectable = exports.ListItem = exports.List = undefined;
 	
-	var _FloatingActionButton = __webpack_require__(1217);
+	var _List2 = __webpack_require__(1181);
 	
-	var _FloatingActionButton2 = _interopRequireDefault(_FloatingActionButton);
+	var _List3 = _interopRequireDefault(_List2);
+	
+	var _ListItem2 = __webpack_require__(1177);
+	
+	var _ListItem3 = _interopRequireDefault(_ListItem2);
+	
+	var _makeSelectable2 = __webpack_require__(1217);
+	
+	var _makeSelectable3 = _interopRequireDefault(_makeSelectable2);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	exports.default = _FloatingActionButton2.default;
+	exports.List = _List3.default;
+	exports.ListItem = _ListItem3.default;
+	exports.makeSelectable = _makeSelectable3.default;
+	exports.default = _List3.default;
 
 /***/ },
 /* 1217 */
@@ -94014,6 +94136,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.makeSelectable = undefined;
 	
 	var _extends2 = __webpack_require__(624);
 	
@@ -94051,345 +94174,130 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _transitions = __webpack_require__(632);
-	
-	var _transitions2 = _interopRequireDefault(_transitions);
-	
 	var _colorManipulator = __webpack_require__(529);
-	
-	var _EnhancedButton = __webpack_require__(768);
-	
-	var _EnhancedButton2 = _interopRequireDefault(_EnhancedButton);
-	
-	var _FontIcon = __webpack_require__(1119);
-	
-	var _FontIcon2 = _interopRequireDefault(_FontIcon);
-	
-	var _Paper = __webpack_require__(756);
-	
-	var _Paper2 = _interopRequireDefault(_Paper);
-	
-	var _childUtils = __webpack_require__(765);
-	
-	var _warning = __webpack_require__(594);
-	
-	var _warning2 = _interopRequireDefault(_warning);
-	
-	var _propTypes = __webpack_require__(758);
-	
-	var _propTypes2 = _interopRequireDefault(_propTypes);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function getStyles(props, context) {
-	  var floatingActionButton = context.muiTheme.floatingActionButton;
+	var makeSelectable = exports.makeSelectable = function makeSelectable(MyComponent) {
+	  var _class, _temp2;
 	
+	  return _temp2 = _class = function (_Component) {
+	    (0, _inherits3.default)(_class, _Component);
 	
-	  var backgroundColor = props.backgroundColor || floatingActionButton.color;
-	  var iconColor = floatingActionButton.iconColor;
+	    function _class() {
+	      var _ref;
 	
-	  if (props.disabled) {
-	    backgroundColor = props.disabledColor || floatingActionButton.disabledColor;
-	    iconColor = floatingActionButton.disabledTextColor;
-	  } else if (props.secondary) {
-	    backgroundColor = floatingActionButton.secondaryColor;
-	    iconColor = floatingActionButton.secondaryIconColor;
-	  }
+	      var _temp, _this, _ret;
 	
-	  return {
-	    root: {
-	      transition: _transitions2.default.easeOut(),
-	      display: 'inline-block'
-	    },
-	    container: {
-	      backgroundColor: backgroundColor,
-	      transition: _transitions2.default.easeOut(),
-	      position: 'relative',
-	      height: floatingActionButton.buttonSize,
-	      width: floatingActionButton.buttonSize,
-	      padding: 0,
-	      overflow: 'hidden',
-	      borderRadius: '50%',
-	      textAlign: 'center',
-	      verticalAlign: 'bottom'
-	    },
-	    containerWhenMini: {
-	      height: floatingActionButton.miniSize,
-	      width: floatingActionButton.miniSize
-	    },
-	    overlay: {
-	      transition: _transitions2.default.easeOut(),
-	      top: 0
-	    },
-	    overlayWhenHovered: {
-	      backgroundColor: (0, _colorManipulator.fade)(iconColor, 0.4)
-	    },
-	    icon: {
-	      height: floatingActionButton.buttonSize,
-	      lineHeight: floatingActionButton.buttonSize + 'px',
-	      fill: iconColor,
-	      color: iconColor
-	    },
-	    iconWhenMini: {
-	      height: floatingActionButton.miniSize,
-	      lineHeight: floatingActionButton.miniSize + 'px'
-	    }
-	  };
-	}
+	      (0, _classCallCheck3.default)(this, _class);
 	
-	var FloatingActionButton = function (_Component) {
-	  (0, _inherits3.default)(FloatingActionButton, _Component);
+	      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	        args[_key] = arguments[_key];
+	      }
 	
-	  function FloatingActionButton() {
-	    var _ref;
+	      return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = _class.__proto__ || (0, _getPrototypeOf2.default)(_class)).call.apply(_ref, [this].concat(args))), _this), _this.hasSelectedDescendant = function (previousValue, child) {
+	        if (_react2.default.isValidElement(child) && child.props.nestedItems && child.props.nestedItems.length > 0) {
+	          return child.props.nestedItems.reduce(_this.hasSelectedDescendant, previousValue);
+	        }
+	        return previousValue || _this.isChildSelected(child, _this.props);
+	      }, _this.handleItemTouchTap = function (event, item) {
+	        var itemValue = item.props.value;
 	
-	    var _temp, _this, _ret;
-	
-	    (0, _classCallCheck3.default)(this, FloatingActionButton);
-	
-	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	      args[_key] = arguments[_key];
+	        if (itemValue !== _this.props.value) {
+	          if (_this.props.onChange) {
+	            _this.props.onChange(event, itemValue);
+	          }
+	        }
+	      }, _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
 	    }
 	
-	    return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = FloatingActionButton.__proto__ || (0, _getPrototypeOf2.default)(FloatingActionButton)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
-	      hovered: false,
-	      touch: false,
-	      zDepth: undefined
-	    }, _this.handleMouseDown = function (event) {
-	      // only listen to left clicks
-	      if (event.button === 0) {
-	        _this.setState({ zDepth: _this.props.zDepth + 1 });
-	      }
-	      if (_this.props.onMouseDown) _this.props.onMouseDown(event);
-	    }, _this.handleMouseUp = function (event) {
-	      _this.setState({ zDepth: _this.props.zDepth });
-	      if (_this.props.onMouseUp) {
-	        _this.props.onMouseUp(event);
-	      }
-	    }, _this.handleMouseLeave = function (event) {
-	      if (!_this.refs.container.isKeyboardFocused()) {
-	        _this.setState({ zDepth: _this.props.zDepth, hovered: false });
-	      }
-	      if (_this.props.onMouseLeave) {
-	        _this.props.onMouseLeave(event);
-	      }
-	    }, _this.handleMouseEnter = function (event) {
-	      if (!_this.refs.container.isKeyboardFocused() && !_this.state.touch) {
-	        _this.setState({ hovered: true });
-	      }
-	      if (_this.props.onMouseEnter) {
-	        _this.props.onMouseEnter(event);
-	      }
-	    }, _this.handleTouchStart = function (event) {
-	      _this.setState({
-	        touch: true,
-	        zDepth: _this.props.zDepth + 1
-	      });
-	      if (_this.props.onTouchStart) {
-	        _this.props.onTouchStart(event);
-	      }
-	    }, _this.handleTouchEnd = function (event) {
-	      _this.setState({
-	        touch: true,
-	        zDepth: _this.props.zDepth
-	      });
-	      if (_this.props.onTouchEnd) {
-	        _this.props.onTouchEnd(event);
-	      }
-	    }, _this.handleKeyboardFocus = function (event, keyboardFocused) {
-	      if (keyboardFocused && !_this.props.disabled) {
-	        _this.setState({ zDepth: _this.props.zDepth + 1 });
-	        _this.refs.overlay.style.backgroundColor = (0, _colorManipulator.fade)(getStyles(_this.props, _this.context).icon.color, 0.4);
-	      } else if (!_this.state.hovered) {
-	        _this.setState({ zDepth: _this.props.zDepth });
-	        _this.refs.overlay.style.backgroundColor = 'transparent';
-	      }
-	    }, _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
-	  }
+	    (0, _createClass3.default)(_class, [{
+	      key: 'extendChild',
+	      value: function extendChild(child, styles, selectedItemStyle) {
+	        var _this2 = this;
 	
-	  (0, _createClass3.default)(FloatingActionButton, [{
-	    key: 'componentWillMount',
-	    value: function componentWillMount() {
-	      this.setState({
-	        zDepth: this.props.disabled ? 0 : this.props.zDepth
-	      });
-	    }
-	  }, {
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	       false ? (0, _warning2.default)(!this.props.iconClassName || !this.props.children, 'Material-UI: You have set both an iconClassName and a child icon. ' + 'It is recommended you use only one method when adding ' + 'icons to FloatingActionButtons.') : void 0;
-	    }
-	  }, {
-	    key: 'componentWillReceiveProps',
-	    value: function componentWillReceiveProps(nextProps) {
-	      var nextState = {};
+	        if (child && child.type && child.type.muiName === 'ListItem') {
+	          var selected = this.isChildSelected(child, this.props);
+	          var selectedChildrenStyles = void 0;
+	          if (selected) {
+	            selectedChildrenStyles = (0, _simpleAssign2.default)({}, styles, selectedItemStyle);
+	          }
 	
-	      if (nextProps.disabled !== this.props.disabled) {
-	        nextState.zDepth = nextProps.disabled ? 0 : this.props.zDepth;
-	      }
-	      if (nextProps.disabled) {
-	        nextState.hovered = false;
-	      }
+	          var mergedChildrenStyles = (0, _simpleAssign2.default)({}, child.props.style, selectedChildrenStyles);
 	
-	      this.setState(nextState);
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var _props = this.props,
-	          backgroundColor = _props.backgroundColor,
-	          className = _props.className,
-	          childrenProp = _props.children,
-	          disabled = _props.disabled,
-	          mini = _props.mini,
-	          secondary = _props.secondary,
-	          iconStyle = _props.iconStyle,
-	          iconClassName = _props.iconClassName,
-	          zDepth = _props.zDepth,
-	          other = (0, _objectWithoutProperties3.default)(_props, ['backgroundColor', 'className', 'children', 'disabled', 'mini', 'secondary', 'iconStyle', 'iconClassName', 'zDepth']);
-	      var prepareStyles = this.context.muiTheme.prepareStyles;
+	          this.keyIndex += 1;
 	
-	      var styles = getStyles(this.props, this.context);
-	
-	      var iconElement = void 0;
-	      if (iconClassName) {
-	        iconElement = _react2.default.createElement(_FontIcon2.default, {
-	          className: iconClassName,
-	          style: (0, _simpleAssign2.default)({}, styles.icon, mini && styles.iconWhenMini, iconStyle)
-	        });
-	      }
-	
-	      var children = void 0;
-	
-	      if (childrenProp) {
-	        children = (0, _childUtils.extendChildren)(childrenProp, function (child) {
-	          return {
-	            style: (0, _simpleAssign2.default)({}, styles.icon, mini && styles.iconWhenMini, iconStyle, child.props.style)
-	          };
-	        });
-	      }
-	
-	      var buttonEventHandlers = disabled ? null : {
-	        onMouseDown: this.handleMouseDown,
-	        onMouseUp: this.handleMouseUp,
-	        onMouseLeave: this.handleMouseLeave,
-	        onMouseEnter: this.handleMouseEnter,
-	        onTouchStart: this.handleTouchStart,
-	        onTouchEnd: this.handleTouchEnd,
-	        onKeyboardFocus: this.handleKeyboardFocus
-	      };
-	
-	      return _react2.default.createElement(
-	        _Paper2.default,
-	        {
-	          className: className,
-	          style: (0, _simpleAssign2.default)(styles.root, this.props.style),
-	          zDepth: this.state.zDepth,
-	          circle: true
-	        },
-	        _react2.default.createElement(
-	          _EnhancedButton2.default,
-	          (0, _extends3.default)({}, other, buttonEventHandlers, {
-	            ref: 'container',
-	            disabled: disabled,
-	            style: (0, _simpleAssign2.default)(styles.container, this.props.mini && styles.containerWhenMini, iconStyle),
-	            focusRippleColor: styles.icon.color,
-	            touchRippleColor: styles.icon.color
-	          }),
-	          _react2.default.createElement(
-	            'div',
-	            {
-	              ref: 'overlay',
-	              style: prepareStyles((0, _simpleAssign2.default)(styles.overlay, this.state.hovered && !this.props.disabled && styles.overlayWhenHovered))
+	          return _react2.default.cloneElement(child, {
+	            onTouchTap: function onTouchTap(event) {
+	              _this2.handleItemTouchTap(event, child);
+	              if (child.props.onTouchTap) {
+	                child.props.onTouchTap(event);
+	              }
 	            },
-	            iconElement,
-	            children
-	          )
-	        )
-	      );
-	    }
-	  }]);
-	  return FloatingActionButton;
-	}(_react.Component);
+	            key: this.keyIndex,
+	            style: mergedChildrenStyles,
+	            nestedItems: child.props.nestedItems.map(function (child) {
+	              return _this2.extendChild(child, styles, selectedItemStyle);
+	            }),
+	            initiallyOpen: this.isInitiallyOpen(child)
+	          });
+	        } else {
+	          return child;
+	        }
+	      }
+	    }, {
+	      key: 'isInitiallyOpen',
+	      value: function isInitiallyOpen(child) {
+	        if (child.props.initiallyOpen) {
+	          return child.props.initiallyOpen;
+	        }
+	        return this.hasSelectedDescendant(false, child);
+	      }
+	    }, {
+	      key: 'isChildSelected',
+	      value: function isChildSelected(child, props) {
+	        return props.value === child.props.value;
+	      }
+	    }, {
+	      key: 'render',
+	      value: function render() {
+	        var _this3 = this;
 	
-	FloatingActionButton.defaultProps = {
-	  disabled: false,
-	  mini: false,
-	  secondary: false,
-	  zDepth: 2
+	        var _props = this.props,
+	            children = _props.children,
+	            selectedItemStyle = _props.selectedItemStyle,
+	            other = (0, _objectWithoutProperties3.default)(_props, ['children', 'selectedItemStyle']);
+	
+	
+	        this.keyIndex = 0;
+	        var styles = {};
+	
+	        if (!selectedItemStyle) {
+	          var textColor = this.context.muiTheme.baseTheme.palette.textColor;
+	          styles.backgroundColor = (0, _colorManipulator.fade)(textColor, 0.2);
+	        }
+	
+	        return _react2.default.createElement(
+	          MyComponent,
+	          (0, _extends3.default)({}, other, this.state),
+	          _react.Children.map(children, function (child) {
+	            return _this3.extendChild(child, styles, selectedItemStyle);
+	          })
+	        );
+	      }
+	    }]);
+	    return _class;
+	  }(_react.Component), _class.propTypes = {
+	    children: _react.PropTypes.node,
+	    onChange: _react.PropTypes.func,
+	    selectedItemStyle: _react.PropTypes.object,
+	    value: _react.PropTypes.any
+	  }, _class.contextTypes = {
+	    muiTheme: _react.PropTypes.object.isRequired
+	  }, _temp2;
 	};
-	FloatingActionButton.contextTypes = {
-	  muiTheme: _react.PropTypes.object.isRequired
-	};
-	 false ? FloatingActionButton.propTypes = {
-	  /**
-	   * This value will override the default background color for the button.
-	   * However it will not override the default disabled background color.
-	   * This has to be set separately using the disabledColor attribute.
-	   */
-	  backgroundColor: _react.PropTypes.string,
-	  /**
-	   * This is what displayed inside the floating action button; for example, a SVG Icon.
-	   */
-	  children: _react.PropTypes.node,
-	  /**
-	   * The css class name of the root element.
-	   */
-	  className: _react.PropTypes.string,
-	  /**
-	   * Disables the button if set to true.
-	   */
-	  disabled: _react.PropTypes.bool,
-	  /**
-	   * This value will override the default background color for the button when it is disabled.
-	   */
-	  disabledColor: _react.PropTypes.string,
-	  /**
-	   * The URL to link to when the button is clicked.
-	   */
-	  href: _react.PropTypes.string,
-	  /**
-	   * The icon within the FloatingActionButton is a FontIcon component.
-	   * This property is the classname of the icon to be displayed inside the button.
-	   * An alternative to adding an iconClassName would be to manually insert a
-	   * FontIcon component or custom SvgIcon component or as a child of FloatingActionButton.
-	   */
-	  iconClassName: _react.PropTypes.string,
-	  /**
-	   * This is the equivalent to iconClassName except that it is used for
-	   * overriding the inline-styles of the FontIcon component.
-	   */
-	  iconStyle: _react.PropTypes.object,
-	  /**
-	   * If true, the button will be a small floating action button.
-	   */
-	  mini: _react.PropTypes.bool,
-	  /** @ignore */
-	  onMouseDown: _react.PropTypes.func,
-	  /** @ignore */
-	  onMouseEnter: _react.PropTypes.func,
-	  /** @ignore */
-	  onMouseLeave: _react.PropTypes.func,
-	  /** @ignore */
-	  onMouseUp: _react.PropTypes.func,
-	  /** @ignore */
-	  onTouchEnd: _react.PropTypes.func,
-	  /** @ignore */
-	  onTouchStart: _react.PropTypes.func,
-	  /**
-	   * If true, the button will use the secondary button colors.
-	   */
-	  secondary: _react.PropTypes.bool,
-	  /**
-	   * Override the inline-styles of the root element.
-	   */
-	  style: _react.PropTypes.object,
-	  /**
-	   * The zDepth of the underlying `Paper` component.
-	   */
-	  zDepth: _propTypes2.default.zDepth
-	} : void 0;
-	exports.default = FloatingActionButton;
+	
+	exports.default = makeSelectable;
 
 /***/ },
 /* 1218 */
@@ -94415,21 +94323,192 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var ContentAdd = function ContentAdd(props) {
+	var ContentCreate = function ContentCreate(props) {
 	  return _react2.default.createElement(
 	    _SvgIcon2.default,
 	    props,
-	    _react2.default.createElement('path', { d: 'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z' })
+	    _react2.default.createElement('path', { d: 'M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z' })
 	  );
 	};
-	ContentAdd = (0, _pure2.default)(ContentAdd);
-	ContentAdd.displayName = 'ContentAdd';
-	ContentAdd.muiName = 'SvgIcon';
+	ContentCreate = (0, _pure2.default)(ContentCreate);
+	ContentCreate.displayName = 'ContentCreate';
+	ContentCreate.muiName = 'SvgIcon';
 	
-	exports.default = ContentAdd;
+	exports.default = ContentCreate;
 
 /***/ },
 /* 1219 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(299);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _pure = __webpack_require__(1123);
+	
+	var _pure2 = _interopRequireDefault(_pure);
+	
+	var _SvgIcon = __webpack_require__(1130);
+	
+	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var ToggleCheckBox = function ToggleCheckBox(props) {
+	  return _react2.default.createElement(
+	    _SvgIcon2.default,
+	    props,
+	    _react2.default.createElement('path', { d: 'M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z' })
+	  );
+	};
+	ToggleCheckBox = (0, _pure2.default)(ToggleCheckBox);
+	ToggleCheckBox.displayName = 'ToggleCheckBox';
+	ToggleCheckBox.muiName = 'SvgIcon';
+	
+	exports.default = ToggleCheckBox;
+
+/***/ },
+/* 1220 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(299);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _pure = __webpack_require__(1123);
+	
+	var _pure2 = _interopRequireDefault(_pure);
+	
+	var _SvgIcon = __webpack_require__(1130);
+	
+	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var ToggleCheckBoxOutlineBlank = function ToggleCheckBoxOutlineBlank(props) {
+	  return _react2.default.createElement(
+	    _SvgIcon2.default,
+	    props,
+	    _react2.default.createElement('path', { d: 'M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z' })
+	  );
+	};
+	ToggleCheckBoxOutlineBlank = (0, _pure2.default)(ToggleCheckBoxOutlineBlank);
+	ToggleCheckBoxOutlineBlank.displayName = 'ToggleCheckBoxOutlineBlank';
+	ToggleCheckBoxOutlineBlank.muiName = 'SvgIcon';
+	
+	exports.default = ToggleCheckBoxOutlineBlank;
+
+/***/ },
+/* 1221 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(299);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _pure = __webpack_require__(1123);
+	
+	var _pure2 = _interopRequireDefault(_pure);
+	
+	var _SvgIcon = __webpack_require__(1130);
+	
+	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var AlertError = function AlertError(props) {
+	  return _react2.default.createElement(
+	    _SvgIcon2.default,
+	    props,
+	    _react2.default.createElement('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z' })
+	  );
+	};
+	AlertError = (0, _pure2.default)(AlertError);
+	AlertError.displayName = 'AlertError';
+	AlertError.muiName = 'SvgIcon';
+	
+	exports.default = AlertError;
+
+/***/ },
+/* 1222 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var React = __webpack_require__(299);
+	var GoalForm_1 = __webpack_require__(1223);
+	var react_redux_1 = __webpack_require__(711);
+	var actions_1 = __webpack_require__(807);
+	var workbook_1 = __webpack_require__(808);
+	var GoalEditComponent = (function (_super) {
+	    __extends(GoalEditComponent, _super);
+	    function GoalEditComponent() {
+	        return _super !== null && _super.apply(this, arguments) || this;
+	    }
+	    GoalEditComponent.prototype.render = function () {
+	        var _a = this.props, editGoal = _a.editGoal, goalDelete = _a.goalDelete, handleClose = _a.handleClose, goal = _a.goal, workbook = _a.workbook;
+	        return (React.createElement(GoalForm_1.default, { goalDelete: goalDelete, handleClose: handleClose, workbook: workbook, goal: goal, submitData: editGoal(goal) }));
+	    };
+	    return GoalEditComponent;
+	}(React.Component));
+	var getGoal = function (loadedGoalId, goals) {
+	    var goal = workbook_1.goalFactory(0, '');
+	    if (typeof goals[loadedGoalId + ''] !== 'undefined') {
+	        goal = goals[loadedGoalId + ''];
+	    }
+	    return goal;
+	};
+	var stateToProps = function (state) {
+	    return {
+	        goal: getGoal(state.loadedGoalId, state.goals)
+	    };
+	};
+	var dispatchToProps = function (dispatch, ownProps) {
+	    return {
+	        editGoal: function (goal) {
+	            return function (goal) {
+	                if (goal.id) {
+	                    dispatch(actions_1.goalEdit(ownProps.workbook.id, goal.id, goal));
+	                }
+	                else {
+	                    dispatch(actions_1.goalSubmitted(ownProps.workbook.id, goal));
+	                }
+	                dispatch(actions_1.goalLoad(-1));
+	            };
+	        },
+	        handleClose: function () {
+	            dispatch(actions_1.goalLoad(-1));
+	        }
+	    };
+	};
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = react_redux_1.connect(stateToProps, dispatchToProps)(GoalEditComponent);
+
+
+/***/ },
+/* 1223 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -94449,9 +94528,9 @@
 	var React = __webpack_require__(299);
 	var TextField_1 = __webpack_require__(1145);
 	var RaisedButton_1 = __webpack_require__(1151);
-	var DatePicker_1 = __webpack_require__(1220);
-	var Checkbox_1 = __webpack_require__(1237);
-	var helpers_1 = __webpack_require__(1242);
+	var DatePicker_1 = __webpack_require__(1224);
+	var Checkbox_1 = __webpack_require__(1241);
+	var helpers_1 = __webpack_require__(1244);
 	var commonStyles_1 = __webpack_require__(1140);
 	var validateForm = function (values) {
 	    var fields = Object.keys(values).reduce(function (accum, current) {
@@ -94468,7 +94547,7 @@
 	                }
 	                break;
 	            case 'dueDate':
-	                if (values.dueDate !== null && !helpers_1.Validators.isNumeric(values.dueDate)) {
+	                if (!helpers_1.Validators.isNumeric(values.dueDate) || values.dueDate === -1) {
 	                    results.fields[propName] = 'Please select a date.';
 	                }
 	                break;
@@ -94508,19 +94587,6 @@
 	                var _a;
 	            };
 	        };
-	        _this.handleDueDateCheck = function (event, isInputChecked) {
-	            if (!isInputChecked) {
-	                _this.setState({
-	                    values: __assign({}, _this.state.values, { dueDate: null }),
-	                    dueDateChecked: isInputChecked
-	                });
-	            }
-	            else {
-	                _this.setState({
-	                    dueDateChecked: isInputChecked
-	                });
-	            }
-	        };
 	        _this.handleSubmit = function (event) {
 	            var submitData = _this.props.submitData;
 	            var result = validateForm(_this.state.values);
@@ -94535,7 +94601,6 @@
 	        };
 	        console.log(props.goal);
 	        _this.state = {
-	            dueDateChecked: props.goal.dueDate && props.goal.dueDate > 0,
 	            errors: { title: '', dueDate: '' },
 	            values: { title: props.goal.title, dueDate: props.goal.dueDate }
 	        };
@@ -94546,17 +94611,24 @@
 	    };
 	    GoalForm.prototype.render = function () {
 	        var _this = this;
+	        var _a = this.props, handleClose = _a.handleClose, workbook = _a.workbook, goal = _a.goal, goalDelete = _a.goalDelete;
+	        var deleteButton = null;
+	        if (goal.id > 0) {
+	            deleteButton = React.createElement(RaisedButton_1.default, { onTouchTap: function () { return goalDelete(workbook.id, goal.id); }, label: "delete" });
+	        }
 	        return (React.createElement("div", null,
 	            React.createElement("form", { onSubmit: this.handleSubmit },
-	                React.createElement("div", { style: commonStyles_1.topRightButtonStyle },
-	                    React.createElement(RaisedButton_1.default, { type: "submit", label: "Save" })),
 	                React.createElement("div", null,
 	                    React.createElement(TextField_1.default, { floatingLabelText: 'Goal', hintText: 'Enter Text Here', multiLine: true, rows: 1, rowsMax: 2, name: 'title', value: this.state.values.title, fullWidth: true, onChange: this.handleChange, ref: function (input) { _this.textInput = input; }, errorText: this.state.errors.title })),
 	                React.createElement("div", null,
 	                    React.createElement("div", null,
-	                        React.createElement(CalendarToggle, { date: this.state.values.dueDate, label: "Set Due Date", dueDateChecked: this.handleDueDateCheck, checked: this.state.dueDateChecked })),
+	                        React.createElement(DatePicker_1.default, { value: helpers_1.Transforms.msToDate(this.state.values.dueDate), floatingLabelText: 'Due Date', locale: 'en-US', firstDayOfWeek: 0, errorText: this.state.errors.dueDate, onChange: this.handleDateChange('dueDate'), name: 'dueDate', autoOk: false }))),
+	                React.createElement("div", { style: commonStyles_1.subMenuFlexContainerStyle },
 	                    React.createElement("div", null,
-	                        React.createElement(DatePicker_1.default, { value: helpers_1.Transforms.msToDate(this.state.values.dueDate), hintText: "Due Date", locale: 'en-US', errorText: this.state.errors.dueDate, onChange: this.handleDateChange('dueDate'), disabled: !this.state.dueDateChecked, name: 'dueDate', autoOk: false }))))));
+	                        React.createElement(RaisedButton_1.default, { primary: true, type: "submit", label: "Save" })),
+	                    React.createElement("div", null, deleteButton),
+	                    React.createElement("div", null,
+	                        React.createElement(RaisedButton_1.default, { onTouchTap: handleClose, type: "button", label: "Cancel" }))))));
 	    };
 	    return GoalForm;
 	}(React.Component));
@@ -94565,7 +94637,7 @@
 
 
 /***/ },
-/* 1220 */
+/* 1224 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -94575,7 +94647,7 @@
 	});
 	exports.default = undefined;
 	
-	var _DatePicker = __webpack_require__(1221);
+	var _DatePicker = __webpack_require__(1225);
 	
 	var _DatePicker2 = _interopRequireDefault(_DatePicker);
 	
@@ -94584,7 +94656,7 @@
 	exports.default = _DatePicker2.default;
 
 /***/ },
-/* 1221 */
+/* 1225 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -94629,9 +94701,9 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _dateUtils = __webpack_require__(1222);
+	var _dateUtils = __webpack_require__(1226);
 	
-	var _DatePickerDialog = __webpack_require__(1223);
+	var _DatePickerDialog = __webpack_require__(1227);
 	
 	var _DatePickerDialog2 = _interopRequireDefault(_DatePickerDialog);
 	
@@ -94977,7 +95049,7 @@
 	exports.default = DatePicker;
 
 /***/ },
-/* 1222 */
+/* 1226 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -95162,7 +95234,7 @@
 	}
 
 /***/ },
-/* 1223 */
+/* 1227 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -95215,7 +95287,7 @@
 	
 	var _keycode2 = _interopRequireDefault(_keycode);
 	
-	var _Calendar = __webpack_require__(1224);
+	var _Calendar = __webpack_require__(1228);
 	
 	var _Calendar2 = _interopRequireDefault(_Calendar);
 	
@@ -95227,11 +95299,11 @@
 	
 	var _Popover2 = _interopRequireDefault(_Popover);
 	
-	var _PopoverAnimationVertical = __webpack_require__(1236);
+	var _PopoverAnimationVertical = __webpack_require__(1240);
 	
 	var _PopoverAnimationVertical2 = _interopRequireDefault(_PopoverAnimationVertical);
 	
-	var _dateUtils = __webpack_require__(1222);
+	var _dateUtils = __webpack_require__(1226);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -95413,7 +95485,7 @@
 	exports.default = DatePickerDialog;
 
 /***/ },
-/* 1224 */
+/* 1228 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -95462,31 +95534,31 @@
 	
 	var _transitions2 = _interopRequireDefault(_transitions);
 	
-	var _CalendarActionButtons = __webpack_require__(1225);
+	var _CalendarActionButtons = __webpack_require__(1229);
 	
 	var _CalendarActionButtons2 = _interopRequireDefault(_CalendarActionButtons);
 	
-	var _CalendarMonth = __webpack_require__(1226);
+	var _CalendarMonth = __webpack_require__(1230);
 	
 	var _CalendarMonth2 = _interopRequireDefault(_CalendarMonth);
 	
-	var _CalendarYear = __webpack_require__(1228);
+	var _CalendarYear = __webpack_require__(1232);
 	
 	var _CalendarYear2 = _interopRequireDefault(_CalendarYear);
 	
-	var _CalendarToolbar = __webpack_require__(1230);
+	var _CalendarToolbar = __webpack_require__(1234);
 	
 	var _CalendarToolbar2 = _interopRequireDefault(_CalendarToolbar);
 	
-	var _DateDisplay = __webpack_require__(1235);
+	var _DateDisplay = __webpack_require__(1239);
 	
 	var _DateDisplay2 = _interopRequireDefault(_DateDisplay);
 	
-	var _SlideIn = __webpack_require__(1233);
+	var _SlideIn = __webpack_require__(1237);
 	
 	var _SlideIn2 = _interopRequireDefault(_SlideIn);
 	
-	var _dateUtils = __webpack_require__(1222);
+	var _dateUtils = __webpack_require__(1226);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -95866,7 +95938,7 @@
 	exports.default = Calendar;
 
 /***/ },
-/* 1225 */
+/* 1229 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -95971,7 +96043,7 @@
 	exports.default = CalendarActionButton;
 
 /***/ },
-/* 1226 */
+/* 1230 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -96004,9 +96076,9 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _dateUtils = __webpack_require__(1222);
+	var _dateUtils = __webpack_require__(1226);
 	
-	var _DayButton = __webpack_require__(1227);
+	var _DayButton = __webpack_require__(1231);
 	
 	var _DayButton2 = _interopRequireDefault(_DayButton);
 	
@@ -96142,7 +96214,7 @@
 	exports.default = CalendarMonth;
 
 /***/ },
-/* 1227 */
+/* 1231 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -96187,7 +96259,7 @@
 	
 	var _transitions2 = _interopRequireDefault(_transitions);
 	
-	var _dateUtils = __webpack_require__(1222);
+	var _dateUtils = __webpack_require__(1226);
 	
 	var _EnhancedButton = __webpack_require__(768);
 	
@@ -96342,7 +96414,7 @@
 	exports.default = DayButton;
 
 /***/ },
-/* 1228 */
+/* 1232 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -96383,11 +96455,11 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _YearButton = __webpack_require__(1229);
+	var _YearButton = __webpack_require__(1233);
 	
 	var _YearButton2 = _interopRequireDefault(_YearButton);
 	
-	var _dateUtils = __webpack_require__(1222);
+	var _dateUtils = __webpack_require__(1226);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -96536,7 +96608,7 @@
 	exports.default = CalendarYear;
 
 /***/ },
-/* 1229 */
+/* 1233 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -96695,7 +96767,7 @@
 	exports.default = YearButton;
 
 /***/ },
-/* 1230 */
+/* 1234 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -96732,15 +96804,15 @@
 	
 	var _IconButton2 = _interopRequireDefault(_IconButton);
 	
-	var _chevronLeft = __webpack_require__(1231);
+	var _chevronLeft = __webpack_require__(1235);
 	
 	var _chevronLeft2 = _interopRequireDefault(_chevronLeft);
 	
-	var _chevronRight = __webpack_require__(1232);
+	var _chevronRight = __webpack_require__(1236);
 	
 	var _chevronRight2 = _interopRequireDefault(_chevronRight);
 	
-	var _SlideIn = __webpack_require__(1233);
+	var _SlideIn = __webpack_require__(1237);
 	
 	var _SlideIn2 = _interopRequireDefault(_SlideIn);
 	
@@ -96868,7 +96940,7 @@
 	exports.default = CalendarToolbar;
 
 /***/ },
-/* 1231 */
+/* 1235 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -96905,7 +96977,7 @@
 	exports.default = NavigationChevronLeft;
 
 /***/ },
-/* 1232 */
+/* 1236 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -96942,7 +97014,7 @@
 	exports.default = NavigationChevronRight;
 
 /***/ },
-/* 1233 */
+/* 1237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -96991,7 +97063,7 @@
 	
 	var _reactAddonsTransitionGroup2 = _interopRequireDefault(_reactAddonsTransitionGroup);
 	
-	var _SlideInChild = __webpack_require__(1234);
+	var _SlideInChild = __webpack_require__(1238);
 	
 	var _SlideInChild2 = _interopRequireDefault(_SlideInChild);
 	
@@ -97081,7 +97153,7 @@
 	exports.default = SlideIn;
 
 /***/ },
-/* 1234 */
+/* 1238 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -97234,7 +97306,7 @@
 	exports.default = SlideInChild;
 
 /***/ },
-/* 1235 */
+/* 1239 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -97279,7 +97351,7 @@
 	
 	var _transitions2 = _interopRequireDefault(_transitions);
 	
-	var _SlideIn = __webpack_require__(1233);
+	var _SlideIn = __webpack_require__(1237);
 	
 	var _SlideIn2 = _interopRequireDefault(_SlideIn);
 	
@@ -97476,7 +97548,7 @@
 	exports.default = DateDisplay;
 
 /***/ },
-/* 1236 */
+/* 1240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -97624,7 +97696,7 @@
 	exports.default = PopoverAnimationVertical;
 
 /***/ },
-/* 1237 */
+/* 1241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -97634,7 +97706,7 @@
 	});
 	exports.default = undefined;
 	
-	var _Checkbox = __webpack_require__(1238);
+	var _Checkbox = __webpack_require__(1242);
 	
 	var _Checkbox2 = _interopRequireDefault(_Checkbox);
 	
@@ -97643,7 +97715,7 @@
 	exports.default = _Checkbox2.default;
 
 /***/ },
-/* 1238 */
+/* 1242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -97688,7 +97760,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _EnhancedSwitch = __webpack_require__(1239);
+	var _EnhancedSwitch = __webpack_require__(1243);
 	
 	var _EnhancedSwitch2 = _interopRequireDefault(_EnhancedSwitch);
 	
@@ -97696,11 +97768,11 @@
 	
 	var _transitions2 = _interopRequireDefault(_transitions);
 	
-	var _checkBoxOutlineBlank = __webpack_require__(1240);
+	var _checkBoxOutlineBlank = __webpack_require__(1220);
 	
 	var _checkBoxOutlineBlank2 = _interopRequireDefault(_checkBoxOutlineBlank);
 	
-	var _checkBox = __webpack_require__(1241);
+	var _checkBox = __webpack_require__(1219);
 	
 	var _checkBox2 = _interopRequireDefault(_checkBox);
 	
@@ -97938,7 +98010,7 @@
 	exports.default = Checkbox;
 
 /***/ },
-/* 1239 */
+/* 1243 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -98394,81 +98466,7 @@
 	exports.default = EnhancedSwitch;
 
 /***/ },
-/* 1240 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _react = __webpack_require__(299);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _pure = __webpack_require__(1123);
-	
-	var _pure2 = _interopRequireDefault(_pure);
-	
-	var _SvgIcon = __webpack_require__(1130);
-	
-	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var ToggleCheckBoxOutlineBlank = function ToggleCheckBoxOutlineBlank(props) {
-	  return _react2.default.createElement(
-	    _SvgIcon2.default,
-	    props,
-	    _react2.default.createElement('path', { d: 'M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z' })
-	  );
-	};
-	ToggleCheckBoxOutlineBlank = (0, _pure2.default)(ToggleCheckBoxOutlineBlank);
-	ToggleCheckBoxOutlineBlank.displayName = 'ToggleCheckBoxOutlineBlank';
-	ToggleCheckBoxOutlineBlank.muiName = 'SvgIcon';
-	
-	exports.default = ToggleCheckBoxOutlineBlank;
-
-/***/ },
-/* 1241 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _react = __webpack_require__(299);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _pure = __webpack_require__(1123);
-	
-	var _pure2 = _interopRequireDefault(_pure);
-	
-	var _SvgIcon = __webpack_require__(1130);
-	
-	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var ToggleCheckBox = function ToggleCheckBox(props) {
-	  return _react2.default.createElement(
-	    _SvgIcon2.default,
-	    props,
-	    _react2.default.createElement('path', { d: 'M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z' })
-	  );
-	};
-	ToggleCheckBox = (0, _pure2.default)(ToggleCheckBox);
-	ToggleCheckBox.displayName = 'ToggleCheckBox';
-	ToggleCheckBox.muiName = 'SvgIcon';
-	
-	exports.default = ToggleCheckBox;
-
-/***/ },
-/* 1242 */
+/* 1244 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -98518,121 +98516,6 @@
 
 
 /***/ },
-/* 1243 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
-	var React = __webpack_require__(299);
-	var Dialog_1 = __webpack_require__(744);
-	var FlatButton_1 = __webpack_require__(763);
-	var GoalForm_1 = __webpack_require__(1219);
-	var react_redux_1 = __webpack_require__(711);
-	var actions_1 = __webpack_require__(807);
-	var workbook_1 = __webpack_require__(808);
-	var commonStyles_1 = __webpack_require__(1140);
-	var GoalEditDialog = (function (_super) {
-	    __extends(GoalEditDialog, _super);
-	    function GoalEditDialog() {
-	        return _super !== null && _super.apply(this, arguments) || this;
-	    }
-	    GoalEditDialog.prototype.render = function () {
-	        var _a = this.props, editGoal = _a.editGoal, goalDelete = _a.goalDelete, open = _a.open, handleClose = _a.handleClose, goal = _a.goal, workbook = _a.workbook;
-	        var actions = [
-	            React.createElement(FlatButton_1.default, { label: "Cancel", primary: true, onTouchTap: handleClose }),
-	            React.createElement(FlatButton_1.default, { label: "Delete", primary: true, onTouchTap: function () {
-	                    goalDelete(workbook.id, goal.id);
-	                    handleClose();
-	                } }),
-	        ];
-	        return (React.createElement("div", null,
-	            React.createElement(Dialog_1.default, { title: "Edit Goal", actions: actions, modal: true, open: open, onRequestClose: handleClose, contentStyle: commonStyles_1.fullWidthDialagStyle },
-	                React.createElement(GoalForm_1.default, { workbook: workbook, goal: goal, submitData: editGoal(goal) }))));
-	    };
-	    return GoalEditDialog;
-	}(React.Component));
-	var getGoal = function (loadedGoalId, goals) {
-	    var goal = workbook_1.goalFactory(0, '');
-	    if (typeof goals[loadedGoalId + ''] !== 'undefined') {
-	        goal = goals[loadedGoalId + ''];
-	    }
-	    return goal;
-	};
-	var stateToProps = function (state) {
-	    return {
-	        open: state.loadedGoalId > 0,
-	        goal: getGoal(state.loadedGoalId, state.goals)
-	    };
-	};
-	var dispatchToProps = function (dispatch, ownProps) {
-	    return {
-	        editGoal: function (goal) {
-	            return function (goal) {
-	                console.log(goal);
-	                dispatch(actions_1.goalEdit(ownProps.workbook.id, goal.id, goal));
-	                dispatch(actions_1.goalLoad(-1));
-	            };
-	        },
-	        handleClose: function () {
-	            dispatch(actions_1.goalLoad(-1));
-	        }
-	    };
-	};
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = react_redux_1.connect(stateToProps, dispatchToProps)(GoalEditDialog);
-
-
-/***/ },
-/* 1244 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
-	var React = __webpack_require__(299);
-	var Dialog_1 = __webpack_require__(744);
-	var FlatButton_1 = __webpack_require__(763);
-	var RaisedButton_1 = __webpack_require__(1151);
-	var List_1 = __webpack_require__(1245);
-	var BasicDialog = (function (_super) {
-	    __extends(BasicDialog, _super);
-	    function BasicDialog() {
-	        var _this = _super !== null && _super.apply(this, arguments) || this;
-	        _this.state = {
-	            open: false,
-	        };
-	        _this.handleOpen = function () {
-	            _this.setState({ open: true });
-	        };
-	        _this.handleClose = function () {
-	            _this.setState({ open: false });
-	        };
-	        return _this;
-	    }
-	    BasicDialog.prototype.render = function () {
-	        var _a = this.props, title = _a.title, items = _a.items;
-	        var actions = [
-	            React.createElement(FlatButton_1.default, { label: "Close", primary: true, keyboardFocused: true, onTouchTap: this.handleClose }),
-	        ];
-	        return (React.createElement("div", null,
-	            React.createElement(RaisedButton_1.default, { label: title, onTouchTap: this.handleOpen }),
-	            React.createElement(Dialog_1.default, { title: title, actions: actions, modal: false, open: this.state.open, onRequestClose: this.handleClose, autoScrollBodyContent: true },
-	                React.createElement(List_1.List, null, items.map(function (item) { return (React.createElement(List_1.ListItem, { key: item.id, primaryText: item.title })); })))));
-	    };
-	    return BasicDialog;
-	}(React.Component));
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = BasicDialog;
-
-
-/***/ },
 /* 1245 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -98641,26 +98524,33 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.default = exports.makeSelectable = exports.ListItem = exports.List = undefined;
 	
-	var _List2 = __webpack_require__(1181);
+	var _react = __webpack_require__(299);
 	
-	var _List3 = _interopRequireDefault(_List2);
+	var _react2 = _interopRequireDefault(_react);
 	
-	var _ListItem2 = __webpack_require__(1177);
+	var _pure = __webpack_require__(1123);
 	
-	var _ListItem3 = _interopRequireDefault(_ListItem2);
+	var _pure2 = _interopRequireDefault(_pure);
 	
-	var _makeSelectable2 = __webpack_require__(1246);
+	var _SvgIcon = __webpack_require__(1130);
 	
-	var _makeSelectable3 = _interopRequireDefault(_makeSelectable2);
+	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	exports.List = _List3.default;
-	exports.ListItem = _ListItem3.default;
-	exports.makeSelectable = _makeSelectable3.default;
-	exports.default = _List3.default;
+	var ContentAdd = function ContentAdd(props) {
+	  return _react2.default.createElement(
+	    _SvgIcon2.default,
+	    props,
+	    _react2.default.createElement('path', { d: 'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z' })
+	  );
+	};
+	ContentAdd = (0, _pure2.default)(ContentAdd);
+	ContentAdd.displayName = 'ContentAdd';
+	ContentAdd.muiName = 'SvgIcon';
+	
+	exports.default = ContentAdd;
 
 /***/ },
 /* 1246 */
@@ -98671,7 +98561,25 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.makeSelectable = undefined;
+	exports.default = undefined;
+	
+	var _FloatingActionButton = __webpack_require__(1247);
+	
+	var _FloatingActionButton2 = _interopRequireDefault(_FloatingActionButton);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = _FloatingActionButton2.default;
+
+/***/ },
+/* 1247 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	
 	var _extends2 = __webpack_require__(624);
 	
@@ -98709,167 +98617,345 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _transitions = __webpack_require__(632);
+	
+	var _transitions2 = _interopRequireDefault(_transitions);
+	
 	var _colorManipulator = __webpack_require__(529);
 	
+	var _EnhancedButton = __webpack_require__(768);
+	
+	var _EnhancedButton2 = _interopRequireDefault(_EnhancedButton);
+	
+	var _FontIcon = __webpack_require__(1119);
+	
+	var _FontIcon2 = _interopRequireDefault(_FontIcon);
+	
+	var _Paper = __webpack_require__(756);
+	
+	var _Paper2 = _interopRequireDefault(_Paper);
+	
+	var _childUtils = __webpack_require__(765);
+	
+	var _warning = __webpack_require__(594);
+	
+	var _warning2 = _interopRequireDefault(_warning);
+	
+	var _propTypes = __webpack_require__(758);
+	
+	var _propTypes2 = _interopRequireDefault(_propTypes);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var makeSelectable = exports.makeSelectable = function makeSelectable(MyComponent) {
-	  var _class, _temp2;
+	function getStyles(props, context) {
+	  var floatingActionButton = context.muiTheme.floatingActionButton;
 	
-	  return _temp2 = _class = function (_Component) {
-	    (0, _inherits3.default)(_class, _Component);
 	
-	    function _class() {
-	      var _ref;
+	  var backgroundColor = props.backgroundColor || floatingActionButton.color;
+	  var iconColor = floatingActionButton.iconColor;
 	
-	      var _temp, _this, _ret;
+	  if (props.disabled) {
+	    backgroundColor = props.disabledColor || floatingActionButton.disabledColor;
+	    iconColor = floatingActionButton.disabledTextColor;
+	  } else if (props.secondary) {
+	    backgroundColor = floatingActionButton.secondaryColor;
+	    iconColor = floatingActionButton.secondaryIconColor;
+	  }
 	
-	      (0, _classCallCheck3.default)(this, _class);
+	  return {
+	    root: {
+	      transition: _transitions2.default.easeOut(),
+	      display: 'inline-block'
+	    },
+	    container: {
+	      backgroundColor: backgroundColor,
+	      transition: _transitions2.default.easeOut(),
+	      position: 'relative',
+	      height: floatingActionButton.buttonSize,
+	      width: floatingActionButton.buttonSize,
+	      padding: 0,
+	      overflow: 'hidden',
+	      borderRadius: '50%',
+	      textAlign: 'center',
+	      verticalAlign: 'bottom'
+	    },
+	    containerWhenMini: {
+	      height: floatingActionButton.miniSize,
+	      width: floatingActionButton.miniSize
+	    },
+	    overlay: {
+	      transition: _transitions2.default.easeOut(),
+	      top: 0
+	    },
+	    overlayWhenHovered: {
+	      backgroundColor: (0, _colorManipulator.fade)(iconColor, 0.4)
+	    },
+	    icon: {
+	      height: floatingActionButton.buttonSize,
+	      lineHeight: floatingActionButton.buttonSize + 'px',
+	      fill: iconColor,
+	      color: iconColor
+	    },
+	    iconWhenMini: {
+	      height: floatingActionButton.miniSize,
+	      lineHeight: floatingActionButton.miniSize + 'px'
+	    }
+	  };
+	}
 	
-	      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	        args[_key] = arguments[_key];
-	      }
+	var FloatingActionButton = function (_Component) {
+	  (0, _inherits3.default)(FloatingActionButton, _Component);
 	
-	      return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = _class.__proto__ || (0, _getPrototypeOf2.default)(_class)).call.apply(_ref, [this].concat(args))), _this), _this.hasSelectedDescendant = function (previousValue, child) {
-	        if (_react2.default.isValidElement(child) && child.props.nestedItems && child.props.nestedItems.length > 0) {
-	          return child.props.nestedItems.reduce(_this.hasSelectedDescendant, previousValue);
-	        }
-	        return previousValue || _this.isChildSelected(child, _this.props);
-	      }, _this.handleItemTouchTap = function (event, item) {
-	        var itemValue = item.props.value;
+	  function FloatingActionButton() {
+	    var _ref;
 	
-	        if (itemValue !== _this.props.value) {
-	          if (_this.props.onChange) {
-	            _this.props.onChange(event, itemValue);
-	          }
-	        }
-	      }, _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
+	    var _temp, _this, _ret;
+	
+	    (0, _classCallCheck3.default)(this, FloatingActionButton);
+	
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
 	    }
 	
-	    (0, _createClass3.default)(_class, [{
-	      key: 'extendChild',
-	      value: function extendChild(child, styles, selectedItemStyle) {
-	        var _this2 = this;
+	    return _ret = (_temp = (_this = (0, _possibleConstructorReturn3.default)(this, (_ref = FloatingActionButton.__proto__ || (0, _getPrototypeOf2.default)(FloatingActionButton)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+	      hovered: false,
+	      touch: false,
+	      zDepth: undefined
+	    }, _this.handleMouseDown = function (event) {
+	      // only listen to left clicks
+	      if (event.button === 0) {
+	        _this.setState({ zDepth: _this.props.zDepth + 1 });
+	      }
+	      if (_this.props.onMouseDown) _this.props.onMouseDown(event);
+	    }, _this.handleMouseUp = function (event) {
+	      _this.setState({ zDepth: _this.props.zDepth });
+	      if (_this.props.onMouseUp) {
+	        _this.props.onMouseUp(event);
+	      }
+	    }, _this.handleMouseLeave = function (event) {
+	      if (!_this.refs.container.isKeyboardFocused()) {
+	        _this.setState({ zDepth: _this.props.zDepth, hovered: false });
+	      }
+	      if (_this.props.onMouseLeave) {
+	        _this.props.onMouseLeave(event);
+	      }
+	    }, _this.handleMouseEnter = function (event) {
+	      if (!_this.refs.container.isKeyboardFocused() && !_this.state.touch) {
+	        _this.setState({ hovered: true });
+	      }
+	      if (_this.props.onMouseEnter) {
+	        _this.props.onMouseEnter(event);
+	      }
+	    }, _this.handleTouchStart = function (event) {
+	      _this.setState({
+	        touch: true,
+	        zDepth: _this.props.zDepth + 1
+	      });
+	      if (_this.props.onTouchStart) {
+	        _this.props.onTouchStart(event);
+	      }
+	    }, _this.handleTouchEnd = function (event) {
+	      _this.setState({
+	        touch: true,
+	        zDepth: _this.props.zDepth
+	      });
+	      if (_this.props.onTouchEnd) {
+	        _this.props.onTouchEnd(event);
+	      }
+	    }, _this.handleKeyboardFocus = function (event, keyboardFocused) {
+	      if (keyboardFocused && !_this.props.disabled) {
+	        _this.setState({ zDepth: _this.props.zDepth + 1 });
+	        _this.refs.overlay.style.backgroundColor = (0, _colorManipulator.fade)(getStyles(_this.props, _this.context).icon.color, 0.4);
+	      } else if (!_this.state.hovered) {
+	        _this.setState({ zDepth: _this.props.zDepth });
+	        _this.refs.overlay.style.backgroundColor = 'transparent';
+	      }
+	    }, _temp), (0, _possibleConstructorReturn3.default)(_this, _ret);
+	  }
 	
-	        if (child && child.type && child.type.muiName === 'ListItem') {
-	          var selected = this.isChildSelected(child, this.props);
-	          var selectedChildrenStyles = void 0;
-	          if (selected) {
-	            selectedChildrenStyles = (0, _simpleAssign2.default)({}, styles, selectedItemStyle);
-	          }
+	  (0, _createClass3.default)(FloatingActionButton, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      this.setState({
+	        zDepth: this.props.disabled ? 0 : this.props.zDepth
+	      });
+	    }
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	       false ? (0, _warning2.default)(!this.props.iconClassName || !this.props.children, 'Material-UI: You have set both an iconClassName and a child icon. ' + 'It is recommended you use only one method when adding ' + 'icons to FloatingActionButtons.') : void 0;
+	    }
+	  }, {
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps(nextProps) {
+	      var nextState = {};
 	
-	          var mergedChildrenStyles = (0, _simpleAssign2.default)({}, child.props.style, selectedChildrenStyles);
+	      if (nextProps.disabled !== this.props.disabled) {
+	        nextState.zDepth = nextProps.disabled ? 0 : this.props.zDepth;
+	      }
+	      if (nextProps.disabled) {
+	        nextState.hovered = false;
+	      }
 	
-	          this.keyIndex += 1;
+	      this.setState(nextState);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _props = this.props,
+	          backgroundColor = _props.backgroundColor,
+	          className = _props.className,
+	          childrenProp = _props.children,
+	          disabled = _props.disabled,
+	          mini = _props.mini,
+	          secondary = _props.secondary,
+	          iconStyle = _props.iconStyle,
+	          iconClassName = _props.iconClassName,
+	          zDepth = _props.zDepth,
+	          other = (0, _objectWithoutProperties3.default)(_props, ['backgroundColor', 'className', 'children', 'disabled', 'mini', 'secondary', 'iconStyle', 'iconClassName', 'zDepth']);
+	      var prepareStyles = this.context.muiTheme.prepareStyles;
 	
-	          return _react2.default.cloneElement(child, {
-	            onTouchTap: function onTouchTap(event) {
-	              _this2.handleItemTouchTap(event, child);
-	              if (child.props.onTouchTap) {
-	                child.props.onTouchTap(event);
-	              }
+	      var styles = getStyles(this.props, this.context);
+	
+	      var iconElement = void 0;
+	      if (iconClassName) {
+	        iconElement = _react2.default.createElement(_FontIcon2.default, {
+	          className: iconClassName,
+	          style: (0, _simpleAssign2.default)({}, styles.icon, mini && styles.iconWhenMini, iconStyle)
+	        });
+	      }
+	
+	      var children = void 0;
+	
+	      if (childrenProp) {
+	        children = (0, _childUtils.extendChildren)(childrenProp, function (child) {
+	          return {
+	            style: (0, _simpleAssign2.default)({}, styles.icon, mini && styles.iconWhenMini, iconStyle, child.props.style)
+	          };
+	        });
+	      }
+	
+	      var buttonEventHandlers = disabled ? null : {
+	        onMouseDown: this.handleMouseDown,
+	        onMouseUp: this.handleMouseUp,
+	        onMouseLeave: this.handleMouseLeave,
+	        onMouseEnter: this.handleMouseEnter,
+	        onTouchStart: this.handleTouchStart,
+	        onTouchEnd: this.handleTouchEnd,
+	        onKeyboardFocus: this.handleKeyboardFocus
+	      };
+	
+	      return _react2.default.createElement(
+	        _Paper2.default,
+	        {
+	          className: className,
+	          style: (0, _simpleAssign2.default)(styles.root, this.props.style),
+	          zDepth: this.state.zDepth,
+	          circle: true
+	        },
+	        _react2.default.createElement(
+	          _EnhancedButton2.default,
+	          (0, _extends3.default)({}, other, buttonEventHandlers, {
+	            ref: 'container',
+	            disabled: disabled,
+	            style: (0, _simpleAssign2.default)(styles.container, this.props.mini && styles.containerWhenMini, iconStyle),
+	            focusRippleColor: styles.icon.color,
+	            touchRippleColor: styles.icon.color
+	          }),
+	          _react2.default.createElement(
+	            'div',
+	            {
+	              ref: 'overlay',
+	              style: prepareStyles((0, _simpleAssign2.default)(styles.overlay, this.state.hovered && !this.props.disabled && styles.overlayWhenHovered))
 	            },
-	            key: this.keyIndex,
-	            style: mergedChildrenStyles,
-	            nestedItems: child.props.nestedItems.map(function (child) {
-	              return _this2.extendChild(child, styles, selectedItemStyle);
-	            }),
-	            initiallyOpen: this.isInitiallyOpen(child)
-	          });
-	        } else {
-	          return child;
-	        }
-	      }
-	    }, {
-	      key: 'isInitiallyOpen',
-	      value: function isInitiallyOpen(child) {
-	        if (child.props.initiallyOpen) {
-	          return child.props.initiallyOpen;
-	        }
-	        return this.hasSelectedDescendant(false, child);
-	      }
-	    }, {
-	      key: 'isChildSelected',
-	      value: function isChildSelected(child, props) {
-	        return props.value === child.props.value;
-	      }
-	    }, {
-	      key: 'render',
-	      value: function render() {
-	        var _this3 = this;
+	            iconElement,
+	            children
+	          )
+	        )
+	      );
+	    }
+	  }]);
+	  return FloatingActionButton;
+	}(_react.Component);
 	
-	        var _props = this.props,
-	            children = _props.children,
-	            selectedItemStyle = _props.selectedItemStyle,
-	            other = (0, _objectWithoutProperties3.default)(_props, ['children', 'selectedItemStyle']);
-	
-	
-	        this.keyIndex = 0;
-	        var styles = {};
-	
-	        if (!selectedItemStyle) {
-	          var textColor = this.context.muiTheme.baseTheme.palette.textColor;
-	          styles.backgroundColor = (0, _colorManipulator.fade)(textColor, 0.2);
-	        }
-	
-	        return _react2.default.createElement(
-	          MyComponent,
-	          (0, _extends3.default)({}, other, this.state),
-	          _react.Children.map(children, function (child) {
-	            return _this3.extendChild(child, styles, selectedItemStyle);
-	          })
-	        );
-	      }
-	    }]);
-	    return _class;
-	  }(_react.Component), _class.propTypes = {
-	    children: _react.PropTypes.node,
-	    onChange: _react.PropTypes.func,
-	    selectedItemStyle: _react.PropTypes.object,
-	    value: _react.PropTypes.any
-	  }, _class.contextTypes = {
-	    muiTheme: _react.PropTypes.object.isRequired
-	  }, _temp2;
+	FloatingActionButton.defaultProps = {
+	  disabled: false,
+	  mini: false,
+	  secondary: false,
+	  zDepth: 2
 	};
-	
-	exports.default = makeSelectable;
-
-/***/ },
-/* 1247 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _react = __webpack_require__(299);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _pure = __webpack_require__(1123);
-	
-	var _pure2 = _interopRequireDefault(_pure);
-	
-	var _SvgIcon = __webpack_require__(1130);
-	
-	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var ContentCreate = function ContentCreate(props) {
-	  return _react2.default.createElement(
-	    _SvgIcon2.default,
-	    props,
-	    _react2.default.createElement('path', { d: 'M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z' })
-	  );
+	FloatingActionButton.contextTypes = {
+	  muiTheme: _react.PropTypes.object.isRequired
 	};
-	ContentCreate = (0, _pure2.default)(ContentCreate);
-	ContentCreate.displayName = 'ContentCreate';
-	ContentCreate.muiName = 'SvgIcon';
-	
-	exports.default = ContentCreate;
+	 false ? FloatingActionButton.propTypes = {
+	  /**
+	   * This value will override the default background color for the button.
+	   * However it will not override the default disabled background color.
+	   * This has to be set separately using the disabledColor attribute.
+	   */
+	  backgroundColor: _react.PropTypes.string,
+	  /**
+	   * This is what displayed inside the floating action button; for example, a SVG Icon.
+	   */
+	  children: _react.PropTypes.node,
+	  /**
+	   * The css class name of the root element.
+	   */
+	  className: _react.PropTypes.string,
+	  /**
+	   * Disables the button if set to true.
+	   */
+	  disabled: _react.PropTypes.bool,
+	  /**
+	   * This value will override the default background color for the button when it is disabled.
+	   */
+	  disabledColor: _react.PropTypes.string,
+	  /**
+	   * The URL to link to when the button is clicked.
+	   */
+	  href: _react.PropTypes.string,
+	  /**
+	   * The icon within the FloatingActionButton is a FontIcon component.
+	   * This property is the classname of the icon to be displayed inside the button.
+	   * An alternative to adding an iconClassName would be to manually insert a
+	   * FontIcon component or custom SvgIcon component or as a child of FloatingActionButton.
+	   */
+	  iconClassName: _react.PropTypes.string,
+	  /**
+	   * This is the equivalent to iconClassName except that it is used for
+	   * overriding the inline-styles of the FontIcon component.
+	   */
+	  iconStyle: _react.PropTypes.object,
+	  /**
+	   * If true, the button will be a small floating action button.
+	   */
+	  mini: _react.PropTypes.bool,
+	  /** @ignore */
+	  onMouseDown: _react.PropTypes.func,
+	  /** @ignore */
+	  onMouseEnter: _react.PropTypes.func,
+	  /** @ignore */
+	  onMouseLeave: _react.PropTypes.func,
+	  /** @ignore */
+	  onMouseUp: _react.PropTypes.func,
+	  /** @ignore */
+	  onTouchEnd: _react.PropTypes.func,
+	  /** @ignore */
+	  onTouchStart: _react.PropTypes.func,
+	  /**
+	   * If true, the button will use the secondary button colors.
+	   */
+	  secondary: _react.PropTypes.bool,
+	  /**
+	   * Override the inline-styles of the root element.
+	   */
+	  style: _react.PropTypes.object,
+	  /**
+	   * The zDepth of the underlying `Paper` component.
+	   */
+	  zDepth: _propTypes2.default.zDepth
+	} : void 0;
+	exports.default = FloatingActionButton;
 
 /***/ },
 /* 1248 */
@@ -98881,44 +98967,7 @@
 	  value: true
 	});
 	
-	var _react = __webpack_require__(299);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _pure = __webpack_require__(1123);
-	
-	var _pure2 = _interopRequireDefault(_pure);
-	
-	var _SvgIcon = __webpack_require__(1130);
-	
-	var _SvgIcon2 = _interopRequireDefault(_SvgIcon);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var AlertError = function AlertError(props) {
-	  return _react2.default.createElement(
-	    _SvgIcon2.default,
-	    props,
-	    _react2.default.createElement('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z' })
-	  );
-	};
-	AlertError = (0, _pure2.default)(AlertError);
-	AlertError.displayName = 'AlertError';
-	AlertError.muiName = 'SvgIcon';
-	
-	exports.default = AlertError;
-
-/***/ },
-/* 1249 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _NotesContainer = __webpack_require__(1250);
+	var _NotesContainer = __webpack_require__(1249);
 	
 	var _NotesContainer2 = _interopRequireDefault(_NotesContainer);
 	
@@ -98935,23 +98984,27 @@
 	};
 
 /***/ },
-/* 1250 */
+/* 1249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Notes_1 = __webpack_require__(1251);
+	var Notes_1 = __webpack_require__(1250);
 	var react_redux_1 = __webpack_require__(711);
 	var actions_1 = __webpack_require__(807);
 	var mapStateToProps = function (state, ownProps) {
 	    return {
 	        notes: state.noteIds.map(function (nid) { return (state.notes[nid + '']); }),
-	        isOnline: true
+	        isOnline: true,
+	        noteEditMode: state.loadedNoteId > -1
 	    };
 	};
 	var dispatchToProps = function (dispatch) {
 	    return {
 	        noteEdit: function (note) { return dispatch(actions_1.noteLoad(note.id)); },
-	        noteDelete: function (noteId) { return dispatch(actions_1.noteDelete(noteId)); },
+	        noteDelete: function (noteId) {
+	            dispatch(actions_1.noteLoad(-1));
+	            dispatch(actions_1.noteDelete(noteId));
+	        },
 	        noteLoad: function () { return dispatch(actions_1.noteLoad(0)); }
 	    };
 	};
@@ -98960,7 +99013,7 @@
 
 
 /***/ },
-/* 1251 */
+/* 1250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -98970,11 +99023,11 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	var React = __webpack_require__(299);
-	var NoteEditDialog_1 = __webpack_require__(1252);
-	var List_1 = __webpack_require__(1245);
-	var create_1 = __webpack_require__(1247);
-	var FloatingActionButton_1 = __webpack_require__(1216);
-	var add_1 = __webpack_require__(1218);
+	var List_1 = __webpack_require__(1216);
+	var create_1 = __webpack_require__(1218);
+	var FloatingActionButton_1 = __webpack_require__(1246);
+	var add_1 = __webpack_require__(1245);
+	var NoteEditComponent_1 = __webpack_require__(1251);
 	var commonStyles_1 = __webpack_require__(1140);
 	var styles = {
 	    video: {
@@ -98991,14 +99044,16 @@
 	        this.props.appBarTitle && this.props.appBarTitle('Notes');
 	    };
 	    Workbook.prototype.render = function () {
-	        var _a = this.props, isOnline = _a.isOnline, noteEdit = _a.noteEdit, notes = _a.notes, noteDelete = _a.noteDelete, noteLoad = _a.noteLoad;
+	        var _a = this.props, isOnline = _a.isOnline, noteEdit = _a.noteEdit, notes = _a.notes, noteDelete = _a.noteDelete, noteLoad = _a.noteLoad, noteEditMode = _a.noteEditMode;
+	        if (noteEditMode) {
+	            return React.createElement(NoteEditComponent_1.default, null);
+	        }
 	        return (React.createElement("div", null,
 	            React.createElement(List_1.List, null, notes.map(function (item) {
 	                return (React.createElement(List_1.ListItem, { key: item.id, primaryText: item.text, onTouchTap: function () { return noteEdit(item); }, rightIcon: React.createElement(create_1.default, null) }));
 	            })),
 	            React.createElement(FloatingActionButton_1.default, { onTouchTap: function () { return noteLoad(); }, style: commonStyles_1.foatingButtonStyle },
-	                React.createElement(add_1.default, null)),
-	            React.createElement(NoteEditDialog_1.default, null)));
+	                React.createElement(add_1.default, null))));
 	    };
 	    return Workbook;
 	}(React.Component));
@@ -99007,7 +99062,7 @@
 
 
 /***/ },
-/* 1252 */
+/* 1251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -99017,34 +99072,20 @@
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	var React = __webpack_require__(299);
-	var Dialog_1 = __webpack_require__(744);
-	var FlatButton_1 = __webpack_require__(763);
-	var NoteForm_1 = __webpack_require__(1253);
+	var NoteForm_1 = __webpack_require__(1252);
 	var react_redux_1 = __webpack_require__(711);
 	var actions_1 = __webpack_require__(807);
 	var note_1 = __webpack_require__(817);
-	var commonStyles_1 = __webpack_require__(1140);
-	var NoteEditDialog = (function (_super) {
-	    __extends(NoteEditDialog, _super);
-	    function NoteEditDialog() {
+	var NoteEditComponent = (function (_super) {
+	    __extends(NoteEditComponent, _super);
+	    function NoteEditComponent() {
 	        return _super !== null && _super.apply(this, arguments) || this;
 	    }
-	    NoteEditDialog.prototype.render = function () {
+	    NoteEditComponent.prototype.render = function () {
 	        var _a = this.props, editNote = _a.editNote, open = _a.open, handleClose = _a.handleClose, note = _a.note, noteDelete = _a.noteDelete;
-	        var actions = [
-	            React.createElement(FlatButton_1.default, { label: "Cancel", primary: true, onTouchTap: handleClose })
-	        ];
-	        if (note.id) {
-	            actions.push(React.createElement(FlatButton_1.default, { label: "Delete", primary: true, onTouchTap: function () {
-	                    noteDelete(note.id);
-	                    handleClose();
-	                } }));
-	        }
-	        return (React.createElement("div", null,
-	            React.createElement(Dialog_1.default, { title: "Note", actions: actions, modal: false, open: open, onRequestClose: handleClose, contentStyle: commonStyles_1.fullWidthDialagStyle },
-	                React.createElement(NoteForm_1.default, { note: note, handleSubmit: editNote(note) }))));
+	        return (React.createElement(NoteForm_1.default, { handleClose: handleClose, noteDelete: noteDelete, note: note, handleSubmit: editNote(note) }));
 	    };
-	    return NoteEditDialog;
+	    return NoteEditComponent;
 	}(React.Component));
 	var getNote = function (loadedNoteId, notes) {
 	    var note = note_1.noteFactory(0, '');
@@ -99075,6 +99116,7 @@
 	            };
 	        },
 	        noteDelete: function (noteId) {
+	            dispatch(actions_1.noteLoad(-1));
 	            dispatch(actions_1.noteDelete(noteId));
 	        },
 	        handleClose: function () {
@@ -99083,11 +99125,11 @@
 	    };
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = react_redux_1.connect(stateToProps, dispatchToProps)(NoteEditDialog);
+	exports.default = react_redux_1.connect(stateToProps, dispatchToProps)(NoteEditComponent);
 
 
 /***/ },
-/* 1253 */
+/* 1252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -99129,17 +99171,25 @@
 	    };
 	    NoteForm.prototype.render = function () {
 	        var _this = this;
-	        var _a = this.props, handleSubmit = _a.handleSubmit, note = _a.note;
+	        var _a = this.props, handleSubmit = _a.handleSubmit, note = _a.note, handleClose = _a.handleClose, noteDelete = _a.noteDelete;
 	        var formSubmit = function (event) {
 	            handleSubmit({ text: _this.state.text });
 	            event.preventDefault();
 	        };
+	        var deleteButton = null;
+	        if (note.id > 0) {
+	            deleteButton = React.createElement(RaisedButton_1.default, { onTouchTap: function () { return noteDelete(note.id); }, label: "delete" });
+	        }
 	        return (React.createElement("div", null,
 	            React.createElement("form", { onSubmit: formSubmit },
-	                React.createElement("div", { style: commonStyles_1.topRightButtonStyle },
-	                    React.createElement(RaisedButton_1.default, { type: "submit", primary: true, disabled: false, label: "Save" })),
 	                React.createElement("div", null,
-	                    React.createElement(TextField_1.default, { floatingLabelText: 'Note', hintText: 'Enter Text Here', multiLine: true, rows: 1, rowsMax: 2, name: 'text', value: this.state.text, fullWidth: true, ref: function (input) { _this.textInput = input; }, onChange: this.handleChange, errorText: false })))));
+	                    React.createElement(TextField_1.default, { floatingLabelText: 'Note', hintText: 'Enter Text Here', multiLine: true, rows: 1, rowsMax: 2, name: 'text', value: this.state.text, fullWidth: true, ref: function (input) { _this.textInput = input; }, onChange: this.handleChange, errorText: false })),
+	                React.createElement("div", { style: commonStyles_1.subMenuFlexContainerStyle },
+	                    React.createElement("div", null,
+	                        React.createElement(RaisedButton_1.default, { primary: true, type: "submit", label: "Save" })),
+	                    React.createElement("div", null, deleteButton),
+	                    React.createElement("div", null,
+	                        React.createElement(RaisedButton_1.default, { onTouchTap: handleClose, type: "button", label: "Cancel" }))))));
 	    };
 	    return NoteForm;
 	}(React.Component));
@@ -99148,7 +99198,7 @@
 
 
 /***/ },
-/* 1254 */
+/* 1253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -99168,7 +99218,7 @@
 	};
 
 /***/ },
-/* 1255 */
+/* 1254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -99177,7 +99227,7 @@
 	  value: true
 	});
 	
-	var _NotFound = __webpack_require__(1256);
+	var _NotFound = __webpack_require__(1255);
 	
 	var _NotFound2 = _interopRequireDefault(_NotFound);
 	
@@ -99192,7 +99242,7 @@
 	};
 
 /***/ },
-/* 1256 */
+/* 1255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -99211,7 +99261,7 @@
 
 
 /***/ },
-/* 1257 */
+/* 1256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -99220,7 +99270,7 @@
 	var reducerSecurity_1 = __webpack_require__(1111);
 	var redux_saga_1 = __webpack_require__(779);
 	var security_1 = __webpack_require__(1038);
-	var assert = __webpack_require__(1258);
+	var assert = __webpack_require__(1257);
 	var sagaMiddleware = redux_saga_1.default();
 	var securityStoreTest = redux_1.createStore(reducerSecurity_1.default, // app reducer // TODO remove "as any"
 	undefined, redux_1.compose(redux_1.applyMiddleware(redux_thunk_1.default, sagaMiddleware)));
@@ -99486,7 +99536,7 @@
 
 
 /***/ },
-/* 1258 */
+/* 1257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -99557,7 +99607,7 @@
 	// ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 	// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	
-	var util = __webpack_require__(1259);
+	var util = __webpack_require__(1258);
 	var hasOwn = Object.prototype.hasOwnProperty;
 	var pSlice = Array.prototype.slice;
 	var functionsHaveNames = (function () {
@@ -99983,7 +100033,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 1259 */
+/* 1258 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -100511,7 +100561,7 @@
 	}
 	exports.isPrimitive = isPrimitive;
 	
-	exports.isBuffer = __webpack_require__(1260);
+	exports.isBuffer = __webpack_require__(1259);
 	
 	function objectToString(o) {
 	  return Object.prototype.toString.call(o);
@@ -100555,7 +100605,7 @@
 	 *     prototype.
 	 * @param {function} superCtor Constructor function to inherit prototype from.
 	 */
-	exports.inherits = __webpack_require__(1261);
+	exports.inherits = __webpack_require__(1260);
 	
 	exports._extend = function(origin, add) {
 	  // Don't do anything if add isn't an object
@@ -100576,7 +100626,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(294)))
 
 /***/ },
-/* 1260 */
+/* 1259 */
 /***/ function(module, exports) {
 
 	module.exports = function isBuffer(arg) {
@@ -100587,7 +100637,7 @@
 	}
 
 /***/ },
-/* 1261 */
+/* 1260 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -100616,41 +100666,41 @@
 
 
 /***/ },
-/* 1262 */
+/* 1261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "manifest.json";
 
 /***/ },
-/* 1263 */
+/* 1262 */
 /***/ function(module, exports, __webpack_require__) {
 
+	__webpack_require__(1263)
 	__webpack_require__(1264)
 	__webpack_require__(1265)
 	__webpack_require__(1266)
-	__webpack_require__(1267)
 	module.exports = "index.html"
 
 /***/ },
-/* 1264 */
+/* 1263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "static/appIcon_152-0396220bbc3c3dd1b385c4a271cb95fb.png";
 
 /***/ },
-/* 1265 */
+/* 1264 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "static/appIcon_144-9cc26bb3079c038ac446ad5d9298ab04.png";
 
 /***/ },
-/* 1266 */
+/* 1265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "main-04312762f51e2ceefa7ee046a1f1e37d.css";
 
 /***/ },
-/* 1267 */
+/* 1266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "static/appIcon_32-d2a5f9283a623a506743532058926892.png";
