@@ -29,7 +29,7 @@ import localForage from 'localForage';
 import createAsyncEncryptor from 'redux-persist-transform-encrypt/async';
 import {userLogout,encryptedDbPaused,loadAppState,turnAppOff} from './actions';
 
-import {securityStore,securityRoutes} from './SecurityProvider';
+
 import createPersistorAdapter from './persistStoreAdapter';
 import createPromiseTransform from './createPromiseTransform';
 var asyncTransform = createAsyncEncryptor({secretKey: 'adadaei8f9s'});
@@ -65,10 +65,7 @@ const encryptorTransform = createEncryptor({
   whitelist: ['goals']
 });
 */
-const getRiPin = () => {
-   const fullKey =  (securityStore as any).getState().rikey
-   return fullKey.substring(0,30);
-}
+
 
 if(__IS_CORDOVA_BUILD__){
 var transformEncryptTransform = createPromiseTransform(
@@ -78,11 +75,11 @@ var transformEncryptTransform = createPromiseTransform(
      console.log(inboundState);
       if(__DEVTOOLS__){
         console.log(inboundState);
-        console.log(getRiPin());
+
       }
       return new Promise(function(res,rej){
           let dataJSON = {
-                      "KEY_PIN": getRiPin(),
+                      "KEY_PIN": 'asdfamfasiei24f',
                       "KEY_INPUT": inboundState
                     };
           (window as any).t2crypto.encryptRaw(dataJSON,function success(result){
@@ -116,8 +113,9 @@ var transformEncryptTransform = createPromiseTransform(
 } else {
 var transformEncryptTransform = createPromiseTransform(
     // transform state coming from redux on its way to being serialized and stored
-    (inboundState, key) => {
-
+    ({inboundState, key}) => {
+      console.log('inbound ' +key);
+      console.log(inboundState);
       return new Promise(function(res,rej){
             res(inboundState);
       }).then(function(rs){
@@ -128,8 +126,8 @@ var transformEncryptTransform = createPromiseTransform(
       
     },
     // transform state coming from storage, on its way to be rehydrated into redux
-    (outboundState, key) =>  {
-      
+    ({outboundState, key}) =>  {
+      console.log('outbound ' +key);
       return new Promise(function(res,rej){
             res(outboundState);
       }).then(function(rs){
@@ -165,7 +163,7 @@ const appStore = createStore(
 //sagaMiddleware.run(appSaga); // saga middleware will not run until this operation  is called
 
 const appHistory = syncHistoryWithStore(hashHistory, appStore);
-const securityHistory = syncHistoryWithStore(hashHistory, securityStore);
+
 if(__INCLUDE_SERVICE_WORKER__ && !__IS_CORDOVA_BUILD__){ // __INCLUDE_SERVICE_WORKER__ and other __VAR_NAME__ variables are used by webpack durring the build process. See <root>/webpack-production.config.js
   if ('serviceWorker' in navigator) {
     /**
@@ -222,18 +220,14 @@ const rootRoute = [
     ]
   }
 ];
-if(!__IS_CORDOVA_BUILD__){
-  securityStore.dispatch(deviceReady());
-}
 
 export const onCordovaDeviceReady = () => {
 
-      console.log((window as any).t2crypto);
-      console.log('cordova device ready');
+
       document.addEventListener("pause", onPause, false);
       document.addEventListener("resume", onResume, false);
       document.addEventListener("menubutton", onMenuKeyDown, false);
-      //securityStore.dispatch(cordovaDeviceReady());
+     
      if(__IS_CORDOVA_BUILD__){
 
         var error = function(message) { console.log("!! FAILED !! API returned: " + message); };
@@ -265,7 +259,7 @@ export const onCordovaDeviceReady = () => {
         }
         
       
-        securityStore.dispatch(deviceReady());
+        
      }
 
 }
@@ -278,8 +272,7 @@ function onPause() {
 }
 
 function onResume() {
-   // console.log('cordova resume');
-   // securityStore.dispatch(push('/'));
+
 }
 
 function onMenuKeyDown() {
@@ -292,8 +285,8 @@ var persistEncryptedConfig =  {
                                       storage: localForage,
                                       inboundTransform: transformEncryptTransform
                                     };
-var appStorePersistor = createPersistorAdapter(appStore, persistEncryptedConfig);
-appStorePersistor.pause();
+
+
 /**
  * AppProvider is the base/root component for the app
  *
@@ -307,7 +300,6 @@ interface MyProps {
 
 interface MyState {
  rehydrated: any;
- locked: any;
 }
 
 class AppProvider extends React.Component<MyProps, MyState> {
@@ -315,7 +307,7 @@ class AppProvider extends React.Component<MyProps, MyState> {
   constructor (props) {
     super(props);
     this.props = props;
-    this.state = { rehydrated: false, locked: true };
+    this.state = { rehydrated: false };
   }
 
   componentWillMount () { // only called on first load or hard browser refresh
@@ -326,144 +318,25 @@ class AppProvider extends React.Component<MyProps, MyState> {
      */
  
 
-    console.log((window as any).t2crypto);
-
-    const securityPersist = persistStore(securityStore, {
-                          keyPrefix: 'decryptedpersistor',
-                          storage: localForage,
-                          blacklist: ['mode','cordova','rikey','view'],
-                        } as any, 
-                        () => {
-                           this.setState({ rehydrated: true } as any);
-                        }
-                  );
-
-
-      var appIsActive = false;
       
-      securityStore.subscribe(() => {
+     
    
 
-          if((securityStore as any).getState().mode === 0 && !appIsActive){
-            if(__DEVTOOLS__){
-              console.log('----------LOADING APP STORE---------');
-            }
-
             (getStoredState(persistEncryptedConfig) as any).then((storedState) => {
-                appIsActive = true;
+              
                let hydratePromises = [];
 
                let isStateEmpty = Object.keys(storedState).length === 0;
-
-               Object.keys(storedState).forEach((objectKey) => {
-               
-                  let field = new Promise((resolve,reject) => {
-                        if(__DEVTOOLS__){
-                          console.log('outgoing data rikey');
-                          console.log(getRiPin());
-                        }
-                      if(__IS_CORDOVA_BUILD__){
-                        let dataJSON = {
-                          "KEY_PIN": getRiPin(),
-                          "KEY_INPUT": storedState[objectKey]
-                        };
-                        if(__DEVTOOLS__){
-                          console.log('calling decryptRaw for objectKey');
-                          console.log(dataJSON);
-                        }
-                        (window as any).t2crypto.decryptRaw(dataJSON,(result) => {
-                            if(result.RESULT !== -1){
-                                if(__DEVTOOLS__){
-                                  console.log('decrypting');
-                                  console.log(result.RESULT);
-                                }
-
-                                let parsedResult;
-                                try {
-                                    parsedResult = JSON.parse(result.RESULT);
-                                } catch(e) {
-                                    if(__DEVTOOLS__){
-                                      console.log('could not parse the following');
-                                      console.log(result.RESULT);
-                                      console.log('Field ' + objectKey);
-                                    }
-                                    parsedResult = null;
-                                    //TODO decide what to do here
-                                }
-                                
-                                resolve([objectKey,parsedResult]);
-                            } else {
-                              let err = {
-                                message: 'cordova: failed decryption on field ' + objectKey
-                              }
-                              console.log(err);
-                              reject(err);
-                            }
-                        },(er) => {
-                          console.log("Error cb is implemented");
-                          console.log(er);
-                        });
-                      }else{
-                        resolve([objectKey,storedState[objectKey]]);
-                      }
-                  });
-                  hydratePromises.push(field);
-                });
-                if(isStateEmpty){
-                      if(__DEVTOOLS__){
-                        console.log("stored state is empty");
-                      }
-                      
-                      appStore.dispatch(loadAppState(storedState));
-                      appStorePersistor.resume();
-                      this.setState({ locked: false } as any);
-                } else {
-                 if(__DEVTOOLS__){
-                   console.log("stored state has data");
-                 }
-                 Promise.all(hydratePromises).then((results) => {
-                      let finalStoredState = results.reduce(function(accum,result){
-                            let [key,value] = result;
-                            accum[key] = value
-                            return accum;
-                      },{});
-                      if(__DEVTOOLS__){
-                        console.log('promise array complete');
-                        console.log(finalStoredState);
-                      }
-                      appStore.dispatch(loadAppState(finalStoredState));
-                      appStorePersistor.resume();
-                      this.setState({ locked: false } as any);
-                  }).catch(function(err){
-                    console.log(err); //TODO handle problems
-                  });
-                }
+               //appStore.dispatch(loadAppState({}));
+               const persistor = createPersistorAdapter(appStore, persistEncryptedConfig);
+               this.setState({rehydrated: true});
 
             }).catch(function(err){
                 console.log(err);
             });
  
-          }
-      });
-
-      appStore.subscribe(() => {
-          if ((appStore as any).getState().mode === 0 && appIsActive) {
-            if(__DEVTOOLS__){
-              console.log('----------LOADING SECURITY STORE---------');
-            }
-
-            const logoutRedirect =  (appStore as any).getState().onLogout.redirect || '/';
-            
-            appStorePersistor.pause();
-            
-            console.log(logoutRedirect);
-            this.setState({ locked: true } as any);
-
-            appIsActive = false;
-            securityStore.dispatch(switchToSecurityProvider()); // securityState.mode == 1
-            securityStore.dispatch(push(logoutRedirect));
-          }
-      });
+         
+      
    
   }
 
@@ -475,15 +348,8 @@ class AppProvider extends React.Component<MyProps, MyState> {
     if (!this.state.rehydrated) {
       return <BlankPage><SplashPage/></BlankPage>;
     }
-    if(this.state.locked){
-      return (
-        <Provider key='dec_store' store={securityStore}>
-          <Router history={securityHistory} routes={securityRoutes} />
-        </Provider>
-      );
-    }
     return (
-      <Provider key='enc_store' store={appStore}>
+      <Provider store={appStore}>
         <Router  history={appHistory} routes={rootRoute} />
       </Provider>
     );

@@ -6,7 +6,7 @@ import {REHYDRATE} from 'redux-persist/constants';
 
 import {deviceReducer} from 'local-t2-device-redux';
 import {navigationReducer} from 'local-t2-navigation-redux';
-import {appReducer} from 'local-t2-app-redux';
+
 import * as objectAssign from 'object-assign';
 import {workbooks,workbookIds, examples, goals,loadedGoalId} from './workbook';
 import {notes, noteIds, loadedNoteId} from './note';
@@ -100,7 +100,6 @@ export const nextId = (array) => {
 }
 
 const appHub = combineReducers({
-  app: appReducer,
   migrations,
   form: formReducer,
   routing: routerReducer,

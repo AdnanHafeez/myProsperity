@@ -53,13 +53,14 @@ export default function createPersistor (store, config) {
         }
 
         let key = storesToProcess[0]
+      
         let storageKey = createStorageKey(key);
         storesToProcess.shift();
-        let promise = transforms.in(stateGetter(store.getState(), key))
+        let promise = transforms.in(stateGetter(store.getState(), key),key)
           .then(function(results){
 
                 storage.setItem(storageKey, serializer(results), warnIfSetError(key))
-        });
+           });
         
       }, debounce)
     }

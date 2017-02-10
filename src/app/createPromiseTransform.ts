@@ -9,8 +9,11 @@ function createTransform (inbound, outbound, config = {}) {
   }
 
   return {
-    in: (state, key) => !whitelistBlacklistCheck(key) && inbound ? inbound(state, key) : Promise.resolve(state),
-    out: (state, key) => !whitelistBlacklistCheck(key) && outbound ? outbound(state, key) : Promise.resolve(state)
+    in: (state, key) => {
+
+      return !whitelistBlacklistCheck(key) && inbound ? inbound({inboundState: state,key}) : Promise.resolve({state,key})
+    },
+    out: (state, key) => !whitelistBlacklistCheck(key) && outbound ? outbound({outboundState: state,key}) : Promise.resolve({state,key})
   }
 }
 
