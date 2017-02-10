@@ -46,44 +46,15 @@ const styles = {
 
 interface SettingsMenuProps {
   turnAppOffRedirect(path:string): any;
-  settingsMenu: any[];
-  open: boolean;
 }
 
 interface SettingsMenuState {
   openMenu: boolean;
 }
 class SettingMenuComponent extends React.Component<SettingsMenuProps, SettingsMenuState> {
-  constructor(props){
-    super(props);
-    this.state = {
-      openMenu: false
-    }
-  }
 
-  componentWillReceiveProps(nextProps){
-    if(this.state.openMenu !== nextProps.open){
-      this.setState({
-        openMenu: nextProps.open
-      })
-    }
-  }
-  handleOnRequestChange = (openMenu) => {
-    console.log('handleOnRequestChange');
-    this.setState({
-      openMenu
-    });
-  }
- 
-  handleItemTouchTap= (openMenu) => {
-    console.log('handleItemTouchTap');
-  }
-
-  handleOnChange = () => {
-    console.log('handleOnChange');
-  }
   render(){
-    const {turnAppOffRedirect,settingsMenu} = this.props;
+    const {turnAppOffRedirect} = this.props;
 
     return (<IconMenu
       iconButtonElement={
@@ -91,10 +62,6 @@ class SettingMenuComponent extends React.Component<SettingsMenuProps, SettingsMe
       }
       targetOrigin={{horizontal: 'right', vertical: 'top'}}
       anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-      open={this.state.openMenu}
-      onRequestChange={this.handleOnRequestChange}
-      onChange={this.handleOnChange}
-      onItemTouchTap={this.handleItemTouchTap}
 
     >
       
@@ -119,8 +86,6 @@ interface MyProps {
 interface MyState {
   title?: any;
   open?: boolean;
-  settingsMenu?: any[];
-  settingsOpen: boolean;
 }
 
 
@@ -136,9 +101,7 @@ class Main extends React.Component<MyProps, MyState>{
     this.handleTitle = this.handleTitle.bind(this);
     this.state = {
       open: false,
-      title: '',
-      settingsMenu: [],
-      settingsOpen: false
+      title: ''
     };
   }
 
@@ -163,18 +126,6 @@ class Main extends React.Component<MyProps, MyState>{
     }as any);
   }
 
-  handleSettingMenu = (settingsMenu:any = []) => {
-    this.setState({
-      settingsMenu
-    }as any);
-  }
-
-  handleSettingsMenuDropDown = (settingsOpen) => {
-    console.log(settingsOpen);
-    this.setState({
-      settingsOpen
-    }as any);
-  }
 
   render () {
     var {turnAppOffRedirect, flash} = this.props;
@@ -184,12 +135,10 @@ class Main extends React.Component<MyProps, MyState>{
                 title={this.state.title}
                 titleStyle={{textAlign: 'center'}}
                 iconElementLeft={<AppBarMenuIcon/>}
-                iconElementRight={<SettingMenuComponent open={this.state.settingsOpen} settingsMenu={this.state.settingsMenu}  turnAppOffRedirect={turnAppOffRedirect} />}
+                iconElementRight={<SettingMenuComponent   turnAppOffRedirect={turnAppOffRedirect} />}
                  />
                 <div style={styles.content as any}>{React.cloneElement(this.props.children, { 
-                                                                                              appBarTitle: this.handleTitle, 
-                                                                                              settingsMenu: this.handleSettingMenu,
-                                                                                              settingsMenuDropDown: this.handleSettingsMenuDropDown
+                                                                                              appBarTitle: this.handleTitle
                                                                                             })}</div>
 
           <SnackBarNotice flash={flash} />
