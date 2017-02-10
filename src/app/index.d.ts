@@ -10,10 +10,6 @@ declare module 'local-t2-navigation-redux' {
 }
 
 
-declare module 'redux-persist/constants' {
-  export const REHYDRATE: any;
-}
-
 declare module 'local-t2-app-redux' {
   export const appSaga: any;
   export const registerPromise: any;

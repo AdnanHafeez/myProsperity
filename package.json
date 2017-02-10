@@ -15,6 +15,7 @@
   "devDependencies": {
     "@types/core-js": "^0.9.34",
     "@types/material-ui": "^0.16.46",
+    "@types/node": "^7.0.5",
     "@types/normalizr": "^2.0.18",
     "@types/react": "^0.14.57",
     "@types/react-tap-event-plugin": "0.0.30",
@@ -61,7 +62,6 @@
     "@types/react-addons-transition-group": "^0.14.17",
     "@types/react-dom": "^0.14.18",
     "@types/react-redux": "^4.4.32",
-    "@types/react-router": "^2.0.38",
     "@types/react-router-redux": "^4.0.34",
     "@types/redux-form": "*",
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
