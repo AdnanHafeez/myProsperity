@@ -32,7 +32,20 @@ import {userLogout,encryptedDbPaused,loadAppState,turnAppOff} from './actions';
 
 import createPersistorAdapter from './persistStoreAdapter';
 import createPromiseTransform from './createPromiseTransform';
-var asyncTransform = createAsyncEncryptor({secretKey: 'adadaei8f9s'});
+import {BrowserCryptoPromise,PromisePeristerTransform} from './lib/CryptoPromise';
+
+const doNotSave = ['mode','user','cordova','onLogout'];
+const doNotEncrypt = ['migrations','navigation','workbookIds','routing','view','onLogout','user'];
+const cryptoKey = 'asdfasfsdffsf'
+
+
+
+const cryptoPromise = new BrowserCryptoPromise();
+const promisePeristerTransform = new PromisePeristerTransform(
+                                          cryptoPromise,
+                                          doNotSave,
+                                          doNotEncrypt
+                                        );
 /**
  * Apply migrations that have yet to be run.
  */
@@ -57,90 +70,6 @@ const sagaMiddleware = createSagaMiddleware();
 let reducerKey = 'migrations'; // name of the migration
 
 const migration = createMigration(manifest, reducerKey);
-// const persistEnhancer = compose(migration, autoRehydrate());
-
-/*
-const encryptorTransform = createEncryptor({
-  secretKey: 'my-super-secret-key',
-  whitelist: ['goals']
-});
-*/
-
-
-if(__IS_CORDOVA_BUILD__){
-var transformEncryptTransform = createPromiseTransform(
-    // transform state coming from redux on its way to being serialized and stored
-
-    (inboundState, key) => {
-     console.log(inboundState);
-      if(__DEVTOOLS__){
-        console.log(inboundState);
-
-      }
-      return new Promise(function(res,rej){
-          let dataJSON = {
-                      "KEY_PIN": 'asdfamfasiei24f',
-                      "KEY_INPUT": inboundState
-                    };
-          (window as any).t2crypto.encryptRaw(dataJSON,function success(result){
-              if(result.RESULT !== -1){
-                if(__DEVTOOLS__){
-                  console.log('inbound enc '+ result.RESULT);
-                  console.log(result.RESULT)
-                }
-
-                res(result.RESULT);
-              }else{
-                let err = {
-                  message: 'inbound encryption failer',
-                  key: key
-                }
-                if(__DEVTOOLS__){
-                  console.log(err);
-                }
-                rej(err);
-              }
-          });
-      }).then(function(rs){
-         return rs;
-      });
-    },
-    // transform state coming from storage, on its way to be rehydrated into redux
-    (outboundState, key) =>  {
-      return outboundState;
-    }
-  );
-} else {
-var transformEncryptTransform = createPromiseTransform(
-    // transform state coming from redux on its way to being serialized and stored
-    ({inboundState, key}) => {
-      console.log('inbound ' +key);
-      console.log(inboundState);
-      return new Promise(function(res,rej){
-            res(inboundState);
-      }).then(function(rs){
-         return rs;
-      }).catch(function(e){
-        console.log(e);
-      });
-      
-    },
-    // transform state coming from storage, on its way to be rehydrated into redux
-    ({outboundState, key}) =>  {
-      console.log('outbound ' +key);
-      return new Promise(function(res,rej){
-            res(outboundState);
-      }).then(function(rs){
-         return rs;
-      }).catch(function(e){
-        console.log(e);
-      });
-    }
-  );
-}
-
-
-// State of app is persisted and made availabe via the call below
 
 
 
@@ -149,13 +78,11 @@ const appStore = createStore(
     undefined,
     compose(
           applyMiddleware(
-            thunkMiddleware,
+            thunkMiddleware.withExtraArgument({test: 'yay',cryptoPromise: cryptoPromise}),
             sagaMiddleware,
             routerMiddleware(hashHistory),
             navigationCreateMiddleware(navigationConfig)
-          )/*,
-          migration,
-          autoRehydrate() */
+          )
         )
   );
 
@@ -229,7 +156,7 @@ export const onCordovaDeviceReady = () => {
       document.addEventListener("menubutton", onMenuKeyDown, false);
      
      if(__IS_CORDOVA_BUILD__){
-
+        
         var error = function(message) { console.log("!! FAILED !! API returned: " + message); };
         var success = function(echoValue) { console.log("--SUCCESS-- API returned: " + echoValue); };
         
@@ -258,7 +185,7 @@ export const onCordovaDeviceReady = () => {
             console.log("Dispatching device ready event");
         }
         
-      
+        cryptoPromise.setCrypto((window as any).t2crypto);
         
      }
 
@@ -280,10 +207,10 @@ function onMenuKeyDown() {
     // Handle the menubutton event
 }
 var persistEncryptedConfig =  {
-                                      keyPrefix: 't2encryptedPersist',
-                                      blacklist: ['mode','cordova','view','onLogout'],
+                                      keyPrefix: 't2UnifiedEncryptedPersist',
+                                      blacklist: doNotSave,
                                       storage: localForage,
-                                      inboundTransform: transformEncryptTransform
+                                      inboundTransform: promisePeristerTransform.transform()
                                     };
 
 
@@ -311,33 +238,26 @@ class AppProvider extends React.Component<MyProps, MyState> {
   }
 
   componentWillMount () { // only called on first load or hard browser refresh
-    /**
-     * keyPrefix: This prefix is added to all root properties of the app state
-     * This is important if you are hosting multiple apps on the same origin.
-     * Otherwise databases from other apps will overlap and cause strange behavior
-     */
- 
 
+    (getStoredState(persistEncryptedConfig) as any).then((storedState) => {
       
-     
-   
+       let hydratePromises = [];
 
-            (getStoredState(persistEncryptedConfig) as any).then((storedState) => {
-              
-               let hydratePromises = [];
+       let isStateEmpty = Object.keys(storedState).length === 0;
+       //appStore.dispatch(loadAppState({}));
+       const persistor = createPersistorAdapter(appStore, persistEncryptedConfig);
+       console.log(storedState);
 
-               let isStateEmpty = Object.keys(storedState).length === 0;
-               //appStore.dispatch(loadAppState({}));
-               const persistor = createPersistorAdapter(appStore, persistEncryptedConfig);
-               this.setState({rehydrated: true});
+       //promisePeristerTransform.unLock(cryptoKey);
+       //appStore.dispatch(loadAppState(storedState));
+       
 
-            }).catch(function(err){
-                console.log(err);
-            });
- 
-         
-      
-   
+
+       this.setState({rehydrated: true});
+
+    }).catch(function(err){
+        console.log(err);
+    });
   }
 
   componentWillUpdate(nextProps){

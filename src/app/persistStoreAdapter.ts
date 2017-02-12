@@ -58,8 +58,10 @@ export default function createPersistor (store, config) {
         storesToProcess.shift();
         let promise = transforms.in(stateGetter(store.getState(), key),key)
           .then(function(results){
-
+              console.log(results);
+              if(typeof results !== 'undefined'){
                 storage.setItem(storageKey, serializer(results), warnIfSetError(key))
+              }
            });
         
       }, debounce)

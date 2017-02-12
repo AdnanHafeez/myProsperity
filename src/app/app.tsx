@@ -35,7 +35,7 @@ function onPageLoad() {
             <p>Check your debugger for test output</p>
             <p>For this test to work properly you mush uninstall app before running</p>
             <p>Or you can close the app, clear the app's data, and restart</p>
-            <p>This app was build this way because __CORDOVA_TEST_ONLY__ === true in a webpack config file</p>
+            <p>This app was built this way because __CORDOVA_TEST_ONLY__ === true in a webpack config file</p>
           </div>, document.getElementById('app'));
 
 
