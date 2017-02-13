@@ -3,18 +3,13 @@ import {routerReducer} from 'react-router-redux';
 import {REHYDRATE} from 'redux-persist/constants';
 import * as objectAssign from 'object-assign';
 import {
-  EDIT_QUESTION_1,
-  EDIT_QUESTION_2,
   EDIT_ALL_QUESTIONS, 
-  SWITCH_TO_APP_PROVIDER, 
-  SWITCH_TO_SECURITY_PROVIDER,
+  LOCK_APPLICATION, 
+  UNLOCK_APPLICATION,
   CORDOVA_DEVICE_READY,
   EULA_ACCEPTED,
   EULA_REJECTED,
-  FIPS_IS_SETUP,
-  CORDOVA_LOGIN_RIKEY,
-  ERROR_MESSAGE,
-  ERROR_MESSAGE_CLEAR
+  FIPS_IS_SETUP
 } from '../actions/security'
 /*
 * The data below could come from a rest server
@@ -68,20 +63,7 @@ const questionNone = {'QUESTION_OPT_NONE': { id:"QUESTION_OPT_NONE", title:"None
 
 
 
-
-/**
- * Redux State functions
- */
-
-/**
- * Controlls the user state
- * @param object state the user's current state
- * @param object action The action that this function may respond to
- *
- * @return object the new state or the current state
- */
-
-function user (state = defaultUser, action) {
+export const user = (state = defaultUser, action) => {
   switch (action.type) {
     case EULA_ACCEPTED:
       state = {...state,eulaAccepted: true}
@@ -89,43 +71,30 @@ function user (state = defaultUser, action) {
     case EULA_REJECTED:
       state = {...state,eulaAccepted: false}
       break;
-    case CORDOVA_LOGIN_RIKEY:
+    case UNLOCK_APPLICATION:
       state = {...state,fipsIsSetUp: true}
       break;
   }
   return state;
 }
 
-function migrations (state = {}, action) {
+
+export const pinQuestions = (state = pinQuestionsDefault, action) => {
   return state;
 }
 
-function pinQuestions(state = pinQuestionsDefault, action){
+export const pinQuestionIds = (state = Object.keys(pinQuestionsDefault).map((key) => key), action) => {
   return state;
 }
 
-function pinQuestionIds(state = Object.keys(pinQuestionsDefault).map((key) => key), action){
-  return state;
-}
 
-function mode(state = 1, action){
+
+export const rikey = (state = '', action) => {
   switch(action.type){
-    case CORDOVA_LOGIN_RIKEY:
-      state = 0;
-      break;
-    case SWITCH_TO_SECURITY_PROVIDER:
-      state = 1;
-      break;
-  }
-  return state;
-}
-
-function rikey(state = '', action) {
-  switch(action.type){
-    case CORDOVA_LOGIN_RIKEY:
+    case UNLOCK_APPLICATION:
       state = action.rikey;
       break;
-    case SWITCH_TO_SECURITY_PROVIDER:
+    case LOCK_APPLICATION:
       state = '';
       break;
   }
@@ -133,20 +102,12 @@ function rikey(state = '', action) {
 }
 
 
-function selectedPinQuestionIds(state =['QUESTION_OPT_NONE','QUESTION_OPT_NONE'], action){
+export const selectedPinQuestionIds = (state =['QUESTION_OPT_NONE','QUESTION_OPT_NONE'], action) => {
   switch(action.type){
     case EDIT_ALL_QUESTIONS:
       state[0] = action.question1Id;
       state[1] = action.question2Id;
       state = state.map(item => item);
-      break;
-    case EDIT_QUESTION_1:
-      state[0] = action.questionId;
-      state = state.map(item => item);
-      break;
-    case EDIT_QUESTION_2:
-      state = state.map(item => item);
-      state[1] = action.questionId;
       break;
   }
   return state;
@@ -158,46 +119,11 @@ const defaultState = {
   '2': {questionId: null}
 }
 
-function questionAnswers(state = {}, action){
+export const questionAnswers = (state = {}, action) => {
   switch(action.type){
     case EDIT_ALL_QUESTIONS:
-      state['1'] = objectAssign({},{questionId: action.question1Id})
-      state['2'] = objectAssign({},{questionId: action.question2Id})
-      state = objectAssign({},state);
-      break;
-    case EDIT_QUESTION_1:
-      state['1'] = objectAssign({},{questionId: action.questioId});
-      state = objectAssign({},state);
-      break;
-    case EDIT_QUESTION_2:
-      state['2'] = objectAssign({},{questionId: action.questioId});
-      state = objectAssign({},state);
-      break;
-  }
-  return state;
-}
-
-const defaultView = {
-  flash: {
-    message: '',
-    open: false,
-    type: 'notice'
-  }
-};
-
-export const view = function (state = defaultView, action){
-  switch(action.type){
-    case ERROR_MESSAGE: //Display an action message
-      if(__DEVTOOLS__){
-        console.log(action);
-      }
-      let newFlash = {...state.flash,message: action.message,open: true, type: 'error'};
-      state.flash = newFlash;
-      state = {...state}; 
-      break;
-    case ERROR_MESSAGE_CLEAR:
-      let newFlashClear = {...state.flash,message: '',open: false, type: 'error'};
-      state.flash = newFlashClear;
+      state['1'] = {...{},questionId: action.question1Id},
+      state['2'] = {...{},questionId: action.question2Id}
       state = {...state};
       break;
   }
@@ -205,38 +131,28 @@ export const view = function (state = defaultView, action){
 }
 
 
+
 const cordovaDefaults = {
   deviceReady: false
 }
 
-const cordova = (state = cordovaDefaults, action) => {
+export const cordova = (state = cordovaDefaults, action) => {
   switch(action.type){
     case CORDOVA_DEVICE_READY:
-      console.log(CORDOVA_DEVICE_READY);
-      state.deviceReady = true;
-      state = objectAssign({},state);
+      state = {...state,deviceReady: true};
       break;
-
   }
   return state;
 }
 
-const securityReducer = combineReducers({
-  sMigrations: migrations,
-  sUser: user,
-  pinQuestionIds,
+export default {
+  user,
   pinQuestions,
+  pinQuestionIds,
+  rikey,
   selectedPinQuestionIds,
   questionAnswers,
-  mode,
-  routing: routerReducer,
-  cordova,
-  rikey,
-  view
-});
-
-const rootReducer = (state, action) => {
-  return securityReducer(state, action)
+  cordova
 }
 
-export default rootReducer;
+

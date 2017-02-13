@@ -15,11 +15,9 @@ import IconButton from 'material-ui/IconButton';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import {push, replace} from 'react-router-redux';
-import { withRouter } from 'react-router';
 import {FlashMessageInterface} from './data/workbook';
 import {deviceActions} from 'local-t2-device-redux';
 
-import {userLogin,userLogout} from './actions';
 import Eula from './Eula';
 
 

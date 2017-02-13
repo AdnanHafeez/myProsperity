@@ -13,11 +13,11 @@ import AppBarMenuIcon from './AppBarMenuIconDrawer';
 import { connect } from 'react-redux';
 
 import {push, replace} from 'react-router-redux';
-import { withRouter } from 'react-router';
+
 import {UpdateDialogContainer} from 'local-t2-app-redux/lib/components';
 
 import {deviceActions} from 'local-t2-device-redux';
-import {userLogin,userLogout,turnAppOff} from './actions';
+import {lockApplication} from './actions/security';
 import BlankPage from './BlankPage';
 import SplashPage from './SplashPage';
 import IconMenu from 'material-ui/IconMenu';
@@ -157,7 +157,7 @@ export default connect(
       dispatch: dispatch,
       turnAppOffRedirect: (path) => {
         console.log(path);
-        dispatch(turnAppOff(path))
+        dispatch(lockApplication(path))
       }
     };
   }

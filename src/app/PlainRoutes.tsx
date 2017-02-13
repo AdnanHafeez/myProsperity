@@ -22,12 +22,12 @@ import {navigationCreateMiddleware} from 'local-t2-navigation-redux';
 import navigationConfig from './navigationConfig';
 import createMigration from 'redux-persist-migrate';
 import appReducer from './reducers';
-import {switchToAppProvider,switchToSecurityProvider,cordovaDeviceReady as deviceReady} from './actions/security';
+import {lockApplication,unlockApplication,cordovaDeviceReady as deviceReady} from './actions/security';
 import * as objectAssign from 'object-assign';
 //import createEncryptor from 'redux-persist-transform-encrypt';
 import localForage from 'localForage';
 import createAsyncEncryptor from 'redux-persist-transform-encrypt/async';
-import {userLogout,encryptedDbPaused,loadAppState,turnAppOff} from './actions';
+import {encryptedDbPaused,loadAppState} from './actions';
 
 
 import createPersistorAdapter from './persistStoreAdapter';
@@ -78,7 +78,7 @@ const appStore = createStore(
     undefined,
     compose(
           applyMiddleware(
-            thunkMiddleware.withExtraArgument({test: 'yay',cryptoPromise: cryptoPromise}),
+            thunkMiddleware.withExtraArgument({cryptoPromise: cryptoPromise}),
             sagaMiddleware,
             routerMiddleware(hashHistory),
             navigationCreateMiddleware(navigationConfig)
@@ -195,7 +195,7 @@ export const onCordovaDeviceReady = () => {
 
 function onPause() {
     console.log('cordova pause');
-    appStore.dispatch(turnAppOff('/'));
+    appStore.dispatch(lockApplication('/'));
 }
 
 function onResume() {
@@ -229,6 +229,26 @@ interface MyState {
  rehydrated: any;
 }
 
+
+const loadPersistor = (cb) => {
+    (getStoredState(persistEncryptedConfig) as any).then((storedState) => {
+
+       const persistor = createPersistorAdapter(appStore, persistEncryptedConfig);
+       console.log(storedState);
+       persistor.rehydrate(storedState);
+
+       
+       cb();
+
+
+       
+
+    }).catch(function(err){
+        console.log(err);
+        cb(err);
+    });
+}
+
 class AppProvider extends React.Component<MyProps, MyState> {
 
   constructor (props) {
@@ -238,28 +258,25 @@ class AppProvider extends React.Component<MyProps, MyState> {
   }
 
   componentWillMount () { // only called on first load or hard browser refresh
-
-    (getStoredState(persistEncryptedConfig) as any).then((storedState) => {
-      
-       let hydratePromises = [];
-
-       let isStateEmpty = Object.keys(storedState).length === 0;
-       //appStore.dispatch(loadAppState({}));
-       const persistor = createPersistorAdapter(appStore, persistEncryptedConfig);
-       console.log(storedState);
-
-       //promisePeristerTransform.unLock(cryptoKey);
-       persistor.rehydrate(storedState);
-
-       //appStore.dispatch(loadAppState(storedState));
-       
-
-
-       this.setState({rehydrated: true});
-
-    }).catch(function(err){
-        console.log(err);
+    loadPersistor((err) => {
+          this.setState({rehydrated: true});
     });
+
+    appStore.subscribe(() => {
+        if(appStore.getState().mode === 0 && !promisePeristerTransform.isLocked()){
+            promisePeristerTransform.lock();
+            appStore.dispatch(push(appStore.getState().onLogout));
+            loadPersistor((err) => {
+                  this.setState({rehydrated: true});
+            });
+        } else if(appStore.getState().mode === 1 && promisePeristerTransform.isLocked()) {
+            promisePeristerTransform.unLock(appStore.getState().rikey);
+            loadPersistor((err) => {
+                  this.setState({rehydrated: true});
+            });
+        }
+    });
+     
   }
 
   componentWillUpdate(nextProps){

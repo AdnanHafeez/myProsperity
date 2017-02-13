@@ -15,9 +15,7 @@ import {
   GOAL_LOAD,
   GOAL_EDIT,
   GOAL_DELETED,
-  GOAL_STATUS_CHANGE,
-  USER_LOGIN,
-  USER_LOGOUT
+  GOAL_STATUS_CHANGE
 } from '../actions';
 const workBookListSchema = new schema.Array(workbook);
 const normalizedData = normalize(wbData, workBookListSchema);

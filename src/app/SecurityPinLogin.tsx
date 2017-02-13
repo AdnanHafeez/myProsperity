@@ -6,7 +6,8 @@ import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Link } from 'react-router';
-import {switchToAppProvider, PinLoginFormInterface} from './actions/security';
+import {PinLoginFormInterface} from './actions/security';
+import {unlockApplication,lockApplication} from './actions/security';
 //   <RaisedButton label="Test Error Message" onTouchTap={testSnackBar} />
 const validateForm = (values: PinLoginFormInterface): any => {
   let fields = Object.keys(values).reduce((accum,current) => {
@@ -40,7 +41,6 @@ const validateForm = (values: PinLoginFormInterface): any => {
 
 interface MyProps {
   submitForm(any): any;
-  testSnackBar(): any;
 }
 
 interface MyState {
@@ -71,7 +71,7 @@ class SecurityLoginPin extends React.Component<MyProps, MyState>{
   }
 
   handleSubmit = (event) => {
-      const {submitForm,testSnackBar} = this.props;
+      const {submitForm} = this.props;
       console.log(this.state.values);
       const result = validateForm(this.state.values);
       if(result.isValid){
@@ -84,7 +84,6 @@ class SecurityLoginPin extends React.Component<MyProps, MyState>{
       event.preventDefault();
   }
   render(){
-    const {testSnackBar} = this.props;
     return (
      <div>
        <div>

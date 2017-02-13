@@ -7,24 +7,18 @@ import {REHYDRATE} from 'redux-persist/constants';
 import {deviceReducer} from 'local-t2-device-redux';
 import {navigationReducer} from 'local-t2-navigation-redux';
 
-import * as objectAssign from 'object-assign';
 import {workbooks,workbookIds, examples, goals,loadedGoalId} from './workbook';
 import {notes, noteIds, loadedNoteId} from './note';
-import {USER_LOGIN, USER_LOGOUT, ENCRYPTED_DB_PAUSED, LOAD_APP_STATE, SWITCH_TO_SECURITY_PROVIDER} from '../actions'
-/*
-* The data below could come from a rest server
-*/
-const defaultUser = {
-  stage: 0,
-  loaded: 0,
-  role: 'anonymous',
-  firstname: '',
-  lastname: '',
-  isAuthenticated: true,
-  pin: '',
-  firstQuestionAnwser: '',
-  secondQuestionAnwser: '' // etc, etc //TODO implement pin lock system
-};
+import {user,
+  pinQuestions,
+  pinQuestionIds,
+  rikey,
+  selectedPinQuestionIds,
+  questionAnswers,
+  cordova} from './security';
+import {LOCK_APPLICATION,UNLOCK_APPLICATION} from '../actions/security'
+
+
 
 export interface GoalInterface {
   id: string;
@@ -37,31 +31,6 @@ export interface GoalTreeInterface {
 }
 
 
-/**
- * Redux State functions
- */
-
-/**
- * Controlls the user state
- * @param object state the user's current state
- * @param object action The action that this function may respond to
- *
- * @return object the new state or the current state
- */
-
-function user (state = defaultUser, action) {
-  switch (action.type) {
-    case REHYDRATE:
-      break;
-    case USER_LOGIN:
-      state = objectAssign({},state,{isAuthenticated: true});
-      break;
-    case USER_LOGOUT:
-      state = objectAssign({},state,{isAuthenticated: false});
-      break;
-  }
-  return state;
-}
 
 function migrations (state = {}, action) {
   return state;
@@ -69,8 +38,11 @@ function migrations (state = {}, action) {
 
 function mode(state = 0, action) {
   switch(action.type){
-    case SWITCH_TO_SECURITY_PROVIDER:
+    case LOCK_APPLICATION:
       state = 0;
+      break;
+    case UNLOCK_APPLICATION:
+      state = 1;
       break;
   }
   return state;
@@ -81,7 +53,7 @@ const onLogOutDefault = {
 }
 function onLogout(state = onLogOutDefault, action){
   switch(action.type){
-    case SWITCH_TO_SECURITY_PROVIDER:
+    case LOCK_APPLICATION:
       state = {...state,redirect: action.redirect};
       break;
   }
@@ -100,10 +72,20 @@ export const nextId = (array) => {
 }
 
 const appHub = combineReducers({
+  /* security states start */
+  user,
+  pinQuestions,
+  pinQuestionIds,
+  rikey,
+  selectedPinQuestionIds,
+  questionAnswers,
+  cordova,
+
+  /* security states end */
+
   migrations,
   form: formReducer,
   routing: routerReducer,
-  user,
   view,
   device: deviceReducer,
   navigation: navigationReducer,
@@ -120,15 +102,17 @@ const appHub = combineReducers({
 });
 
 const rootReducer = (state, action) => {
-  // if (action.type === 'RESET') return action.stateFromLocalStorage
+ 
  if (action.type === REHYDRATE) {
     if(__DEVTOOLS__){
       console.log(action.payload);
       console.log(state);
     }
 
-    state = objectAssign({},state,action.payload,{mode: 1});
-    console.log(state);
+    state = Object.assign({},state,action.payload);
+    if(__DEVTOOLS__){
+      console.log(state);
+    }
   }
 
   return appHub(state, action)

@@ -4,7 +4,7 @@ import * as ReactDOM from 'react-dom';
 import {GridList, GridTile} from 'material-ui/GridList';
 
 import Subheader from 'material-ui/Subheader';
-import { Link, browserHistory } from 'react-router';
+
 import RaisedButton from 'material-ui/RaisedButton';
 import { connect } from 'react-redux';
 import {showFlashMessage , sendErrorMessage} from './actions';

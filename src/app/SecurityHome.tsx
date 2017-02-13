@@ -5,7 +5,8 @@ import BasicDialog from './BasicDialog';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import { Link } from 'react-router';
-import {cordovaLoginWithPin, SetPinFormInterface, cordovaInitLogin, sendErrorMessage} from './actions/security';
+import {cordovaLoginWithPin, SetPinFormInterface, cordovaInitLogin} from './actions/security';
+import {sendErrorMessage} from './actions'
 
 import SecurityPinLogin from './SecurityPinLogin';
 import SecuritySetPinContainer from './SecuritySetPinContainer';
@@ -24,7 +25,6 @@ interface MyProps {
   question1: any,
   question2: any,
   questions: any[];
-  testSnackBar(): any;
 }
 
 interface MyState {
@@ -40,10 +40,10 @@ class SecurityHome extends React.Component<MyProps, MyState> {
   }
 
   render () {
-    const {submitPin,fipsIsSetUp,initPin,questions,testSnackBar} = this.props;
+    const {submitPin,fipsIsSetUp,initPin,questions} = this.props;
 
     if(fipsIsSetUp){
-      return (<SecurityPinLogin submitForm={submitPin} testSnackBar={testSnackBar} />)
+      return (<SecurityPinLogin submitForm={submitPin} />)
     }
     return (
       <SecuritySetPinContainer 
@@ -55,7 +55,7 @@ class SecurityHome extends React.Component<MyProps, MyState> {
 
 const stateToProps = (state) => {
   return {
-    fipsIsSetUp: state.sUser.fipsIsSetUp,
+    fipsIsSetUp: state.user.fipsIsSetUp,
     question1: {},
     question2: {},
     questions: state.pinQuestionIds
@@ -72,11 +72,6 @@ const dispatchToProps = (dispatch,ownProps) => {
       console.log(data);
       console.log('cordovaInitLogin');
       dispatch(cordovaInitLogin(data));
-    },
-    testSnackBar: () => {
-        console.log("test test");
-        dispatch(sendErrorMessage("Here is error message " + errCount, 777));
-        errCount++;
     }
   }
 }

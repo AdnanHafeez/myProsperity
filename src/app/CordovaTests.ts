@@ -1,7 +1,7 @@
 
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import securityReducer from './reducerSecurity';
+import securityReducer from './reducers';
 import createSagaMiddleware from 'redux-saga';
 import {
   SetPinFormInterface,
@@ -10,7 +10,7 @@ import {
   SecurityAnswer3,
   cordovaInitLogin,
   changePinWithPin,
-  switchToSecurityProvider,
+  lockApplication,
   cordovaLoginWithPin,
   changePinWithAnswers,
   changeSecurityQuestions,
@@ -190,8 +190,8 @@ const changePinWithPinTest = (initState) => {
           
       });
 
-      securityStoreTest.dispatch(switchToSecurityProvider());
-      console.log('switchToSecurityProvider dispatched');
+      securityStoreTest.dispatch(lockApplication());
+      console.log('lockApplication dispatched');
   });
 }
 
@@ -204,7 +204,7 @@ const loginWithCorrectPinTest = (validPin) => {
   return new Promise((resolve, reject) => {
       const unsubscribe = securityStoreTest.subscribe(function(){
           unsubscribe();
-          assert.equal(securityStoreTest.getState().mode,1,'state.mode should be set to 1 after switchToSecurityProvider dispatched 400');
+          assert.equal(securityStoreTest.getState().mode,1,'state.mode should be set to 1 after lockApplication dispatched 400');
           securityStoreTest.dispatch(cordovaLoginWithPin(validPin)).then(() => {
             assert.equal(securityStoreTest.getState().mode,0,'state.mode should be set to 0 after valid Login 401');
             resolve(validPin);
@@ -218,7 +218,7 @@ const loginWithCorrectPinTest = (validPin) => {
           });
       });
 
-      securityStoreTest.dispatch(switchToSecurityProvider());
+      securityStoreTest.dispatch(lockApplication());
   });
 }
 
@@ -227,7 +227,7 @@ const changePinWithAnswersTest = (validPinChangeData) => {
   return new Promise((resolve, reject) => {
       const unsubscribe = securityStoreTest.subscribe(function(){
           unsubscribe();
-          assert.equal(securityStoreTest.getState().mode,1,'state.mode should be set to 1 after switchToSecurityProvider (aka logout) dispatched 402');
+          assert.equal(securityStoreTest.getState().mode,1,'state.mode should be set to 1 after lockApplication (aka logout) dispatched 402');
           securityStoreTest.dispatch(changePinWithAnswers(validPinChangeData)).then(() => {
             assert.equal(securityStoreTest.getState().mode,0,'state.mode should be set to 0 after valid Login 401');
             return validPinChangeData.newPin;
@@ -246,7 +246,7 @@ const changePinWithAnswersTest = (validPinChangeData) => {
           });
       });
 
-      securityStoreTest.dispatch(switchToSecurityProvider());
+      securityStoreTest.dispatch(lockApplication());
   });
 }
 

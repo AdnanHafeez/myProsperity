@@ -15,12 +15,8 @@ export const NOTE_LOAD = 'T2.NOTE_LOAD';
 export const NOTE_EDIT = 'T2.NOTE_EDIT';
 export const NOTE_CREATE = 'T2.NOTE_CREATE';
 export const NOTE_DELETE = 'T2.NOTE_DELETE';
-export const USER_LOGOUT = 'T2.USER_LOGOUT';
-export const USER_LOGIN = 'T2.USER_LOGIN';
 export const ENCRYPTED_DB_PAUSED = 'T2.ENCRYPTED_DB_PAUSED';
 export const LOAD_APP_STATE = 'T2.LOAD_APP_STATE';
-export const SWITCH_TO_APP_PROVIDER = 'T2.APP.SWITCH_TO_APP_PROVIDER';
-export const SWITCH_TO_SECURITY_PROVIDER = 'T2.APP.SWITCH_TO_SECURITY_PROVIDER';
 export const CORDOVA_DEVICE_READY = 'T2.APP.CORDOVA_DEVICE_READY';
 export const ERROR_MESSAGE = 'T2.ERROR_MESSAGE';
 export const ERROR_MESSAGE_CLEAR = 'T2.ERROR_MESSAGE_CLEAR';
@@ -87,18 +83,6 @@ export const cordovaDeviceReady = () => {
 }
 
 
-export const turnAppOn = () => {
-  return {
-    type: SWITCH_TO_APP_PROVIDER
-  }
-}
-
-export const turnAppOff = (redirect = '/') => {
-  return {
-    type: SWITCH_TO_SECURITY_PROVIDER,
-    redirect
-  }
-}
 export const encryptedDbPaused = () => {
   return {
     type: ENCRYPTED_DB_PAUSED
@@ -119,17 +103,6 @@ export const fieldChange = (field) => {
   };
 };
 
-export const userLogout = () => {
-  return {
-    type: USER_LOGOUT
-  };
-};
-
-export const userLogin = () => {
-  return {
-    type: USER_LOGIN
-  };
-};
 
 export const formSubmitted = (formId, fields) => {
   return {

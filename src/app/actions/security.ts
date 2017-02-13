@@ -1,8 +1,7 @@
-export const EDIT_QUESTION_1 = 'T2.SECURITY.EDIT_QUESTION_1';
-export const EDIT_QUESTION_2 = 'T2.SECURITY.EDIT_QUESTION_2';
+import {sendErrorMessage} from './index';
 export const EDIT_ALL_QUESTIONS = 'T2.SECURITY.EDIT_ALL_QUESTIONS';
-export const SWITCH_TO_APP_PROVIDER = 'T2.SECURITY.SWITCH_TO_APP_PROVIDER';
-export const SWITCH_TO_SECURITY_PROVIDER = 'T2.SECURITY.SWITCH_TO_SECURITY_PROVIDER';
+export const UNLOCK_APPLICATION = 'T2.SECURITY.UNLOCK_APPLICATION';
+export const LOCK_APPLICATION = 'T2.SECURITY.LOCK_APPLICATION';
 export const CORDOVA_DEVICE_READY = 'T2.SECURITY.CORDOVA_DEVICE_READY';
 export const PIN_ACCEPTED = 'T2.SECURITY.PIN_ACCEPTED';
 export const EULA_ACCEPTED = 'T2.SECURITY.EULA_ACCEPTED';
@@ -13,11 +12,11 @@ export const CORDOVA_INIT_LOGIN_SUCCESS = 'T2.SECURITY.CORDOVA_INIT_LOGIN_SUCCES
 export const CORDOVA_INIT_LOGIN_FAIL = 'T2.SECURITY.CORDOVA_INIT_LOGIN_FAIL';
 export const CORDOVA_LOGIN_PIN = 'T2.SECURITY.CORDOVA_LOGIN_PIN';
 export const CORDOVA_LOGIN_RIKEY = 'T2.SECURITY.CORDOVA_LOGIN_RIKEY';
-export const ERROR_MESSAGE = 'T2.SECURITY.ERROR_MESSAGE';
-export const ERROR_MESSAGE_CLEAR = 'T2.SECURITY.ERROR_MESSAGE_CLEAR';
 export const CHANGE_PIN_WITH_ANSWERS = 'T2.SECURITY.CHANGE_PIN_WITH_ANSWERS';
 export const CHANGE_PIN_WITH_PIN = 'T2.SECURITY.CHANGE_PIN_WITH_PIN';
 export const CHANGE_QUESTIONS_WITH_PIN = 'T2.SECURITY.CHANGE_QUESTIONS_WITH_PIN';
+
+
 //changePinUsingPin
 export interface SetPinFormInterface {
   question1: string;
@@ -74,7 +73,7 @@ export const changeSecurityQuestions = (data: ChangeQuestionsWithPinInterface) =
           function(args){
             if(args.RESULT === 0) {
               dispatch(editAllQuestions(data.question1, data.question2));
-              dispatch(cordovaGetRiKey(data.currentPin)).then(() => {
+              dispatch(cryptoGetRiKey(data.currentPin)).then(() => {
                 resolveChangeAnswer()
               }).catch(() => {
                 rejectChangeAnswers(sendErrorMessage('Invalid Pin',413));
@@ -123,31 +122,7 @@ export const cordovaInitLoginFail = (message, code = 0) => {
       dispatch(sendErrorMessage(message,code));
   }
 }
-export const clearErrorMessage = () => {
-  return {
-    type: ERROR_MESSAGE_CLEAR
-  }
-}
-export const sendErrorMessage = (message,code) => {
-  const localMessage = {
-    type: ERROR_MESSAGE,
-    message,
-    code
-  }
-  let timeoutId;
-  return (dispatch,getState) => {
-    dispatch(localMessage);
-    if(timeoutId){
-      window.clearTimeout(timeoutId);
-    }
-    timeoutId = setTimeout(() => {
-        timeoutId = null;
-        dispatch(clearErrorMessage());
-    },3000);
-    return localMessage;
-  }
 
-}
 
 export const cordovaInitLoginSuccess = (pin) => {
   return {
@@ -155,19 +130,6 @@ export const cordovaInitLoginSuccess = (pin) => {
   }
 }
 
-export const cordovaLoginWithRikey = (rikey) => {
-  const localAction = {
-    type: CORDOVA_LOGIN_RIKEY,
-    rikey
-  }
-  return (dispatch,getState) => {
-      
-      return new Promise((resolve,reject) => {
-        dispatch(localAction);
-          resolve(true);
-      });
-  }
-}
 
 export const changePinWithPin = (data: ChangePinWithPinFormInterface) => {
   const localAction = {
@@ -279,7 +241,7 @@ export const cordovaLoginWithPin = (pin) => {
 
         (window as any).t2crypto.checkPin(pinJSON,(result)=>{
           if(result.RESULT === 0){
-              dispatch(cordovaGetRiKey(pin)).then(() => {
+              dispatch(cryptoGetRiKey(pin)).then(() => {
                 resolveLoginPin(true);
               }).catch((e) => {
                 if(__DEVTOOLS__){
@@ -308,7 +270,7 @@ export const cordovaLoginWithPin = (pin) => {
 }
 
 
-export const cordovaGetRiKey = (pin) => {
+export const cryptoGetRiKey = (pin) => {
   return (dispatch,getState) => {
       const dbKeyJson = {
         "KEY_PIN": pin
@@ -324,9 +286,9 @@ export const cordovaGetRiKey = (pin) => {
                 dispatch(cordovaInitLoginFail('Login Failed.',401));
                 rejectRiKey(cordovaInitLoginFail('Login Failed.',401));
            }else{
-                dispatch(cordovaLoginWithRikey(rikey))
+                dispatch(unlockApplication(rikey))
                   .then(() => {
-                    console.log('cordovaLoginWithRikey promise resolved');
+                    console.log('unlockApplication promise resolved');
                     resolveRiKey(true);
                   });
            }
@@ -343,7 +305,7 @@ export const cordovaGetRiKey = (pin) => {
 export const getDummyRiKey = (pin) => {
   const rikey = 'dummykey1234';
   return (dispatch,getState) => {
-      dispatch(cordovaLoginWithRikey(rikey));
+      dispatch(unlockApplication(rikey));
   }
 }
 export const cordovaInitLogin = (loginData: SetPinFormInterface) => {
@@ -363,9 +325,9 @@ export const cordovaInitLogin = (loginData: SetPinFormInterface) => {
             console.log(args);
                 if(args.RESULT === 0) {
                   dispatch(editAllQuestions(loginData.question1, loginData.question2));
-                  dispatch(cordovaGetRiKey(loginData.pin)).then(() => {
+                  dispatch(cryptoGetRiKey(loginData.pin)).then(() => {
                     if(__DEVTOOLS__){
-                      console.log('cordovaGetRiKey promise resolved 2');
+                      console.log('cryptoGetRiKey promise resolved 2');
                     }
                     resolveInit(true);
                   });
@@ -430,30 +392,29 @@ export const editQuestion = (type:string,questionId:string,answer: string) => {
   }
 }
 
-export const switchToAppProvider = (rikey) => {
+export const unlockApplication = (rikey) => {
   if(__DEVTOOLS__){
     console.log('rikey: ' + rikey);
   }
-  return {
-    type: SWITCH_TO_APP_PROVIDER,
+  const localAction = {
+    type: UNLOCK_APPLICATION,
     rikey
   }
-}
-
-export const switchToSecurityProvider = () => {
-  return {
-    type: SWITCH_TO_SECURITY_PROVIDER
+  return (dispatch,getState) => {
+      
+      return new Promise((resolve,reject) => {
+        dispatch(localAction);
+          resolve(true);
+      });
   }
 }
 
-export const editQuestion1 = (questionId:string,answer: string) => {
-  return editQuestion(EDIT_QUESTION_1, questionId, answer);
+export const lockApplication = (redirect = '/') => {
+  return {
+    type: LOCK_APPLICATION,
+    redirect
+  }
 }
-
-export const editQuestion2 = (questionId:string,answer: string) => {
-  return editQuestion(EDIT_QUESTION_2, questionId, answer);
-}
-
 
 export const editAllQuestions = (question1Id:string,question2Id:string) => {
   return {

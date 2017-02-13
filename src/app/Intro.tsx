@@ -3,6 +3,9 @@ import * as ReactDOM from 'react-dom';
 import {Card, CardActions, CardTitle, CardText} from 'material-ui/Card';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Link } from 'react-router';
+import { connect } from 'react-redux';
+import SecurityHome from './SecurityHome';
+
 const clarkSignature = require('../assets/clark_sig.png');
 const styles = {
   container: {
@@ -10,14 +13,17 @@ const styles = {
   }
 };
 
+
+
 interface MyProps {
   appBarTitle(msg: string): any;
+  mode: any;
 }
 
 interface MyState {
  
 }
-export default class HomePage extends React.Component<MyProps, MyState> {
+class IntroPage extends React.Component<MyProps, MyState> {
   constructor (props) {
     super(props);
     this.props = props;
@@ -28,6 +34,10 @@ export default class HomePage extends React.Component<MyProps, MyState> {
   }
 
   render () {
+    const {mode} = this.props;
+    if(mode === 0){
+       return <SecurityHome />
+    }
     return (
       <div>
         <Card>
@@ -70,3 +80,11 @@ export default class HomePage extends React.Component<MyProps, MyState> {
     );
   }
 }
+
+const stateToProps = (state) => {
+  return {
+    mode: state.mode
+  }
+}
+
+export default connect(stateToProps)(IntroPage);

@@ -1,6 +1,5 @@
 import {wbData} from '../data/workbook';
 import { normalize, schema } from 'normalizr';
-import * as objectAssign from 'object-assign';
 import {NoteReducerInterface} from '../data/workbook';
 
 
@@ -32,17 +31,17 @@ export const notes = (state = {},action) => {
         return state;
       }
       state[action.note.id + ''] = action.note
-      state = objectAssign({},state);
+      state = {...state};
       break;
     case NOTE_CREATE:
       if(action.note.id){
         state[action.note.id + ''] = action.note
-        state = objectAssign({},state);
+        state = {...state};
       }
       break;
     case NOTE_DELETE:
       delete state[action.id + ''];
-      state = objectAssign({},state);
+      state = {...state};
       break;
   }
   return state;
