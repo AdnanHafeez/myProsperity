@@ -24,8 +24,6 @@ export namespace Transforms {
       tmpdate.setTime(input);
       return tmpdate;
     }
-    console.log('invalid date');
-    console.log(input);
 
     return ifInvalid;
   }

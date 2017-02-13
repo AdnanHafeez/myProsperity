@@ -58,7 +58,7 @@ export default function createPersistor (store, config) {
         storesToProcess.shift();
         let promise = transforms.in(stateGetter(store.getState(), key),key)
           .then(function(results){
-              console.log(results);
+           
               if(typeof results !== 'undefined'){
                 storage.setItem(storageKey, serializer(results), warnIfSetError(key))
               }
@@ -81,12 +81,34 @@ export default function createPersistor (store, config) {
   function createStorageKey (key) {
     return `${keyPrefix}${key}`
   }
+  function adhocRehydrate (incoming) {
+    let state = {}
+    let promises = []
+   
+    stateIterator(incoming, (subState, key) => {
+      try {
+        let promise = transforms.out(subState,key).then((sState) => {
+            return stateSetter(state, key, sState);
+        }).catch((err) => {
+          if (process.env.NODE_ENV !== 'production') console.warn(`Error rehydrating data for key "${key}"`, subState, err)
+        })
+        promises.push(promise);
+      } catch (err) {
+        if (process.env.NODE_ENV !== 'production') console.warn(`Error rehydrating data for key "${key}"`, subState, err)
+      }
+    })
 
+    return Promise.all(promises).then(() => {
+        store.dispatch(rehydrateAction(state))
+        return state;
+    });
+  }
   // return `persistor`
   return {
     pause: () => { paused = true },
     resume: () => { paused = false },
-    purge: (keys) => purgeStoredState({storage, keyPrefix} as any, keys)
+    purge: (keys) => purgeStoredState({storage, keyPrefix} as any, keys),
+    rehydrate: adhocRehydrate
   }
 }
 

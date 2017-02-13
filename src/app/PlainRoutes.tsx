@@ -35,7 +35,7 @@ import createPromiseTransform from './createPromiseTransform';
 import {BrowserCryptoPromise,PromisePeristerTransform} from './lib/CryptoPromise';
 
 const doNotSave = ['mode','user','cordova','onLogout'];
-const doNotEncrypt = ['migrations','navigation','workbookIds','routing','view','onLogout','user'];
+const doNotEncrypt = ['migrations','navigation','routing','view','onLogout','user'];
 const cryptoKey = 'asdfasfsdffsf'
 
 
@@ -249,6 +249,8 @@ class AppProvider extends React.Component<MyProps, MyState> {
        console.log(storedState);
 
        //promisePeristerTransform.unLock(cryptoKey);
+       persistor.rehydrate(storedState);
+
        //appStore.dispatch(loadAppState(storedState));
        
 

@@ -161,18 +161,20 @@ export class PromisePeristerTransform {
                
 
                 if(this.allowIncomming(key)){
-                  console.log('YESSS allowing Incomming "' + key +'" ');
           
                   this.cryptoPromise.encryptRaw(dataJSON)
                     .then((result) => {
-                       console.log(result);
+                     
                        res(result);
                     })
                     .catch((e) => {
                         rej(e);
                     });
                 }else{
-                  console.log('NOT allowing Incomming');
+                  if(this.debug){
+                    console.log('NOT allowing Incomming');
+                  }
+                  
                   res(); //we retern nothing in which case the persistor should not change persisted data
                          //In other words it should not change, add, or remove data.
                 }
@@ -185,16 +187,18 @@ export class PromisePeristerTransform {
                             "KEY_PIN": this.key,
                             "KEY_INPUT": outboundState
                           };
+                          //console.log(dataJSON);
                 if(this.allowOutgoing(key)){
                   this.cryptoPromise.decryptRaw(dataJSON)
                     .then((result) => {
+                        //console.log(result);
                        res(result);
                     })
                     .catch((e) => {
                         rej(e);
                     });
                 }else{
-                  res(null);
+                  res();
                 }
             });
           }

@@ -121,18 +121,14 @@ const appHub = combineReducers({
 
 const rootReducer = (state, action) => {
   // if (action.type === 'RESET') return action.stateFromLocalStorage
-  if (action.type === ENCRYPTED_DB_PAUSED) {
-      state.workbooks = undefined;
-      state.goals = undefined;
-      state.notes = undefined;
-      state.noteIds = undefined;
-  } else if (action.type === LOAD_APP_STATE) {
+ if (action.type === REHYDRATE) {
     if(__DEVTOOLS__){
-      console.log(action.storedState);
+      console.log(action.payload);
       console.log(state);
     }
 
-    return objectAssign({},state,action.storedState,{mode: 1});
+    state = objectAssign({},state,action.payload,{mode: 1});
+    console.log(state);
   }
 
   return appHub(state, action)
