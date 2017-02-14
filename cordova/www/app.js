@@ -8198,7 +8198,7 @@
 	// For more details see: https://facebook.github.io/react/docs/top-level-api.html#react.render
 	function onPageLoad() {
 	    document.addEventListener("deviceready", function () {
-	        if (false) {
+	        if (true) {
 	            var ctest = new CordovaTests_1.CordovaTests();
 	            ctest.start();
 	            render(React.createElement("div", null,
@@ -92150,6 +92150,15 @@
 	                        React.createElement("p", null, "Just because you identify goals and develop a plan does not ensure success. Hard work, dedication, perseverance, support and assistance from Family, Friends, Coworkers, and Leaders can help you accomplish your goals. Changes in your life may necessitate adding, deleting, or modifying certain goals. Honesty with yourself will be your best guide in choosing and adjusting your goals wisely."),
 	                        React.createElement("p", null, "Leaders may use the Prosperity Plan Workbook to assist those they are privileged to lead in developing, specifying, pursuing and achieving their goals. Our Workbook can be a teaching/coaching/mentoring tool to challenge and guide each of us to prosper personally, professionally, spiritually, and in our relationships."),
 	                        React.createElement("p", null, "Accomplish our mission/Take care of each other/Take care of our Families are interrelated and inseparable."),
+	                        React.createElement("h2", null, "Director's Goals"),
+	                        React.createElement("ul", null,
+	                            React.createElement("li", null, "Fortify our Relationship with the Services"),
+	                            React.createElement("li", null, "Strengthen our role as a Combat Support Agency"),
+	                            React.createElement("li", null, "Optimize DHA Operations")),
+	                        React.createElement("h3", null, "Vision"),
+	                        React.createElement("p", null, "A joint, integrated, premier system of health, supporting those who" + " " + "serve in the defense of our country."),
+	                        React.createElement("h3", null, "Mission"),
+	                        React.createElement("p", null, "The Defense Health Agency (DHA) is a Combat Support Agency supporting" + " " + "the Military Services. The DHA supports the delivery of integrated," + " " + "affordable, and high quality health services to beneficiaries of" + " " + "the Military Health System (MHS), and executes responsibility for" + " " + "shared services, functions, and activities of the MHS and other common" + " " + "clinical and business processes in support of the Military Services." + " " + "The DHA serves as the program manager for the TRICARE health plan," + " " + "medical resources, and the market manager for the National Capital" + " " + "Region (NCR) enhanced Multi-Service Market. The DHA manages the" + " " + "execution of policy as issued by the Assistant Secretary of Defense for" + " " + "Health Affairs and exercises authority, direction, and control over the" + " " + "inpatient facilities and their subordinate clinics assigned to the DHA in the NCR Directorate."),
 	                        React.createElement("p", null,
 	                            React.createElement("img", { src: clarkSignature, alt: "Major General Clark Signature" })),
 	                        React.createElement("p", null, "JEFFREY B. CLARK "),
@@ -99411,6 +99420,18 @@
 	    question1: '',
 	    question2: ''
 	};
+	var encryptRiPin = "x'f86d1241edd72bd97c0553f7";
+	var encryptInput = { test: 'asdfasdfadsf' };
+	var encryptInput2 = { "locationBeforeTransitions": { "pathname": "/", "search": "", "hash": "", "state": null, "action": "POP", "key": "qq7waj", "query": {}, "$searchBase": { "search": "", "searchBase": "" } } };
+	var encryptInput3 = 'asdfasdfasdfadsfd';
+	var dataInputJSON1 = {
+	    "KEY_PIN": encryptRiPin,
+	    "KEY_INPUT": encryptInput
+	};
+	var dataInputJSON2 = {
+	    "KEY_PIN": encryptRiPin,
+	    "KEY_INPUT": encryptInput3
+	};
 	var ensureCordovaAndPlugins = function () {
 	    return new Promise(function (resolve, reject) {
 	        assert((true), 'These test are mean to be run in cordova build only');
@@ -99572,6 +99593,51 @@
 	        return changePinWithAnswersTest(newPinChangeWithAnsers);
 	    });
 	};
+	var encryptDecryptTest = function () {
+	    return new Promise(function (resolve, reject) {
+	        console.log('encryptRaw steppin in');
+	        window.t2crypto.encryptRaw(dataInputJSON2, function success(result) {
+	            console.log('encryptRaw callback');
+	            assert(result.RESULT !== -1, 'encryptRaw failed for input 2');
+	            if (result.RESULT !== -1) {
+	                resolve(result.RESULT);
+	            }
+	            else {
+	                var err = {
+	                    message: 'inbound encryption failed for input 2',
+	                    key: ''
+	                };
+	                reject(err);
+	            }
+	        });
+	    }).then(function (lastResult) {
+	        ////////////////////
+	        var encryptedInput2 = {
+	            "KEY_PIN": encryptRiPin,
+	            "KEY_INPUT": lastResult
+	        };
+	        return new Promise(function (resolve, reject) {
+	            console.log('decryptRaw steppin in');
+	            window.t2crypto.decryptRaw(encryptedInput2, function (result) {
+	                console.log('decryptRaw callback');
+	                assert(result.RESULT !== -1, 'decryptRaw failed for input 2');
+	                if (result.RESULT !== -1) {
+	                    resolve(result.RESULT);
+	                }
+	                else {
+	                    var err = {
+	                        message: 'cordova: failed decryption of input 2'
+	                    };
+	                    console.log(err);
+	                    reject(err);
+	                }
+	            }, function (er) {
+	                console.log('decryptRaw error callback');
+	                reject(er);
+	            });
+	        });
+	    });
+	};
 	var CordovaTests = (function () {
 	    function CordovaTests(throwOnError) {
 	        if (throwOnError === void 0) { throwOnError = true; }
@@ -99612,6 +99678,10 @@
 	            })
 	                .then(function () {
 	                console.log('PASSED: changeSecurityQuestionsTest');
+	                return encryptDecryptTest();
+	            })
+	                .then(function (result) {
+	                console.log('PASSED: encryptDecryptTest');
 	                return true;
 	            })
 	                .then(function (result) {

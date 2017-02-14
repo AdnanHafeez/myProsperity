@@ -54,12 +54,48 @@ export default class HomePage extends React.Component<MyProps, MyState> {
         <p>Leaders may use the Prosperity Plan Workbook to assist those they are privileged to lead in developing, specifying, pursuing and achieving their goals. Our Workbook can be a teaching/coaching/mentoring tool to challenge and guide each of us to prosper personally, professionally, spiritually, and in our relationships.</p>
 
         <p>Accomplish our mission/Take care of each other/Take care of our Families are interrelated and inseparable.</p>
+    
+
+<h2>Director's Goals</h2>
+<ul>
+  <li>Fortify our Relationship with the Services</li>
+  <li>Strengthen our role as a Combat Support Agency</li>
+  <li>Optimize DHA Operations</li>
+</ul>
+
+<h3>Vision</h3>
+<p>
+A joint, integrated, premier system of health, supporting those who
+serve in the defense of our country.
+</p>
+<h3>Mission</h3>
+<p>
+The Defense Health Agency (DHA) is a Combat Support Agency supporting
+the Military Services. The DHA supports the delivery of integrated,
+affordable, and high quality health services to beneficiaries of
+the Military Health System (MHS), and executes responsibility for
+shared services, functions, and activities of the MHS and other common
+clinical and business processes in support of the Military Services.
+The DHA serves as the program manager for the TRICARE health plan,
+medical resources, and the market manager for the National Capital
+Region (NCR) enhanced Multi-Service Market. The DHA manages the
+execution of policy as issued by the Assistant Secretary of Defense for
+Health Affairs and exercises authority, direction, and control over the
+inpatient facilities and their subordinate clinics assigned to the DHA in the NCR Directorate.
+</p>
+
+
+
     <p>
     <img src={clarkSignature} alt="Major General Clark Signature" />
     </p>
     <p>JEFFREY B. CLARK </p>
     <p>Major General,</p>
     <p>Medical Corps United States Army</p>
+
+
+
+
           </div>
           </CardText>
           <CardActions>
