@@ -45,7 +45,7 @@ export default class BasicDialog extends React.Component<MyProps, MyState> {
 
     return (
       <div>
-        <FlatButton label={title} onTouchTap={this.handleOpen} />
+        <RaisedButton label={title} onTouchTap={this.handleOpen} />
         
 
         <Dialog

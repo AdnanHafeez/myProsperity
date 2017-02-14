@@ -1,8 +1,8 @@
-import Main from '../Main.tsx';
+import MainContainer from '../MainContainer';
 export default {
   getComponent (nextState, cb) {
     console.log('quick Load comp called');
-    cb(null, Main);
+    cb(null, MainContainer);
   },
 
   getChildRoutes (partialNextState, cb) {

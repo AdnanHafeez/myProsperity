@@ -30,11 +30,11 @@ import createAsyncEncryptor from 'redux-persist-transform-encrypt/async';
 import {encryptedDbPaused,loadAppState} from './actions';
 
 
-import createPersistorAdapter from './persistStoreAdapter';
-import createPromiseTransform from './createPromiseTransform';
+import createPersistorAdapter from './lib/persistStoreAdapter';
+import createPromiseTransform from './lib/createPromiseTransform';
 import {BrowserCryptoPromise,PromisePeristerTransform} from './lib/CryptoPromise';
 
-const doNotSave = ['mode','user','cordova','onLogout'];
+const doNotSave = ['mode','cordova','onLogout'];
 const doNotEncrypt = ['migrations','navigation','routing','view','onLogout','user'];
 const cryptoKey = 'asdfasfsdffsf'
 
@@ -238,7 +238,7 @@ const loadPersistor = (cb) => {
        persistor.rehydrate(storedState);
 
        
-       cb();
+       cb(null,storedState);
 
 
        
@@ -259,20 +259,34 @@ class AppProvider extends React.Component<MyProps, MyState> {
 
   componentWillMount () { // only called on first load or hard browser refresh
     loadPersistor((err) => {
+      console.log('Hard reload, reloading persistor');
           this.setState({rehydrated: true});
     });
 
     appStore.subscribe(() => {
         if(appStore.getState().mode === 0 && !promisePeristerTransform.isLocked()){
+            console.log('locking');
             promisePeristerTransform.lock();
-            appStore.dispatch(push(appStore.getState().onLogout));
             loadPersistor((err) => {
-                  this.setState({rehydrated: true});
+                console.log('Locking app, reloading persistor');
+                if(err){
+                  console.log(err);
+                }
+                if(!this.state.rehydrated){
+                   this.setState({rehydrated: true});
+                }
             });
         } else if(appStore.getState().mode === 1 && promisePeristerTransform.isLocked()) {
+            console.log('unlocking');
             promisePeristerTransform.unLock(appStore.getState().rikey);
             loadPersistor((err) => {
-                  this.setState({rehydrated: true});
+                console.log('Unlocking app, reloading persistor');
+                if(err){
+                  console.log(err);
+                }
+                if(!this.state.rehydrated){
+                   this.setState({rehydrated: true});
+                }
             });
         }
     });

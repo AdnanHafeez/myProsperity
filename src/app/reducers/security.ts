@@ -28,17 +28,8 @@ export interface QuestionAnswers {
 
 
 const defaultUser = {
-  stage: 0,
-  loaded: 0,
-  role: 'anonymous',
-  firstname: '',
-  lastname: '',
-  isAuthenticated: false,
-  pin: '',
-  firstQuestionAnwser: '',
-  secondQuestionAnwser: '',
   eulaAccepted: false,
-  fipsIsSetUp: false,
+  fipsIsSetUp: false
 };
 
 interface PinQuestionsMap {

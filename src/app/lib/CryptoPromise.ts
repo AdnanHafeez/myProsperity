@@ -1,5 +1,5 @@
-import createPersistorAdapter from '../persistStoreAdapter';
-import createPromiseTransform from '../createPromiseTransform';
+import createPersistorAdapter from './persistStoreAdapter';
+import createPromiseTransform from './createPromiseTransform';
 
 
 interface CryptoInterface {

@@ -1,10 +1,9 @@
-
-import Main from '../Main.tsx';
+import MainContainer from '../MainContainer';
 
 export default {
   path: 'main',
   getComponent (nextState, cb) {
-    cb(null, Main);
+    cb(null, MainContainer);
   },
   name: 'main',
   getChildRoutes (partialNextState, cb) {

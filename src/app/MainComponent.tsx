@@ -4,48 +4,69 @@
  */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-
-import Paper from 'material-ui/Paper';
 import AppBar from 'material-ui/AppBar';
 import Toggle from 'material-ui/Toggle';
-import SnackBarNotice from './SnackBarNoticeComponent';
 import AppBarMenuIcon from './AppBarMenuIconDrawer';
-import HomeIcon from 'material-ui/svg-icons/action/home';
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
 import IconButton from 'material-ui/IconButton';
-import { connect } from 'react-redux';
-import { Link } from 'react-router';
-import {push, replace} from 'react-router-redux';
+import MenuIcon from 'material-ui/svg-icons/navigation/menu';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import SnackBarNotice from './SnackBarNoticeComponent';
 import {FlashMessageInterface} from './data/workbook';
-import {deviceActions} from 'local-t2-device-redux';
 
-import Eula from './Eula';
 
 
 const styles = {
-  wrapper: {
-    maxWidth: '1500px',
-    margin: '0 auto 0 auto'
-  },
   content: {
-    paddingTop: '10px',
-    display: 'flex',
-    flexFlow: 'row wrap',
-    justifyContent: 'center'
+    padding: '5px'
   }
 };
+
+
+interface SettingsMenuProps {
+  turnAppOffRedirect(path:string): any;
+}
+
+interface SettingsMenuState {
+  openMenu: boolean;
+}
+
+class SettingMenuComponent extends React.Component<SettingsMenuProps, SettingsMenuState> {
+
+  render(){
+    const {turnAppOffRedirect} = this.props;
+
+    return (<IconMenu
+      iconButtonElement={
+        <IconButton><MoreVertIcon /></IconButton>
+      }
+      targetOrigin={{horizontal: 'right', vertical: 'top'}}
+      anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+
+    >
+      
+      <MenuItem key={'default_1'} primaryText="Change Pin" onTouchTap={() => turnAppOffRedirect('/security/changepin')}  />
+      <MenuItem key={'default_2'}  primaryText="Edit Security Questions" onTouchTap={() => turnAppOffRedirect('/security/changequestions')} />
+      <MenuItem key={'default_3'}  primaryText="Sign Out" onTouchTap={() => turnAppOffRedirect('/')} />
+    </IconMenu>)
+  }
+}
+
+
 interface MyProps {
-  dispatch(arg: any): any;
-  appBarTitle?(any): any;
-  isAuthed: boolean;
+  appBarTitle?(title: string): any;
   children: any;
-  authToggle(isAuthed: boolean): any;
-  flash: FlashMessageInterface;
+  turnAppOffRedirect(path: string): any;
+  flash: FlashMessageInterface
 }
 
 interface MyState {
-  title?: any,
-  open?: boolean
+  title?: any;
+  open?: boolean;
 }
+
+
 export default class MainComponent extends React.Component<MyProps, MyState>{
   static contextTypes: any = {
                                 router: React.PropTypes.object.isRequired
@@ -63,39 +84,42 @@ export default class MainComponent extends React.Component<MyProps, MyState>{
   }
 
   componentWillMount () {
-    //this.props.dispatch(windowResize(window.innerWidth, window.innerHeight));
+
   }
   handleRequestClose () {
     this.setState({
       open: false
-    });
+    } as any);
   }
 
   handleTouchTap () {
     this.setState({
       open: true
-    });
+    }as any);
   }
 
   handleTitle (title) {
     this.setState({
       title: title
-    });
+    }as any);
   }
 
+
   render () {
-    var {isAuthed, authToggle, flash} = this.props;
+    var {turnAppOffRedirect, flash} = this.props;
     return (
-        <div style={styles.wrapper}>
+        <div>
             <AppBar
                 title={this.state.title}
                 titleStyle={{textAlign: 'center'}}
-                iconElementLeft={<IconButton containerElement={<Link to="/" />}><HomeIcon /></IconButton>}
-               
+                iconElementLeft={<AppBarMenuIcon/>}
+                iconElementRight={<SettingMenuComponent   turnAppOffRedirect={turnAppOffRedirect} />}
                  />
-                <div style={styles.content as any}>{React.cloneElement(this.props.children, { appBarTitle: this.handleTitle })}</div>
-                <Eula />
-                <SnackBarNotice flash={flash} />
+                <div style={styles.content as any}>{React.cloneElement(this.props.children, { 
+                                                                                              appBarTitle: this.handleTitle
+                                                                                            })}</div>
+
+          <SnackBarNotice flash={flash} />
         </div>
     );
   }

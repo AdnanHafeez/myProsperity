@@ -70,11 +70,6 @@ interface MyState {
    values: GoalFormInterface;
 }
 
-
-
-
-
-
 export default class GoalForm extends React.Component<MyProps, MyState>{
   constructor (props, context) {
     super(props, context);
@@ -85,9 +80,7 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
       values: {title: props.goal.title, dueDate: props.goal.dueDate}
     };
   }
-  componentDidMount(){
-    //(this as any).textInput.focus(); doesn't work
-  }
+
   handleChange = (event) => {
    
     const target = event.target;

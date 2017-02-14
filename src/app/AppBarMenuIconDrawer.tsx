@@ -5,7 +5,6 @@ import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import IconButton from 'material-ui/IconButton';
 import MenuIcon from 'material-ui/svg-icons/navigation/menu';
-import ArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
 import { Link } from 'react-router';
 import Divider from 'material-ui/Divider';
 import Drawer from 'material-ui/Drawer';
@@ -81,9 +80,5 @@ const mapStateToProp = (state, ownProps) => {
   };
 };
 
-const dispatchToProp = (dispatch) => {
-  return {
-  }
-};
-export default connect(mapStateToProp,dispatchToProp)(AppBarMenuIconDrawer);
+export default connect(mapStateToProp)(AppBarMenuIconDrawer);
 

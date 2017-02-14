@@ -1,10 +1,9 @@
-import { Link } from 'react-router';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import Main from './MainSecurityContainer';
+import MainContainer from './MainContainer';
 import SecurityHome from './SecurityHome';
 const NotFound = () => {
-  return (<Main><SecurityHome /></Main>);
+  return (<MainContainer><SecurityHome /></MainContainer>);
 };
 
 export default NotFound;

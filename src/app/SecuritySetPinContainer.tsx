@@ -1,10 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {connect} from 'react-redux';
-import SelectField from 'material-ui/SelectField';
-import TextField from 'material-ui/TextField';
-import MenuItem from 'material-ui/MenuItem';
-import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
 import {SetPinFormInterface} from './actions/security';
 import {labelStyle,fieldErrorStyle,fieldRowStyle} from './commonStyles';
 
@@ -45,8 +41,7 @@ const validateForm = (values: SetPinFormInterface): any => {
       default: //unexpected value
         results.errorMessage = 'Unexpected form field "' + propName +'".'
     }
-    //no empty fields
-    console.log(propName);
+
     if(values[propName].length === 0){
        isFormValid = false;
        results.fields[propName] = 'Required';
@@ -56,7 +51,6 @@ const validateForm = (values: SetPinFormInterface): any => {
     }
   });
   results.isValid = isFormValid && results.errorMessage.length === 0;
-  console.log(results);
   return results;
 }
 interface MyProps {
@@ -191,7 +185,7 @@ export default class SecuritySetQuestionsContainer extends React.Component<MyPro
           <div style={fieldErrorStyle}>{this.state.errors.answer2}</div>
         </div>
         <div style={fieldRowStyle}>
-          <FlatButton label="Submit" type="submit" />
+          <RaisedButton primary={true} label="Submit" type="submit" />
         </div>
       </form>
     );

@@ -1,9 +1,6 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import GoalCreateDialog from './GoalCreateDialog';
-import GoalEditDialog from './GoalEditDialog';
-import {connect} from 'react-redux';
 import BasicDialog from './BasicDialog';
 import {WorkbookReducerInterface,GoalReducerInterface} from './data/workbook';
 import {List, ListItem} from 'material-ui/List';
@@ -20,14 +17,8 @@ import GoalEditComponent from './GoalEditComponent';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import {topRightButtonStyle, subMenuFlexContainerStyle, foatingButtonStyle} from './commonStyles';
-import {Transforms,Validators,Formats} from './lib/helpers';
+import {Formats} from './lib/helpers';
 
-const styles = {
-  video: {
-    width: '100%',
-    height: 'auto'
-  }
-};
 
 interface MyProps {
   appBarTitle(title: string): any;
