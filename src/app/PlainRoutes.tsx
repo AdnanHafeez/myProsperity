@@ -83,7 +83,7 @@ var transformEncryptTransform = createPromiseTransform(
       return new Promise(function(res,rej){
           let dataJSON = {
                       "KEY_PIN": getRiPin(),
-                      "KEY_INPUT": inboundState
+                      "KEY_INPUT": JSON.stringify(inboundState)
                     };
           (window as any).t2crypto.encryptRaw(dataJSON,function success(result){
               if(result.RESULT !== -1){
