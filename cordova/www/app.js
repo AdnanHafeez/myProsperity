@@ -28707,18 +28707,18 @@
 	    // transform state coming from redux on its way to being serialized and stored
 	    function (inboundState, key) {
 	        console.log(inboundState);
-	        if (true) {
+	        if (false) {
 	            console.log(inboundState);
 	            console.log(getRiPin());
 	        }
 	        return new Promise(function (res, rej) {
 	            var dataJSON = {
 	                "KEY_PIN": getRiPin(),
-	                "KEY_INPUT": inboundState
+	                "KEY_INPUT": JSON.stringify(inboundState)
 	            };
 	            window.t2crypto.encryptRaw(dataJSON, function success(result) {
 	                if (result.RESULT !== -1) {
-	                    if (true) {
+	                    if (false) {
 	                        console.log('inbound enc ' + result.RESULT);
 	                        console.log(result.RESULT);
 	                    }
@@ -28729,7 +28729,7 @@
 	                        message: 'inbound encryption failer',
 	                        key: key
 	                    };
-	                    if (true) {
+	                    if (false) {
 	                        console.log(err);
 	                    }
 	                    rej(err);
@@ -28799,7 +28799,7 @@
 	        });
 	    }
 	}
-	if (true) {
+	if (false) {
 	    appStore.subscribe(function () {
 	        console.log(appStore.getState()); // list entire state of app in js console. Essential for debugging.
 	    });
@@ -28853,12 +28853,12 @@
 	            console.log(err);
 	        });
 	        window.t2crypto.setVerboseLogging({ "VERBOSE_LOGGING": "1" }, function (result) {
-	            if (true) {
+	            if (false) {
 	                console.log("Verbose Logging");
 	                console.log(result);
 	            }
 	        });
-	        if (true) {
+	        if (false) {
 	            console.log("Dispatching device ready event");
 	        }
 	        SecurityProvider_1.securityStore.dispatch(security_1.cordovaDeviceReady());
@@ -28910,7 +28910,7 @@
 	        var appIsActive = false;
 	        SecurityProvider_1.securityStore.subscribe(function () {
 	            if (SecurityProvider_1.securityStore.getState().mode === 0 && !appIsActive) {
-	                if (true) {
+	                if (false) {
 	                    console.log('----------LOADING APP STORE---------');
 	                }
 	                redux_persist_1.getStoredState(persistEncryptedConfig).then(function (storedState) {
@@ -28919,7 +28919,7 @@
 	                    var isStateEmpty = Object.keys(storedState).length === 0;
 	                    Object.keys(storedState).forEach(function (objectKey) {
 	                        var field = new Promise(function (resolve, reject) {
-	                            if (true) {
+	                            if (false) {
 	                                console.log('outgoing data rikey');
 	                                console.log(getRiPin());
 	                            }
@@ -28928,13 +28928,13 @@
 	                                    "KEY_PIN": getRiPin(),
 	                                    "KEY_INPUT": storedState[objectKey]
 	                                };
-	                                if (true) {
+	                                if (false) {
 	                                    console.log('calling decryptRaw for objectKey');
 	                                    console.log(dataJSON);
 	                                }
 	                                window.t2crypto.decryptRaw(dataJSON, function (result) {
 	                                    if (result.RESULT !== -1) {
-	                                        if (true) {
+	                                        if (false) {
 	                                            console.log('decrypting');
 	                                            console.log(result.RESULT);
 	                                        }
@@ -28943,7 +28943,7 @@
 	                                            parsedResult = JSON.parse(result.RESULT);
 	                                        }
 	                                        catch (e) {
-	                                            if (true) {
+	                                            if (false) {
 	                                                console.log('could not parse the following');
 	                                                console.log(result.RESULT);
 	                                                console.log('Field ' + objectKey);
@@ -28971,7 +28971,7 @@
 	                        hydratePromises.push(field);
 	                    });
 	                    if (isStateEmpty) {
-	                        if (true) {
+	                        if (false) {
 	                            console.log("stored state is empty");
 	                        }
 	                        appStore.dispatch(actions_1.loadAppState(storedState));
@@ -28979,7 +28979,7 @@
 	                        _this.setState({ locked: false });
 	                    }
 	                    else {
-	                        if (true) {
+	                        if (false) {
 	                            console.log("stored state has data");
 	                        }
 	                        Promise.all(hydratePromises).then(function (results) {
@@ -28988,7 +28988,7 @@
 	                                accum[key] = value;
 	                                return accum;
 	                            }, {});
-	                            if (true) {
+	                            if (false) {
 	                                console.log('promise array complete');
 	                                console.log(finalStoredState);
 	                            }
@@ -29006,7 +29006,7 @@
 	        });
 	        appStore.subscribe(function () {
 	            if (appStore.getState().mode === 0 && appIsActive) {
-	                if (true) {
+	                if (false) {
 	                    console.log('----------LOADING SECURITY STORE---------');
 	                }
 	                var logoutRedirect = appStore.getState().onLogout.redirect || '/';
@@ -52838,7 +52838,7 @@
 	        state.noteIds = undefined;
 	    }
 	    else if (action.type === actions_1.LOAD_APP_STATE) {
-	        if (true) {
+	        if (false) {
 	            console.log(action.storedState);
 	            console.log(state);
 	        }
@@ -52882,7 +52882,7 @@
 	    if (state === void 0) { state = defaultView; }
 	    switch (action.type) {
 	        case actions_1.ERROR_MESSAGE:
-	            if (true) {
+	            if (false) {
 	                console.log(action);
 	            }
 	            var newFlash = __assign({}, state.flash, { message: action.message, open: true, type: 'error' });
@@ -53164,7 +53164,7 @@
 	};
 	function checkProperty(ob, prop) {
 	    if (typeof ob[prop + ''] === 'undefined') {
-	        if (true) {
+	        if (false) {
 	            console.log("Invalid object id submitted to reducer");
 	        }
 	        return false;
@@ -53914,7 +53914,7 @@
 	};
 	function checkProperty(ob, prop) {
 	    if (typeof ob[prop + ''] === 'undefined') {
-	        if (true) {
+	        if (false) {
 	            console.log("Invalid workbook id submitted to reducer");
 	        }
 	        return false;
@@ -65272,7 +65272,7 @@
 	                        rejectChangeAnswers(exports.sendErrorMessage('Invalid Pin', 410));
 	                    }
 	                }, function (error) {
-	                    if (true) {
+	                    if (false) {
 	                        console.log('error changeAnswersUsingPin');
 	                        console.log(error);
 	                    }
@@ -65285,7 +65285,7 @@
 	                resolveChangeAnswer();
 	            }
 	        }).catch(function (eMessage) {
-	            if (true) {
+	            if (false) {
 	                console.log(eMessage);
 	            }
 	            dispatch(eMessage);
@@ -65354,7 +65354,7 @@
 	    var localAction = {
 	        type: exports.CHANGE_PIN_WITH_PIN
 	    };
-	    if (true) {
+	    if (false) {
 	        console.log('changePinWithPin');
 	    }
 	    return function (dispatch, getState) {
@@ -65365,7 +65365,7 @@
 	                    "KEY_PIN": data.currentPin,
 	                    "KEY_NEW_PIN": data.newPin
 	                };
-	                if (true) {
+	                if (false) {
 	                    console.log(changePinJSON);
 	                }
 	                window.t2crypto.changePinUsingPin(changePinJSON, function (args) {
@@ -65396,7 +65396,7 @@
 	    };
 	    return function (dispatch, getState) {
 	        dispatch(localAction);
-	        if (true) {
+	        if (false) {
 	            console.log(data);
 	        }
 	        return new Promise(function (resolveChangePinAnswers, rejectChangePinAnswers) {
@@ -65410,14 +65410,14 @@
 	                window.t2crypto.changePinUsingAnswers(changejson, function (result) {
 	                    if (result.RESULT === 0) {
 	                        dispatch(exports.cordovaLoginWithPin(data.newPin)).then(function () {
-	                            if (true) {
+	                            if (false) {
 	                                console.log('cordovaLoginWithPin called from changePinWithAnswers');
 	                            }
 	                            resolveChangePinAnswers(true);
 	                        });
 	                    }
 	                    else {
-	                        if (true) {
+	                        if (false) {
 	                            console.log(exports.sendErrorMessage('Invalid Answers', 406));
 	                        }
 	                        dispatch(exports.sendErrorMessage('Invalid Answers', 406));
@@ -65441,7 +65441,7 @@
 	        type: exports.CORDOVA_LOGIN_PIN,
 	        pin: pin
 	    };
-	    if (true) {
+	    if (false) {
 	        console.log('cordovaLoginWithPin');
 	    }
 	    return function (dispatch, getState) {
@@ -65456,7 +65456,7 @@
 	                        dispatch(exports.cordovaGetRiKey(pin)).then(function () {
 	                            resolveLoginPin(true);
 	                        }).catch(function (e) {
-	                            if (true) {
+	                            if (false) {
 	                                console.log('promise rejected from cordovaLoginWithPin');
 	                                console.log(e);
 	                            }
@@ -65464,7 +65464,7 @@
 	                        });
 	                    }
 	                    else {
-	                        if (true) {
+	                        if (false) {
 	                            console.log(exports.sendErrorMessage('Invalid Pin', 404));
 	                        }
 	                        rejectLoginPin(dispatch(exports.sendErrorMessage('Invalid Pin', 404)));
@@ -65489,7 +65489,7 @@
 	        return new Promise(function (resolveRiKey, rejectRiKey) {
 	            window.t2crypto.getDatabaseKeyUsingPin(dbKeyJson, function (args) {
 	                var rikey = args.RESULT;
-	                if (true) {
+	                if (false) {
 	                    console.log(rikey);
 	                }
 	                if (!rikey) {
@@ -65504,7 +65504,7 @@
 	                    });
 	                }
 	            }, function (e) {
-	                if (true) {
+	                if (false) {
 	                    console.log(e);
 	                }
 	                rejectRiKey(exports.cordovaInitLoginFail('Login Failed.', 412));
@@ -65535,7 +65535,7 @@
 	                    if (args.RESULT === 0) {
 	                        dispatch(exports.editAllQuestions(loginData.question1, loginData.question2));
 	                        dispatch(exports.cordovaGetRiKey(loginData.pin)).then(function () {
-	                            if (true) {
+	                            if (false) {
 	                                console.log('cordovaGetRiKey promise resolved 2');
 	                            }
 	                            resolveInit(true);
@@ -65546,7 +65546,7 @@
 	                        rejectInit(exports.cordovaInitLoginFail('Login Initialization Failed.', 400));
 	                    }
 	                }, function (error) {
-	                    if (true) {
+	                    if (false) {
 	                        console.log('initializeLogin Error');
 	                        console.log(error);
 	                    }
@@ -65596,7 +65596,7 @@
 	    };
 	};
 	exports.switchToAppProvider = function (rikey) {
-	    if (true) {
+	    if (false) {
 	        console.log('rikey: ' + rikey);
 	    }
 	    return {
@@ -81671,7 +81671,7 @@
 	];
 	exports.securityStore = redux_1.createStore(reducerSecurity_1.default, // app reducer // TODO remove "as any"
 	undefined, redux_1.compose(redux_1.applyMiddleware(redux_thunk_1.default, sagaMiddleware, react_router_redux_1.routerMiddleware(react_router_1.hashHistory), local_t2_navigation_redux_1.navigationCreateMiddleware(navigationConfig_1.default)), migration, redux_persist_1.autoRehydrate()));
-	if (true) {
+	if (false) {
 	    exports.securityStore.subscribe(function () {
 	        console.log(exports.securityStore.getState()); // list entire state of app in js console. Essential for debugging.
 	    });
@@ -81835,7 +81835,7 @@
 	    if (state === void 0) { state = defaultView; }
 	    switch (action.type) {
 	        case security_1.ERROR_MESSAGE:
-	            if (true) {
+	            if (false) {
 	                console.log(action);
 	            }
 	            var newFlash = __assign({}, state.flash, { message: action.message, open: true, type: 'error' });
@@ -84785,10 +84785,9 @@
 	};
 	var React = __webpack_require__(299);
 	var TextField_1 = __webpack_require__(1145);
-	var FlatButton_1 = __webpack_require__(763);
 	var RaisedButton_1 = __webpack_require__(1151);
 	var react_router_1 = __webpack_require__(634);
-	//   <RaisedButton label="Test Error Message" onTouchTap={testSnackBar} />
+	var commonStyles_1 = __webpack_require__(1140);
 	var validateForm = function (values) {
 	    var fields = Object.keys(values).reduce(function (accum, current) {
 	        accum[current] = '';
@@ -84858,10 +84857,11 @@
 	                React.createElement("form", { onSubmit: this.handleSubmit },
 	                    React.createElement("div", null,
 	                        React.createElement(TextField_1.default, { floatingLabelText: 'Enter Pin', hintText: '1234', multiLine: false, name: 'pin', errorText: this.state.errors.pin, value: this.state.values.pin, onChange: this.handleChange })),
-	                    React.createElement("div", null,
-	                        React.createElement(RaisedButton_1.default, { primary: true, label: "Login", type: "submit" })))),
-	            React.createElement("div", { style: { float: 'right' } },
-	                React.createElement(FlatButton_1.default, { label: "Forgot Pin", containerElement: React.createElement(react_router_1.Link, { to: 'security/forgotpin' }) }))));
+	                    React.createElement("div", { style: commonStyles_1.subMenuFlexContainerStyle },
+	                        React.createElement("div", null,
+	                            React.createElement(RaisedButton_1.default, { primary: true, label: "Login", type: "submit" })),
+	                        React.createElement("div", null,
+	                            React.createElement(RaisedButton_1.default, { type: "button", label: "Forgot Pin", containerElement: React.createElement(react_router_1.Link, { to: 'security/forgotpin' }) })))))));
 	    };
 	    return SecurityLoginPin;
 	}(React.Component));
@@ -86567,7 +86567,7 @@
 	    return t;
 	};
 	var React = __webpack_require__(299);
-	var FlatButton_1 = __webpack_require__(763);
+	var RaisedButton_1 = __webpack_require__(1151);
 	var commonStyles_1 = __webpack_require__(1140);
 	var validateForm = function (values) {
 	    var fields = Object.keys(values).reduce(function (accum, current) {
@@ -86705,7 +86705,7 @@
 	                    React.createElement("input", { type: "text", name: 'answer2', value: this.state.values.answer2, onChange: this.handleChange })),
 	                React.createElement("div", { style: commonStyles_1.fieldErrorStyle }, this.state.errors.answer2)),
 	            React.createElement("div", { style: commonStyles_1.fieldRowStyle },
-	                React.createElement(FlatButton_1.default, { label: "Submit", type: "submit" }))));
+	                React.createElement(RaisedButton_1.default, { primary: true, label: "Submit", type: "submit" }))));
 	    };
 	    return SecuritySetQuestionsContainer;
 	}(React.Component));
@@ -86808,17 +86808,11 @@
 	var React = __webpack_require__(299);
 	var react_redux_1 = __webpack_require__(711);
 	var TextField_1 = __webpack_require__(1145);
-	var FlatButton_1 = __webpack_require__(763);
 	var RaisedButton_1 = __webpack_require__(1151);
 	var react_router_1 = __webpack_require__(634);
 	var security_1 = __webpack_require__(1038);
 	var SecurityHome_1 = __webpack_require__(1143);
-	var styles = {
-	    video: {
-	        width: '100%',
-	        height: 'auto'
-	    }
-	};
+	var commonStyles_1 = __webpack_require__(1140);
 	var validateForm = function (values) {
 	    var fields = Object.keys(values).reduce(function (accum, current) {
 	        accum[current] = '';
@@ -86895,18 +86889,18 @@
 	            return React.createElement(SecurityHome_1.default, null);
 	        }
 	        return (React.createElement("div", { style: { maxWidth: 400, width: '90%' } },
-	            React.createElement("div", null,
-	                React.createElement("form", { onSubmit: this.handleSubmit },
+	            React.createElement("form", { onSubmit: this.handleSubmit },
+	                React.createElement("div", null,
+	                    React.createElement(TextField_1.default, { floatingLabelText: 'New Pin', hintText: 'My Secret Pin', multiLine: false, fullWidth: true, name: 'newPin', errorText: this.state.errors.newPin, value: this.state.values.newPin, onChange: this.handleChange })),
+	                React.createElement("div", null,
+	                    React.createElement(TextField_1.default, { floatingLabelText: question1.title, floatingLabelFixed: false, fullWidth: true, multiLine: false, name: 'answer1', errorText: this.state.errors.answer1, value: this.state.values.answer1, onChange: this.handleChange })),
+	                React.createElement("div", null,
+	                    React.createElement(TextField_1.default, { floatingLabelText: question2.title, floatingLabelFixed: false, multiLine: false, fullWidth: true, name: 'answer2', errorText: this.state.errors.answer2, value: this.state.values.answer2, onChange: this.handleChange })),
+	                React.createElement("div", { style: commonStyles_1.subMenuFlexContainerStyle },
 	                    React.createElement("div", null,
-	                        React.createElement(TextField_1.default, { floatingLabelText: 'New Pin', hintText: 'My Secret Pin', multiLine: false, fullWidth: true, name: 'newPin', errorText: this.state.errors.newPin, value: this.state.values.newPin, onChange: this.handleChange })),
+	                        React.createElement(RaisedButton_1.default, { primary: true, label: "Submit", type: "submit" })),
 	                    React.createElement("div", null,
-	                        React.createElement(TextField_1.default, { floatingLabelText: question1.title, floatingLabelFixed: false, fullWidth: true, multiLine: false, name: 'answer1', errorText: this.state.errors.answer1, value: this.state.values.answer1, onChange: this.handleChange })),
-	                    React.createElement("div", null,
-	                        React.createElement(TextField_1.default, { floatingLabelText: question2.title, floatingLabelFixed: false, multiLine: false, fullWidth: true, name: 'answer2', errorText: this.state.errors.answer2, value: this.state.values.answer2, onChange: this.handleChange })),
-	                    React.createElement("div", null,
-	                        React.createElement(RaisedButton_1.default, { primary: true, label: "Submit", type: "submit" })))),
-	            React.createElement("div", { style: { float: 'right' } },
-	                React.createElement(FlatButton_1.default, { label: "Back", containerElement: React.createElement(react_router_1.Link, { to: '/' }) }))));
+	                        React.createElement(RaisedButton_1.default, { label: "Back", containerElement: React.createElement(react_router_1.Link, { to: '/' }) }))))));
 	    };
 	    return SecurityPinRecoveryContainer;
 	}(React.Component));
@@ -86994,10 +86988,10 @@
 	var React = __webpack_require__(299);
 	var react_redux_1 = __webpack_require__(711);
 	var TextField_1 = __webpack_require__(1145);
-	var FlatButton_1 = __webpack_require__(763);
 	var RaisedButton_1 = __webpack_require__(1151);
 	var react_router_1 = __webpack_require__(634);
 	var security_1 = __webpack_require__(1038);
+	var commonStyles_1 = __webpack_require__(1140);
 	var validateForm = function (values) {
 	    var fields = Object.keys(values).reduce(function (accum, current) {
 	        accum[current] = '';
@@ -87079,10 +87073,11 @@
 	                        React.createElement(TextField_1.default, { floatingLabelText: 'Enter New Pin', multiLine: false, name: 'newPin', errorText: this.state.errors.newPin, value: this.state.values.newPin, onChange: this.handleChange })),
 	                    React.createElement("div", null,
 	                        React.createElement(TextField_1.default, { floatingLabelText: 'Confirm New Pin', multiLine: false, name: 'confirmNewPin', errorText: this.state.errors.confirmNewPin, value: this.state.values.confirmNewPin, onChange: this.handleChange })),
-	                    React.createElement("div", null,
-	                        React.createElement(RaisedButton_1.default, { primary: true, label: "Change", type: "submit" })))),
-	            React.createElement("div", { style: { float: 'right' } },
-	                React.createElement(FlatButton_1.default, { label: "Cancel", containerElement: React.createElement(react_router_1.Link, { to: '/' }) }))));
+	                    React.createElement("div", { style: commonStyles_1.subMenuFlexContainerStyle },
+	                        React.createElement("div", null,
+	                            React.createElement(RaisedButton_1.default, { primary: true, label: "Change", type: "submit" })),
+	                        React.createElement("div", null,
+	                            React.createElement(RaisedButton_1.default, { label: "Cancel", containerElement: React.createElement(react_router_1.Link, { to: '/' }) })))))));
 	    };
 	    return SecurityChangePinWithPin;
 	}(React.Component));
@@ -87145,7 +87140,9 @@
 	var react_redux_1 = __webpack_require__(711);
 	var TextField_1 = __webpack_require__(1145);
 	var security_1 = __webpack_require__(1038);
-	var FlatButton_1 = __webpack_require__(763);
+	var RaisedButton_1 = __webpack_require__(1151);
+	var react_router_1 = __webpack_require__(634);
+	var commonStyles_1 = __webpack_require__(1140);
 	var styles = {
 	    video: {
 	        width: '100%',
@@ -87273,8 +87270,11 @@
 	                    }))),
 	            React.createElement("div", null,
 	                React.createElement(TextField_1.default, { floatingLabelText: 'Answer 2', hintText: '', multiLine: false, name: 'answer2', errorText: this.state.errors.answer2, value: this.state.values.answer2, onChange: this.handleChange })),
-	            React.createElement("div", null,
-	                React.createElement(FlatButton_1.default, { label: "Submit", type: "submit" }))));
+	            React.createElement("div", { style: commonStyles_1.subMenuFlexContainerStyle },
+	                React.createElement("div", null,
+	                    React.createElement(RaisedButton_1.default, { primary: true, label: "Submit", type: "submit" })),
+	                React.createElement("div", null,
+	                    React.createElement(RaisedButton_1.default, { label: "Cancel", containerElement: React.createElement(react_router_1.Link, { to: '/' }) })))));
 	    };
 	    return SecuritySetQuestionsContainer;
 	}(React.Component));
@@ -94107,7 +94107,7 @@
 	        }
 	        var goalOpenEdit = function (item) {
 	            return function (event) {
-	                if (true) {
+	                if (false) {
 	                    console.log('goal edit click triggered');
 	                }
 	                goalEditClick(item);
@@ -94116,7 +94116,7 @@
 	            };
 	        };
 	        var goalOpenNewClick = function (event) {
-	            if (true) {
+	            if (false) {
 	                console.log('goal new click triggered');
 	            }
 	            goalOpenNew();
@@ -98611,8 +98611,6 @@
 	            tmpdate.setTime(input);
 	            return tmpdate;
 	        }
-	        console.log('invalid date');
-	        console.log(input);
 	        return ifInvalid;
 	    };
 	})(Transforms = exports.Transforms || (exports.Transforms = {}));
@@ -99452,12 +99450,12 @@
 	            console.log(err);
 	        });
 	        window.t2crypto.setVerboseLogging({ "VERBOSE_LOGGING": "1" }, function (result) {
-	            if (true) {
+	            if (false) {
 	                console.log("Verbose Logging");
 	                console.log(result);
 	            }
 	        });
-	        if (true) {
+	        if (false) {
 	            console.log("Dispatching device ready event");
 	        }
 	        resolve(true);
@@ -99545,7 +99543,7 @@
 	                resolve(validPin);
 	                return true;
 	            }).catch(function (e) {
-	                if (true) {
+	                if (false) {
 	                    console.log("error caught in loginWithCorrectPinTest");
 	                    console.log(e);
 	                }
@@ -99571,7 +99569,7 @@
 	                resolve(correctPin);
 	            })
 	                .catch(function (e) {
-	                if (true) {
+	                if (false) {
 	                    console.log("error caught in changePinWithAnswersTest");
 	                    console.log(e);
 	                }
@@ -99690,7 +99688,7 @@
 	                .catch(function (e) {
 	                console.log("|FAILED|: CORDOVA TEST FAIL");
 	                console.log('|FAILED MESSAGE|: ' + e.message);
-	                if (true) {
+	                if (false) {
 	                    console.log(e);
 	                }
 	                if (_this.throwOnError) {
@@ -99699,7 +99697,7 @@
 	            });
 	        }
 	        catch (e) {
-	            if (true) {
+	            if (false) {
 	                console.log(e);
 	            }
 	            if (this.throwOnError) {
