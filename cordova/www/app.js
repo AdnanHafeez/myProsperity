@@ -87626,18 +87626,26 @@
 	var MenuItem_1 = __webpack_require__(1170);
 	var IconButton_1 = __webpack_require__(1117);
 	var menu_1 = __webpack_require__(1122);
-	var react_router_1 = __webpack_require__(634);
 	var Divider_1 = __webpack_require__(1186);
 	var Drawer_1 = __webpack_require__(1188);
+	var react_router_redux_1 = __webpack_require__(794);
 	var AppBarMenuIconDrawer = (function (_super) {
 	    __extends(AppBarMenuIconDrawer, _super);
 	    function AppBarMenuIconDrawer(props, context) {
 	        var _this = _super.call(this, props) || this;
-	        _this.handleToggle = function () {
+	        _this.handleToggle = function (event) {
+	            event.preventDefault();
+	            event.stopPropagation();
 	            _this.setState({ open: !_this.state.open });
 	        };
-	        _this.handleClose = function () {
-	            _this.setState({ open: false });
+	        _this.handleClose = function (path) {
+	            var navigateTo = _this.props.navigateTo;
+	            return function (event) {
+	                event.preventDefault();
+	                event.stopPropagation();
+	                _this.setState({ open: false });
+	                navigateTo(path);
+	            };
 	        };
 	        _this.state = { open: false };
 	        return _this;
@@ -87648,13 +87656,14 @@
 	        return (React.createElement("div", null,
 	            React.createElement(IconButton_1.default, { onTouchTap: this.handleToggle },
 	                React.createElement(menu_1.default, null)),
-	            React.createElement(Drawer_1.default, { docked: false, width: 250, open: this.state.open, onRequestChange: function (open) { return _this.setState({ open: open }); } },
-	                React.createElement(MenuItem_1.default, { key: 'static_directors_message', primaryText: "Director's Message", onTouchTap: this.handleClose, containerElement: React.createElement(react_router_1.Link, { to: '/main/message' }) }),
-	                React.createElement(MenuItem_1.default, { key: 'static_smart_goals', primaryText: 'S.M.A.R.T. Goals', onTouchTap: this.handleClose, containerElement: React.createElement(react_router_1.Link, { to: '/main/home' }) }),
+	            React.createElement(Drawer_1.default, { docked: false, width: 200, open: this.state.open, onRequestChange: function (open) { return _this.setState({ open: open }); }, containerStyle: { paddingTop: 60 } },
 	                React.createElement(Divider_1.default, null),
-	                workbooks.map(function (item) { return (React.createElement(MenuItem_1.default, { key: 'workbook_' + item.id, primaryText: item.title, onTouchTap: _this.handleClose, containerElement: React.createElement(react_router_1.Link, { to: '/main/workbook/' + item.id }) })); }),
+	                React.createElement(MenuItem_1.default, { key: 'static_directors_message', primaryText: "Director's Message", onTouchTap: this.handleClose('/main/message') }),
+	                React.createElement(MenuItem_1.default, { key: 'static_smart_goals', primaryText: 'S.M.A.R.T. Goals', onTouchTap: this.handleClose('/main/home') }),
 	                React.createElement(Divider_1.default, null),
-	                React.createElement(MenuItem_1.default, { key: 'notes_landing', primaryText: "Notes", onTouchTap: this.handleClose, containerElement: React.createElement(react_router_1.Link, { to: '/main/notes' }) }))));
+	                workbooks.map(function (item) { return (React.createElement(MenuItem_1.default, { key: 'workbook_' + item.id, primaryText: item.title, onTouchTap: _this.handleClose('/main/workbook/' + item.id) })); }),
+	                React.createElement(Divider_1.default, null),
+	                React.createElement(MenuItem_1.default, { key: 'notes_landing', primaryText: "Notes", onTouchTap: this.handleClose('/main/notes') }))));
 	    };
 	    return AppBarMenuIconDrawer;
 	}(React.Component));
@@ -87671,7 +87680,11 @@
 	    };
 	};
 	var dispatchToProp = function (dispatch) {
-	    return {};
+	    return {
+	        navigateTo: function (path) {
+	            dispatch(react_router_redux_1.push(path));
+	        }
+	    };
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = react_redux_1.connect(mapStateToProp, dispatchToProp)(AppBarMenuIconDrawer);
