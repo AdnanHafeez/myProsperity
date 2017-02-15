@@ -16,10 +16,10 @@ npm version 3.10.10
 # you need typescript 
 npm install -g typescript
 # I'm using Version 2.1.5
-install -g cordova
-# you need cordova
 
-
+# you need cordova and installed globally
+npm install -g cordova
+#I'm on version 6.5.0
 
 
 https://www.typescriptlang.org/#download-links
