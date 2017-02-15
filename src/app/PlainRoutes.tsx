@@ -35,7 +35,9 @@ import createPromiseTransform from './lib/createPromiseTransform';
 import {BrowserCryptoPromise,PromisePeristerTransform} from './lib/CryptoPromise';
 
 const doNotSave = ['mode','cordova','onLogout'];
-const doNotEncrypt = ['migrations','navigation','routing','view','onLogout','user'];
+const plainFields = ['migrations','navigation','routing','view','onLogout','user'];
+const encryptFields = ['workbooks','workbookIds','goals','notes','noteIds'];
+const lockableFields = ['workbooks','workbookIds','goals','notes','noteIds'];
 const cryptoKey = 'asdfasfsdffsf'
 
 
@@ -43,8 +45,10 @@ const cryptoKey = 'asdfasfsdffsf'
 const cryptoPromise = new BrowserCryptoPromise();
 const promisePeristerTransform = new PromisePeristerTransform(
                                           cryptoPromise,
-                                          doNotSave,
-                                          doNotEncrypt
+
+                                          plainFields,
+                                          encryptFields,
+                                          lockableFields
                                         );
 /**
  * Apply migrations that have yet to be run.
@@ -233,7 +237,7 @@ interface MyState {
 const loadPersistor = (cb) => {
     (getStoredState(persistEncryptedConfig) as any).then((storedState) => {
 
-       const persistor = createPersistorAdapter(appStore, persistEncryptedConfig);
+       const persistor = createPersistorAdapter(appStore, persistEncryptedConfig,promisePeristerTransform);
        console.log(storedState);
        persistor.rehydrate(storedState);
 
@@ -262,7 +266,7 @@ class AppProvider extends React.Component<MyProps, MyState> {
       console.log('Hard reload, reloading persistor');
           this.setState({rehydrated: true});
     });
-
+    
     appStore.subscribe(() => {
         if(appStore.getState().mode === 0 && !promisePeristerTransform.isLocked()){
             console.log('locking');
@@ -289,7 +293,7 @@ class AppProvider extends React.Component<MyProps, MyState> {
                 }
             });
         }
-    });
+    }); 
      
   }
 

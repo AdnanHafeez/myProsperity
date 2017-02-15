@@ -3,7 +3,7 @@ import createAsyncLocalStorage from 'redux-persist/lib/defaults/asyncLocalStorag
 import purgeStoredState from 'redux-persist/lib/purgeStoredState'
 import * as stringify from 'json-stringify-safe'
 
-export default function createPersistor (store, config) {
+export default function createPersistor (store, config, promisePeristerTransform) {
   // defaults
   const serializer = config.serialize === false ? (data) => data : defaultSerializer
   const deserializer = config.serialize === false ? (data) => data : defaultDeserializer
@@ -58,9 +58,8 @@ export default function createPersistor (store, config) {
         storesToProcess.shift();
         let promise = transforms.in(stateGetter(store.getState(), key),key)
           .then(function(results){
-           
               if(typeof results !== 'undefined'){
-                storage.setItem(storageKey, serializer(results), warnIfSetError(key))
+                storage.setItem(storageKey, results, warnIfSetError(key))
               }
            });
         

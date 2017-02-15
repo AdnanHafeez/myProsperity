@@ -103,15 +103,39 @@ export class BrowserCryptoPromise implements CryptoPromiseInterface {
 export class PromisePeristerTransform {
     cryptoPromise: CryptoPromiseInterface;
     debug: boolean = false;
-    blackList: string[]; //do no persist
-    doNotEncrypt: string[];
+    plainFields: string[];
+    encryptFields: string[];
+    lockableFields: string[];
+    activeFields: string[];
     private locked: boolean = true;
     private key: string = '';
 
-    constructor(crypto:CryptoPromiseInterface,blackList = [],doNotEncrypt = []){
+    constructor(crypto:CryptoPromiseInterface,
+                            plainFields = [],
+                            encryptFields = [],
+                            lockableFields =[]
+                            ){
       this.cryptoPromise = crypto;
-      this.blackList = blackList;
-      this.doNotEncrypt = doNotEncrypt;
+
+      this.plainFields = plainFields;
+      this.lockableFields = lockableFields;
+      this.encryptFields = encryptFields;
+      this.activeFields = this.plainFields.concat(this.lockableFields,this.encryptFields);
+      let overlap = this.plainFields.filter((n) => {
+          return this.encryptFields.indexOf(n) !== -1;
+      });
+
+      if(overlap.length > 0){
+        throw 'cannot have a field that is both plain and enscrypted';
+      }
+
+      let extraFields = this.lockableFields.filter((lockField) => {
+          return this.encryptFields.indexOf(lockField) === -1 && this.plainFields.indexOf(lockField) === -1;
+      });
+      if(extraFields.length > 0){
+        throw 'unregistered fields ' + extraFields.join(', ');
+      }
+
     }
 
     isLocked = () => {
@@ -128,67 +152,75 @@ export class PromisePeristerTransform {
       this.key = key;
     }
 
-    allowIncomming = (key) => {
+    shouldEncrypt(field){
+      return this.encryptFields.indexOf(field) > 1;
+    }
 
 
-      //if blacklisted then don't allow in or out
-      if(this.blackList.indexOf(key) > -1){
+    allowIncomming = (field) => {
+
+      if(this.activeFields.indexOf(field) === -1){
         return false;
       }
 
-      //if it is not encrypted then always allow in and out regargless of this.locked
-      if(this.doNotEncrypt.indexOf(key) > -1){
-        return true;
-      };
-      return !this.locked;
+      if(this.lockableFields.indexOf(field) > -1 && this.locked){
+        return false;
+      }
+
+
+      return true;
     }
 
-    allowOutgoing = (key) => {
-      return this.allowIncomming(key);
+    allowOutgoing = (field) => {
+      return this.allowIncomming(field);
     }
+
+
 
     transform = () => {
 
       return createPromiseTransform(
           // transform state coming from redux on its way to being serialized and stored
 
-          ({inboundState, key}) => {
+          ({inboundState, field}) => {
             return new Promise((res,rej) => {
-                let dataJSON = {
-                            "KEY_PIN": this.key,
-                            "KEY_INPUT": inboundState
-                          };
+                let inboundString =  JSON.stringify(inboundState);
+                if(!this.allowIncomming(field)){
+                  console.log('!!!!!not allowIncomming for ' + field);
+                  res(); // return undefined means persistor should ignore it
+                } else if(this.shouldEncrypt(field)) {
+                   console.log('!!!!!shouldEncrypt ' + field);
+                   let dataJSON = {
+                                "KEY_PIN": this.key,
+                                "KEY_INPUT": inboundString
+                              };
                
-
-                if(this.allowIncomming(key)){
-          
                   this.cryptoPromise.encryptRaw(dataJSON)
                     .then((result) => {
-                     
                        res(result);
                     })
                     .catch((e) => {
                         rej(e);
                     });
-                }else{
-                  if(this.debug){
-                    console.log('NOT allowing Incomming');
-                  }
-                  
-                  res(); //we retern nothing in which case the persistor should not change persisted data
-                         //In other words it should not change, add, or remove data.
+
+                } else {
+                  console.log('!!!!!!should be plain ' + field);
+                  res(inboundString);
                 }
             });
           },
           // transform state coming from storage, on its way to be rehydrated into redux
-          ({outboundState, key}) =>  {
+          ({outboundState, field}) =>  {
+    
             return new Promise((res,rej) => {
-                let dataJSON = {
-                            "KEY_PIN": this.key,
-                            "KEY_INPUT": outboundState
-                          };
-                          //console.log(dataJSON);
-                if(this.allowOutgoing(key)){
+                if(!this.allowOutgoing(field)){
+                  res();
+                } else if(this.shouldEncrypt(field)) {
+                  let dataJSON = {
+                              "KEY_PIN": this.key,
+                              "KEY_INPUT": outboundState
+                            };
+
                   this.cryptoPromise.decryptRaw(dataJSON)
                     .then((result) => {
                         //console.log(result);
@@ -197,8 +229,8 @@ export class PromisePeristerTransform {
                     .catch((e) => {
                         rej(e);
                     });
-                }else{
-                  res();
+                } else {
+                  res(outboundState);
                 }
             });
           }
