@@ -99310,7 +99310,8 @@
 	        };
 	        return _this;
 	    }
-	    NoteForm.prototype.componentDidMount = function () {
+	    NoteForm.prototype.componentWillUnmount = function () {
+	        this.textInput.blur();
 	    };
 	    NoteForm.prototype.render = function () {
 	        var _this = this;
