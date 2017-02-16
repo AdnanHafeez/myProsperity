@@ -85,9 +85,12 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
       values: {title: props.goal.title, dueDate: props.goal.dueDate}
     };
   }
-  componentDidMount(){
-    //(this as any).textInput.focus(); doesn't work
+
+  componentWillUnmount(){
+
+    (this as any).textInput.blur();
   }
+
   handleChange = (event) => {
    
     const target = event.target;
@@ -102,6 +105,7 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
 
   handleDateChange = (name) => {
     return (event, date) => {
+
       this.setState({
         values: {...this.state.values,[name]: Transforms.dateToMS(date,null)}
       } as any);
@@ -124,6 +128,10 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
     
     event.preventDefault();
   }
+  excuseKeyboard = (event) => {
+      event.target.focus();
+  }
+
   render(){
     const {handleClose,workbook,goal,goalDelete} = this.props
     let deleteButton = null;
@@ -159,6 +167,7 @@ export default class GoalForm extends React.Component<MyProps, MyState>{
                 firstDayOfWeek={0}
                 errorText={this.state.errors.dueDate}
                 onChange={this.handleDateChange('dueDate')}
+                onTouchTap={this.excuseKeyboard}
                 name='dueDate'
                 autoOk={false} />
           </div>

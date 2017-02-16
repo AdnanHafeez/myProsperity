@@ -94741,6 +94741,9 @@
 	            });
 	            event.preventDefault();
 	        };
+	        _this.excuseKeyboard = function (event) {
+	            event.target.focus();
+	        };
 	        console.log(props.goal);
 	        _this.state = {
 	            errors: { title: '', dueDate: '' },
@@ -94748,8 +94751,8 @@
 	        };
 	        return _this;
 	    }
-	    GoalForm.prototype.componentDidMount = function () {
-	        //(this as any).textInput.focus(); doesn't work
+	    GoalForm.prototype.componentWillUnmount = function () {
+	        this.textInput.blur();
 	    };
 	    GoalForm.prototype.render = function () {
 	        var _this = this;
@@ -94764,7 +94767,7 @@
 	                    React.createElement(TextField_1.default, { floatingLabelText: 'Goal', hintText: 'Enter Text Here', multiLine: true, rows: 1, rowsMax: 2, name: 'title', value: this.state.values.title, fullWidth: true, onChange: this.handleChange, ref: function (input) { _this.textInput = input; }, errorText: this.state.errors.title })),
 	                React.createElement("div", null,
 	                    React.createElement("div", null,
-	                        React.createElement(DatePicker_1.default, { value: helpers_1.Transforms.msToDate(this.state.values.dueDate), floatingLabelText: 'Due Date', locale: 'en-US', firstDayOfWeek: 0, errorText: this.state.errors.dueDate, onChange: this.handleDateChange('dueDate'), name: 'dueDate', autoOk: false }))),
+	                        React.createElement(DatePicker_1.default, { value: helpers_1.Transforms.msToDate(this.state.values.dueDate), floatingLabelText: 'Due Date', locale: 'en-US', firstDayOfWeek: 0, errorText: this.state.errors.dueDate, onChange: this.handleDateChange('dueDate'), onTouchTap: this.excuseKeyboard, name: 'dueDate', autoOk: false }))),
 	                React.createElement("div", { style: commonStyles_1.subMenuFlexContainerStyle },
 	                    React.createElement("div", null,
 	                        React.createElement(RaisedButton_1.default, { primary: true, type: "submit", label: "Save" })),
