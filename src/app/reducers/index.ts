@@ -1,6 +1,5 @@
 import {combineReducers} from 'redux';
 import {view} from './view';
-import {reducer as formReducer} from 'redux-form';
 import {routerReducer} from 'react-router-redux';
 import {REHYDRATE} from 'redux-persist/constants';
 
@@ -84,7 +83,6 @@ const appHub = combineReducers({
   /* security states end */
 
   migrations,
-  form: formReducer,
   routing: routerReducer,
   view,
   device: deviceReducer,

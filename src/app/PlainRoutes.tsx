@@ -30,9 +30,7 @@ import createAsyncEncryptor from 'redux-persist-transform-encrypt/async';
 import {encryptedDbPaused,loadAppState} from './actions';
 
 
-import createPersistorAdapter from './lib/persistStoreAdapter';
-import createPromiseTransform from './lib/createPromiseTransform';
-import {BrowserCryptoPromise,PromisePeristerTransform} from './lib/CryptoPromise';
+import {BrowserCryptoPromise,PromisePeristerTransform,persistStoreAdapter as createPersistorAdapter} from './lib/crypto';
 
 const doNotSave = ['mode','cordova','onLogout'];
 const plainFields = ['migrations','navigation','routing','view','onLogout','user'];
