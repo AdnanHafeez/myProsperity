@@ -84565,11 +84565,13 @@
 	        return _super !== null && _super.apply(this, arguments) || this;
 	    }
 	    Eula.prototype.render = function () {
-	        var _a = this.props, accept = _a.accept, reject = _a.reject, eulaAccepted = _a.eulaAccepted;
+	        var _a = this.props, accept = _a.accept, reject = _a.reject, eulaAccepted = _a.eulaAccepted, hideRejectButton = _a.hideRejectButton;
 	        var actions = [
-	            React.createElement(FlatButton_1.default, { label: "Accept", primary: true, onTouchTap: accept }),
-	            React.createElement(FlatButton_1.default, { label: "Reject", primary: true, onTouchTap: reject })
+	            React.createElement(FlatButton_1.default, { label: "Accept", primary: true, onTouchTap: accept })
 	        ];
+	        if (!hideRejectButton) {
+	            actions.push(React.createElement(FlatButton_1.default, { label: "Reject", primary: true, onTouchTap: reject }));
+	        }
 	        return (React.createElement("div", null,
 	            React.createElement(Dialog_1.default, { title: "EULA", actions: actions, modal: false, open: !eulaAccepted, contentStyle: commonStyles_1.fullWidthDialagStyle, autoScrollBodyContent: true },
 	                React.createElement("h3", null, settings_1.eula.title),
@@ -84577,9 +84579,20 @@
 	    };
 	    return Eula;
 	}(React.Component));
+	var getPlatform = function () {
+	    var platform = 'browser';
+	    if (typeof window.device !== 'undefined') {
+	        platform = window.device.platform;
+	    }
+	    return platform.toLowerCase();
+	};
+	var shouldHideRejectButton = function () {
+	    return getPlatform() !== 'android';
+	};
 	var stateToProps = function (state) {
 	    return {
-	        eulaAccepted: state.sUser.eulaAccepted
+	        eulaAccepted: state.sUser.eulaAccepted,
+	        hideRejectButton: shouldHideRejectButton()
 	    };
 	};
 	var dispatchToProps = function (dispatch) {

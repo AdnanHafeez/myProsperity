@@ -77,6 +77,9 @@ cordova plugin add /path/to/cloned/cordova-plugin-t2crypto
 
 #add the splash screen plugin
 cordova plugin add cordova-plugin-splashscreen
+
+#add device info plugin
+cordova plugin add cordova-plugin-device
  
  #Android Build
  
