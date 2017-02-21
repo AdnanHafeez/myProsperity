@@ -189,6 +189,8 @@ export const onCordovaDeviceReady = () => {
         
         cryptoPromise.setCrypto((window as any).t2crypto);
         
+     }else{
+       cryptoPromise.setCrypto((window as any).t2crypto);
      }
 
 }

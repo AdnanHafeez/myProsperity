@@ -20,7 +20,7 @@ describe('Testing data flow for promise-based persistor', () => {
        expect(transformer.allowIncomming(field)).toBe(true);
      });
      done();
-   })
+   });
 
 
    test('locking feature LOCKED for lockableFields',(done) => {
@@ -29,7 +29,7 @@ describe('Testing data flow for promise-based persistor', () => {
        expect(transformer.allowIncomming(field)).toBe(false);
      });
      done();
-   })
+   });
 
 
 
