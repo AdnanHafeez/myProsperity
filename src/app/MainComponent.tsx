@@ -20,11 +20,7 @@ import Eula from './Eula';
 
 const styles = {
   content: {
-    paddingTop: '10px',
-    padding: '5px',
-    display: 'flex',
-    flexFlow: 'row wrap',
-    justifyContent: 'center'
+
   }
 };
 
@@ -121,7 +117,7 @@ export default class MainComponent extends React.Component<MyProps, MyState>{
                 iconElementRight={<SettingMenuComponent   turnAppOffRedirect={turnAppOffRedirect} />}
                  />
 
-                <div style={{'padding': '5px'} as any}>
+                <div style={{'padding': '10px'} as any}>
                 <div style={styles.content as any}>{React.cloneElement(this.props.children, { appBarTitle: this.handleTitle })}</div>
                 </div>
                 <Eula />

@@ -15,10 +15,19 @@ interface MyProps {
 }
 
 interface MyState {
-
+  suppressOpen: boolean;
 }
 
 class Eula extends React.Component<MyProps, MyState> {
+  constructor(props){
+    super(props);
+    this.state = {suppressOpen: true};
+  }
+  componentDidMount(){
+    setTimeout(() => {
+      this.setState({suppressOpen: false});
+    },2000);
+  }
 
   render(){
     const {accept,reject,eulaAccepted,hideRejectButton} = this.props;
@@ -45,7 +54,7 @@ class Eula extends React.Component<MyProps, MyState> {
           title="EULA"
           actions={actions}
           modal={false}
-          open={!eulaAccepted}
+          open={!eulaAccepted && !this.state.suppressOpen}
           contentStyle={fullWidthDialagStyle}
           autoScrollBodyContent={true}
         >
@@ -71,7 +80,7 @@ const shouldHideRejectButton = () => {
 
 const stateToProps = (state) => {
   return {
-    eulaAccepted: state.sUser.eulaAccepted,
+    eulaAccepted: state.user.eulaAccepted,
     hideRejectButton: shouldHideRejectButton()
   }
 }

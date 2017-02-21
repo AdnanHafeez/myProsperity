@@ -27,7 +27,6 @@ export default class NoteForm extends React.Component<MyProps, MyState> {
   
   constructor (props, context) {
     super(props, context);
-    console.log(props);
     this.state = {
       text: props.note.text
     };
