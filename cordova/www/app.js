@@ -84654,6 +84654,9 @@
 	exports.listItemSubTitle = {
 	    marginTop: 0
 	};
+	exports.selectTagStyle = {
+	    maxWidth: '200px'
+	};
 
 
 /***/ },
@@ -86692,7 +86695,7 @@
 	            React.createElement("div", { style: commonStyles_1.fieldRowStyle },
 	                React.createElement("div", null,
 	                    React.createElement("label", null, "Question 1")),
-	                React.createElement("select", { value: this.state.values.question1, onChange: this.questionSelectChange('question1'), name: 'question1' },
+	                React.createElement("select", { value: this.state.values.question1, onChange: this.questionSelectChange('question1'), name: 'question1', style: commonStyles_1.selectTagStyle },
 	                    React.createElement("option", { key: 'q1_none' }, "Select a question"),
 	                    questions.map(function (question) {
 	                        return React.createElement("option", { key: 'q1_' + question.id, value: question.id }, question.title);
@@ -86706,7 +86709,7 @@
 	            React.createElement("div", { style: commonStyles_1.fieldRowStyle },
 	                React.createElement("div", null,
 	                    React.createElement("label", null, "Question 2")),
-	                React.createElement("select", { value: this.state.values.question2, onChange: this.questionSelectChange('question2'), name: 'question2' },
+	                React.createElement("select", { value: this.state.values.question2, onChange: this.questionSelectChange('question2'), name: 'question2', style: commonStyles_1.selectTagStyle },
 	                    React.createElement("option", { key: 'q2_none' }, "Select a question"),
 	                    questions.map(function (question) {
 	                        return React.createElement("option", { key: 'q2_' + question.id, value: question.id }, question.title);
@@ -87265,7 +87268,7 @@
 	                React.createElement("div", null,
 	                    React.createElement("label", null, "Question 1")),
 	                React.createElement("div", null, this.state.errors.question1),
-	                React.createElement("select", { value: this.state.values.question1, onChange: this.questionSelectChange('question1'), name: 'question1' },
+	                React.createElement("select", { value: this.state.values.question1, onChange: this.questionSelectChange('question1'), name: 'question1', style: commonStyles_1.selectTagStyle },
 	                    React.createElement("option", { key: 'q1_none' }, "Select a question"),
 	                    questions.map(function (question) {
 	                        return React.createElement("option", { key: 'q1_' + question.id, value: question.id }, question.title);
@@ -87276,7 +87279,7 @@
 	                React.createElement("div", null,
 	                    React.createElement("label", null, "Question 2")),
 	                React.createElement("div", null, this.state.errors.question2),
-	                React.createElement("select", { value: this.state.values.question2, onChange: this.questionSelectChange('question2'), name: 'question2' },
+	                React.createElement("select", { value: this.state.values.question2, onChange: this.questionSelectChange('question2'), name: 'question2', style: commonStyles_1.selectTagStyle },
 	                    React.createElement("option", { key: 'q2_none' }, "Select a question"),
 	                    questions.map(function (question) {
 	                        return React.createElement("option", { key: 'q2_' + question.id, value: question.id }, question.title);

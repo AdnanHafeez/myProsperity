@@ -55,3 +55,10 @@ export const listItemTitle = { //intended for h3
 export const listItemSubTitle = { //intended for h3
   marginTop: 0
 }
+
+export const selectTagStyle = {
+  maxWidth: '200px'
+}
+
+
+
