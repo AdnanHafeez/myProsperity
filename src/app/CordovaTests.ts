@@ -65,6 +65,19 @@ const validChangeQuestionsWithPin: ChangeQuestionsWithPinInterface = {
   question1: '',
   question2: ''
 }
+const encryptRiPin = "x'f86d1241edd72bd97c0553f7";
+const encryptInput = {test: 'asdfasdfadsf'};
+const encryptInput2 = {"locationBeforeTransitions":{"pathname":"/","search":"","hash":"","state":null,"action":"POP","key":"qq7waj","query":{},"$searchBase":{"search":"","searchBase":""}}}
+const encryptInput3 = 'asdfasdfasdfadsfd';
+const dataInputJSON1 = {
+            "KEY_PIN": encryptRiPin,
+            "KEY_INPUT": encryptInput
+          };
+
+const dataInputJSON2 = {
+            "KEY_PIN": encryptRiPin,
+            "KEY_INPUT": encryptInput3
+          };
 
 const ensureCordovaAndPlugins = () => {
   return new Promise((resolve,reject) => {
@@ -261,6 +274,56 @@ const changeSecurityQuestionsTest = (validPin) => {
             };
             return changePinWithAnswersTest(newPinChangeWithAnsers);
         })
+}
+
+
+const encryptDecryptTest = () => {
+
+   return new Promise((resolve,reject) => {
+           console.log('encryptRaw steppin in');
+          (window as any).t2crypto.encryptRaw(dataInputJSON2,function success(result){
+              console.log('encryptRaw callback');
+              assert(result.RESULT !== -1,'encryptRaw failed for input 2')
+              if(result.RESULT !== -1){
+
+                resolve(result.RESULT);
+              }else{
+                let err = {
+                  message: 'inbound encryption failed for input 2',
+                  key: ''
+                }
+                reject(err);
+              }
+
+          })
+
+   }).then((lastResult) => {
+        ////////////////////
+        const encryptedInput2 = {
+            "KEY_PIN": encryptRiPin,
+            "KEY_INPUT": lastResult
+        }
+        return new Promise((resolve,reject) => {
+                  console.log('decryptRaw steppin in');
+                        (window as any).t2crypto.decryptRaw(encryptedInput2,(result) => {
+                            console.log('decryptRaw callback');
+                            assert(result.RESULT !== -1,'decryptRaw failed for input 2')
+                            if(result.RESULT !== -1){
+                                resolve(result.RESULT);
+                            } else {
+                              let err = {
+                                message: 'cordova: failed decryption of input 2'
+                              }
+                              console.log(err);
+                              reject(err);
+                            }
+                        },(er) => {
+                          console.log('decryptRaw error callback');
+                          reject(er);
+                        });
+        });
+
+   });
 
 }
 
@@ -308,6 +371,10 @@ export class CordovaTests{
         })
         .then(() => {
           console.log('PASSED: changeSecurityQuestionsTest');
+          return encryptDecryptTest();
+        })
+        .then(function(result){
+          console.log('PASSED: encryptDecryptTest');
           return true;
         })
         .then(function(result){

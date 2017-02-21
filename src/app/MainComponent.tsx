@@ -14,12 +14,17 @@ import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import SnackBarNotice from './SnackBarNoticeComponent';
 import {FlashMessageInterface} from './data/workbook';
+import Eula from './Eula';
 
 
 
 const styles = {
   content: {
-    padding: '5px'
+    paddingTop: '10px',
+    padding: '5px',
+    display: 'flex',
+    flexFlow: 'row wrap',
+    justifyContent: 'center'
   }
 };
 
@@ -115,11 +120,12 @@ export default class MainComponent extends React.Component<MyProps, MyState>{
                 iconElementLeft={<AppBarMenuIcon/>}
                 iconElementRight={<SettingMenuComponent   turnAppOffRedirect={turnAppOffRedirect} />}
                  />
-                <div style={styles.content as any}>{React.cloneElement(this.props.children, { 
-                                                                                              appBarTitle: this.handleTitle
-                                                                                            })}</div>
 
-          <SnackBarNotice flash={flash} />
+                <div style={{'padding': '5px'} as any}>
+                <div style={styles.content as any}>{React.cloneElement(this.props.children, { appBarTitle: this.handleTitle })}</div>
+                </div>
+                <Eula />
+                <SnackBarNotice flash={flash} />
         </div>
     );
   }

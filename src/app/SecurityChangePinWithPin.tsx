@@ -6,7 +6,10 @@ import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Link } from 'react-router';
+
 import {ChangePinWithPinFormInterface, changePinWithPin} from './actions/security';
+import {subMenuFlexContainerStyle} from './commonStyles'
+
 
 const validateForm = (values: ChangePinWithPinFormInterface): any => {
   let fields = Object.keys(values).reduce((accum,current) => {
@@ -124,14 +127,17 @@ class SecurityChangePinWithPin extends React.Component<MyProps, MyState>{
                 value={this.state.values.confirmNewPin} 
                 onChange={this.handleChange} />
             </div>
-            <div>
+            <div style={subMenuFlexContainerStyle as any}>
+             <div>
               <RaisedButton primary={true} label="Change" type="submit" />
+             </div>
+             <div>
+               <RaisedButton label="Cancel" containerElement={<Link to={'/'} />} />
+             </div>
             </div>
          </form>
        </div>
-       <div style={{float: 'right'}}>
-         <FlatButton label="Cancel" containerElement={<Link to={'/'} />} />
-       </div>
+
     </div>);
   }
 }

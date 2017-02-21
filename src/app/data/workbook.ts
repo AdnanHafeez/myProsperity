@@ -65,7 +65,7 @@ export const wbData: WorkbookRawInterface[] = [
             {id: 3,title: 'Family',desc: '(Prioritize, Quality Time, Special/Important Events)'},
             {id: 4,title: 'Friendships',desc: '(Birthdays, Events, Interaction/Nurture)'},
             {id: 5,title: 'Diversity',desc: '(Cultural Events, Exchanges, Tours)'},
-            {id: 6,title: 'Marital',desc: '(Anniversaries, Couples’ Retreats, Dating)'},
+            {id: 6,title: 'Marital',desc: '(Anniversaries, Couples\' Retreats, Dating)'},
             {id: 7, title: 'Work',desc: '(SAY THANK YOU, Challenge, Communicate, Support, Compassion)'}
           ],
           goals: []

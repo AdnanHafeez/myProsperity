@@ -9,13 +9,10 @@ import RaisedButton from 'material-ui/RaisedButton';
 import { Link } from 'react-router';
 import {ChangePinWithQuestionsFormInterface,changePinWithAnswers} from './actions/security';
 import SecurityHome from './SecurityHome'
+import {subMenuFlexContainerStyle} from './commonStyles'
 
-const styles = {
-  video: {
-    width: '100%',
-    height: 'auto'
-  }
-};
+
+
 
 const validateForm = (values: ChangePinWithQuestionsFormInterface): any => {
   let fields = Object.keys(values).reduce((accum,current) => {
@@ -113,7 +110,7 @@ class SecurityPinRecoveryContainer extends React.Component<MyProps, MyState> {
     }
     return (
       <div style={{maxWidth: 400,width: '90%'} as any}>
-      <div>
+     
         <form onSubmit={this.handleSubmit}>
           <div>
             <TextField 
@@ -143,14 +140,15 @@ class SecurityPinRecoveryContainer extends React.Component<MyProps, MyState> {
                   errorText={this.state.errors.answer2}
                   value={this.state.values.answer2} onChange={this.handleChange} />
           </div>
-          <div>
+          <div style={subMenuFlexContainerStyle as any}>
+             <div>
               <RaisedButton primary={true} label="Submit" type="submit" />
+              </div>
+             <div>
+               <RaisedButton label="Back" containerElement={<Link to={'/'} />} />
+             </div>
           </div>
         </form>
-       </div>
-       <div style={{float: 'right'}}>
-         <FlatButton label="Back" containerElement={<Link to={'/'} />} />
-       </div>
       </div>
     );
   }

@@ -1,5 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import {connect} from 'react-redux';
+import SelectField from 'material-ui/SelectField';
+import TextField from 'material-ui/TextField';
+import MenuItem from 'material-ui/MenuItem';
+import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import {SetPinFormInterface} from './actions/security';
 import {labelStyle,fieldErrorStyle,fieldRowStyle} from './commonStyles';

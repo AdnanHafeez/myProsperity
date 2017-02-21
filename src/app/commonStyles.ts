@@ -5,7 +5,7 @@ export const foatingButtonStyle = {
       bottom: 20,
       left: 'auto',
       position: 'fixed',
-      zIndex: 10
+      zIndex: 100
 };
 
 export const topRightButtonStyle = {
