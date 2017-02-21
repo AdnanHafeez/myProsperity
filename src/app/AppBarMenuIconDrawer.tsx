@@ -9,7 +9,7 @@ import ArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
 import { Link } from 'react-router';
 import Divider from 'material-ui/Divider';
 import Drawer from 'material-ui/Drawer';
-
+import {push} from 'react-router-redux';
 
 /**
  * AppBarMenuIcon provides the left icon in the top navigation bar
@@ -24,6 +24,7 @@ interface MyProps {
   submenu: any;
   parent: any;
   workbooks: any;
+  navigateTo(path:string): any
 }
 
 interface MyState {
@@ -36,11 +37,23 @@ class AppBarMenuIconDrawer extends React.Component<MyProps, MyState> {
       this.state = {open: false};
     }
 
-    handleToggle = () => {
+    handleToggle = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
        this.setState({open: !this.state.open});
     }
-    handleClose = () => {
-       this.setState({open: false});
+
+
+    handleClose = (path) => {
+      const {navigateTo} = this.props;
+      return (event) => {
+
+        event.preventDefault();
+        event.stopPropagation();
+        this.setState({open: false});
+        navigateTo(path);
+      }
     }
     render(){
       const {paths, submenu, parent,  workbooks} = this.props;
@@ -49,19 +62,23 @@ class AppBarMenuIconDrawer extends React.Component<MyProps, MyState> {
             <IconButton onTouchTap={this.handleToggle}><MenuIcon /></IconButton>
             <Drawer
               docked={false}
-              width={250}
+              width={200}
               open={this.state.open}
               onRequestChange={(open) => this.setState({open})}
+              containerStyle={{paddingTop: 60}}
             >
-
-              <MenuItem key={'static_directors_message'} primaryText="Director's Message" onTouchTap={this.handleClose} containerElement={<Link to={'/main/message'} />}  />
-              <MenuItem key={'static_smart_goals'} primaryText={'S.M.A.R.T. Goals'} onTouchTap={this.handleClose} containerElement={<Link to='/main/home' />} />
-            
+             <Divider />
+              <MenuItem key={'static_directors_message'} primaryText="Director's Message" onTouchTap={this.handleClose('/main/message')}   />
+             
+              <MenuItem key={'static_smart_goals'} primaryText={'S.M.A.R.T. Goals'} onTouchTap={this.handleClose('/main/home')} />
+               <Divider />
               {workbooks.map((item) => (
-                 <MenuItem key={'workbook_' + item.id} primaryText={item.title} onTouchTap={this.handleClose} containerElement={<Link to={'/main/workbook/'+item.id} />}  />
-              ))}
+                
+                   <MenuItem key={'workbook_' + item.id} primaryText={item.title} onTouchTap={this.handleClose('/main/workbook/'+item.id)}  />
 
-              <MenuItem key={'notes_landing'} primaryText="Notes" onTouchTap={this.handleClose} containerElement={<Link to={'/main/notes'} />}  />
+              ))}
+              <Divider />
+              <MenuItem key={'notes_landing'} primaryText="Notes" onTouchTap={this.handleClose('/main/notes')}  />
             </Drawer>
           </div>
           );
@@ -83,6 +100,9 @@ const mapStateToProp = (state, ownProps) => {
 
 const dispatchToProp = (dispatch) => {
   return {
+    navigateTo: (path) => {
+      dispatch(push(path));
+    }
   }
 };
 export default connect(mapStateToProp,dispatchToProp)(AppBarMenuIconDrawer);

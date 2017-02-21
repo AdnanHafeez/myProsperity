@@ -5,6 +5,7 @@ import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 import MenuItem from 'material-ui/MenuItem';
 import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
 import {SetPinFormInterface} from './actions/security';
 import {labelStyle,fieldErrorStyle,fieldRowStyle} from './commonStyles';
 
@@ -191,7 +192,7 @@ export default class SecuritySetQuestionsContainer extends React.Component<MyPro
           <div style={fieldErrorStyle}>{this.state.errors.answer2}</div>
         </div>
         <div style={fieldRowStyle}>
-          <FlatButton label="Submit" type="submit" />
+          <RaisedButton primary={true} label="Submit" type="submit" />
         </div>
       </form>
     );

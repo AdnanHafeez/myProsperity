@@ -34,12 +34,10 @@ import {FlashMessageInterface} from './data/workbook';
 var {windowResize} = deviceActions;
 
 const styles = {
-  wrapper: {
-    maxWidth: '1500px',
-    margin: '0 auto 0 auto'
-  },
   content: {
-    paddingTop: '10px'
+    paddingTop: '10px',
+    paddingLeft: '10px',
+    paddingRight: '10px'
   }
 };
 
@@ -130,7 +128,7 @@ class Main extends React.Component<MyProps, MyState>{
   render () {
     var {turnAppOffRedirect, flash} = this.props;
     return (
-        <div style={styles.wrapper}>
+        <div>
             <AppBar
                 title={this.state.title}
                 titleStyle={{textAlign: 'center'}}

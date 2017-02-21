@@ -11,6 +11,7 @@ interface MyProps {
   eulaAccepted: boolean;
   accept(): any;
   reject(): any;
+  hideRejectButton: boolean;
 }
 
 interface MyState {
@@ -20,19 +21,22 @@ interface MyState {
 class Eula extends React.Component<MyProps, MyState> {
 
   render(){
-    const {accept,reject,eulaAccepted} = this.props;
-    const actions = [
+    const {accept,reject,eulaAccepted,hideRejectButton} = this.props;
+    let actions = [
       <FlatButton
         label="Accept"
         primary={true}
         onTouchTap={accept}
-      />,
-        <FlatButton
+      />
+    ];
+
+    if(!hideRejectButton){
+      actions.push(<FlatButton
             label="Reject"
             primary={true}
             onTouchTap={reject}
-        />
-    ];
+        />);
+    }
 
     return (
       <div>
@@ -53,10 +57,22 @@ class Eula extends React.Component<MyProps, MyState> {
     );
   }
 }
+const getPlatform = () =>{
+  let platform = 'browser';
+  if(typeof (window as any).device !== 'undefined'){ //should be set in the case of cordova
+    platform = (window as any).device.platform;
+  }
+  return platform.toLowerCase();
+}
+
+const shouldHideRejectButton = () => {
+  return getPlatform() !== 'android';
+}
 
 const stateToProps = (state) => {
   return {
-    eulaAccepted: state.sUser.eulaAccepted
+    eulaAccepted: state.sUser.eulaAccepted,
+    hideRejectButton: shouldHideRejectButton()
   }
 }
 const dispatchToProps = (dispatch) => {
