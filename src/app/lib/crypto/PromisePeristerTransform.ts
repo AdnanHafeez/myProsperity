@@ -38,6 +38,22 @@ export default class PromisePeristerTransform {
 
     }
 
+    getLockableFields = () => {
+      return this.lockableFields;
+    }
+
+    getEncryptFields = () => {
+      return this.encryptFields;
+    }
+
+    getPlainFields = () => {
+      return this.plainFields;
+    }
+    
+    getActiveFields = () => {
+      return this.activeFields;
+    }
+
     isLocked = () => {
       return this.locked;
     }

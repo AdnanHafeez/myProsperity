@@ -234,15 +234,27 @@ interface MyState {
 }
 
 
-const loadPersistor = (cb) => {
+const loadPersistor = (whiteList: string[], cb) => {
     (getStoredState(persistEncryptedConfig) as any).then((storedState) => {
 
        const persistor = createPersistorAdapter(appStore, persistEncryptedConfig,promisePeristerTransform);
-       console.log(storedState);
-       persistor.rehydrate(storedState);
+       
+
+       if(whiteList.length > 0){
+         let lockedStore = {};
+         whiteList.forEach((field) => {
+           lockedStore[field] = storedState[field];
+         });
+         persistor.rehydrate(lockedStore);
+       }else{
+         persistor.rehydrate(storedState);
+       }
+
 
        
-       cb(null,storedState);
+
+       
+       cb(null);
 
 
        
@@ -262,7 +274,7 @@ class AppProvider extends React.Component<MyProps, MyState> {
   }
 
   componentWillMount () { // only called on first load or hard browser refresh
-    loadPersistor((err) => {
+    loadPersistor([],(err) => {
       console.log('Hard reload, reloading persistor');
           this.setState({rehydrated: true});
     });
@@ -271,7 +283,7 @@ class AppProvider extends React.Component<MyProps, MyState> {
         if(appStore.getState().mode === 0 && !promisePeristerTransform.isLocked()){
             console.log('locking');
             promisePeristerTransform.lock();
-            loadPersistor((err) => {
+            loadPersistor([],(err) => {
                 console.log('Locking app, reloading persistor');
                 if(err){
                   console.log(err);
@@ -283,7 +295,12 @@ class AppProvider extends React.Component<MyProps, MyState> {
         } else if(appStore.getState().mode === 1 && promisePeristerTransform.isLocked()) {
             console.log('unlocking');
             promisePeristerTransform.unLock(appStore.getState().rikey);
-            loadPersistor((err) => {
+            // when we unlock we only want to reload the locked fields because
+            // all unlocked fields are already up to date and should not be overwritten
+            // from the stored state.
+            // SO we submit the lockable fields to loadPersistor which in turn
+            // deletes all non locked fields.
+            loadPersistor(promisePeristerTransform.getLockableFields(),(err) => {
                 console.log('Unlocking app, reloading persistor');
                 if(err){
                   console.log(err);
