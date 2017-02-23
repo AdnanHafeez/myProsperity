@@ -65,11 +65,21 @@ npm start
  cd cordova/
  #you are now in cordova land
  
- # if you haven't done so add the android platform
+
+    _           _         _    _     _     _  ___  ___ 
+   /_\  _ _  __| |_ _ ___(_)__| |  _| |_  (_)/ _ \/ __|
+  / _ \| ' \/ _` | '_/ _ \ / _` | |_   _| | | (_) \__ \
+ /_/ \_\_||_\__,_|_| \___/_\__,_|   |_|   |_|\___/|___/
+ # if you haven't done so add the android and iOS platforms
  cordova platform add android
+ cordova platform add ios
+
+    _      _    _   ___ _           _         
+   /_\  __| |__| | | _ \ |_  _ __ _(_)_ _  ___
+  / _ \/ _` / _` | |  _/ | || / _` | | ' \(_-<
+ /_/ \_\__,_\__,_| |_| |_|\_,_\__, |_|_||_/__/
+                              |___/           
  # in a directory outside this project clone t2crypto plugin and checkout Encryption2.0
- 
- 
  # the add it to project like so
  
 cordova plugin rm org.t2crypto
@@ -91,6 +101,23 @@ cordova plugin add cordova-plugin-device
  
  #if your device is listed then the following command should install and launch the app on it
  cordova run android
+
+  _  ___  ___   ___      _ _    _ 
+ (_)/ _ \/ __| | _ )_  _(_) |__| |
+ | | (_) \__ \ | _ \ || | | / _` |
+ |_|\___/|___/ |___/\_,_|_|_\__,_|
+
+#iOS Build
+# for iOS building it's easiest to first build it using cordova then open the project in xCode to launch on a device
+# build with cordova. If you skip this step the latest js/html files will not go into the iOS build.
+cordova build ios
+# now open the project in xCode and build, distribute, install, debug from xCode.
+#the xcode project will be located somewhere like cordova/platforms/ios/<MyProjectName>.xcodeproj
+
+
+
+
+
 
 
  # [Web Demo](https://jlightfoot2.github.io/myProsperity/build)

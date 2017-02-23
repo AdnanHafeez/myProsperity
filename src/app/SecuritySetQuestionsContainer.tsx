@@ -7,7 +7,7 @@ import MenuItem from 'material-ui/MenuItem';
 import {ChangeQuestionsWithPinInterface, changeSecurityQuestions} from './actions/security';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Link } from 'react-router';
-import {subMenuFlexContainerStyle} from './commonStyles'
+import {subMenuFlexContainerStyle,selectTagStyle} from './commonStyles'
 const styles = {
   video: {
     width: '100%',
@@ -144,6 +144,7 @@ class SecuritySetQuestionsContainer extends React.Component<MyProps, MyState> {
               value={this.state.values.question1} 
               onChange={this.questionSelectChange('question1') as any}
               name='question1'
+              style={selectTagStyle}
             >
               <option key='q1_none'>Select a question</option>
               {questions.map((question) => {
@@ -167,6 +168,7 @@ class SecuritySetQuestionsContainer extends React.Component<MyProps, MyState> {
               value={this.state.values.question2} 
               onChange={this.questionSelectChange('question2') as any}
               name='question2'
+              style={selectTagStyle}
             >
               <option key='q2_none'>Select a question</option>
               {questions.map((question) => {
