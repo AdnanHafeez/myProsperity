@@ -16,7 +16,6 @@ const styles = {
 
 
 interface MyProps {
-  appBarTitle(msg: string): any;
   mode: any;
 }
 
@@ -30,14 +29,11 @@ class IntroPage extends React.Component<MyProps, MyState> {
   }
 
   componentWillMount () {
-    this.props.appBarTitle('Intro');
+
   }
 
   render () {
-    const {mode} = this.props;
-    if(mode === 0){
-       return <SecurityHome />
-    }
+
     return (
       <div>
         <Card>

@@ -6,7 +6,9 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import AppBar from 'material-ui/AppBar';
 import Toggle from 'material-ui/Toggle';
-import AppBarMenuIcon from './AppBarMenuIconDrawer';
+import AppBarMenuIconDrawer from './AppBarMenuIconDrawer';
+import HomeIcon from 'material-ui/svg-icons/action/home';
+import { Link } from 'react-router';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import IconButton from 'material-ui/IconButton';
@@ -59,7 +61,8 @@ interface MyProps {
   appBarTitle?(title: string): any;
   children: any;
   turnAppOffRedirect(path: string): any;
-  flash: FlashMessageInterface
+  flash: FlashMessageInterface;
+  mode: number;
 }
 
 interface MyState {
@@ -69,9 +72,7 @@ interface MyState {
 
 
 export default class MainComponent extends React.Component<MyProps, MyState>{
-  static contextTypes: any = {
-                                router: React.PropTypes.object.isRequired
-                              };
+
   constructor (props, context) {
     super(props, context);
 
@@ -107,14 +108,22 @@ export default class MainComponent extends React.Component<MyProps, MyState>{
 
 
   render () {
-    var {turnAppOffRedirect, flash} = this.props;
+    var {turnAppOffRedirect, flash, mode} = this.props;
+    let AppBarMenuIcon = <IconButton containerElement={<Link to='/' />}><HomeIcon /></IconButton>;
+    if(mode === 1){
+      AppBarMenuIcon = <AppBarMenuIconDrawer />;
+    }
+    let IconRight = null;
+    if(mode === 1){
+      IconRight = <SettingMenuComponent   turnAppOffRedirect={turnAppOffRedirect} />;
+    }
     return (
         <div>
             <AppBar
                 title={this.state.title}
                 titleStyle={{textAlign: 'center'}}
-                iconElementLeft={<AppBarMenuIcon/>}
-                iconElementRight={<SettingMenuComponent   turnAppOffRedirect={turnAppOffRedirect} />}
+                iconElementLeft={AppBarMenuIcon}
+                iconElementRight={IconRight}
                  />
 
                 <div style={{'padding': '10px'} as any}>

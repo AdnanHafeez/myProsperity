@@ -15,7 +15,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import {persistStore, autoRehydrate, createTransform, createPersistor, getStoredState} from 'redux-persist';
-import {registerPromise} from 'local-t2-app-redux';
+
 import { syncHistoryWithStore, routerMiddleware, push,replace} from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
 import {navigationCreateMiddleware} from 'local-t2-navigation-redux';
@@ -33,7 +33,7 @@ import {encryptedDbPaused,loadAppState} from './actions';
 import {BrowserCryptoPromise,PromisePeristerTransform,persistStoreAdapter as createPersistorAdapter} from './lib/crypto';
 
 const doNotSave = ['mode','cordova','onLogout'];
-const plainFields = ['migrations','navigation','routing','view','onLogout','user'];
+const plainFields = ['migrations','navigation','routing','view','onLogout','user','questionAnswers'];
 const encryptFields = ['workbooks','workbookIds','goals','notes','noteIds'];
 const lockableFields = ['workbooks','workbookIds','goals','notes','noteIds'];
 const cryptoKey = 'asdfasfsdffsf'
@@ -93,30 +93,6 @@ const appStore = createStore(
 
 const appHistory = syncHistoryWithStore(hashHistory, appStore);
 
-if(__INCLUDE_SERVICE_WORKER__ && !__IS_CORDOVA_BUILD__){ // __INCLUDE_SERVICE_WORKER__ and other __VAR_NAME__ variables are used by webpack durring the build process. See <root>/webpack-production.config.js
-  if ('serviceWorker' in navigator) {
-    /**
-     * Service workers are not supported currently in an iOS browsers
-     */
-    const registrationPromise = navigator.serviceWorker.register('./ad-service-worker.js');
-    /**
-     * registerPromise takes the serviceWorker promise and listens for
-     * certain events which will trigger redux dispatch events
-     *
-     * @see https://github.com/jlightfoot2/local-t2-app-redux/blob/master/src/lib/serviceWorker.js
-     */
-    registerPromise(registrationPromise, appStore).then(function (res) {
-      if (__DEVTOOLS__) {
-        console.log(res);
-      }
-    }).catch(function (e) {
-      if (__DEVTOOLS__) {
-        console.log(e);
-      }
-      throw e;
-    });
-  }
-}
 
 if (__DEVTOOLS__) { // Webpack defined variable for build process
   appStore.subscribe(() => {
