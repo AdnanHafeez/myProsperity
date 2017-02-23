@@ -49,8 +49,8 @@ class SettingMenuComponent extends React.Component<SettingsMenuProps, SettingsMe
 
     >
       
-      <MenuItem key={'default_1'} primaryText="Change Pin" onTouchTap={() => turnAppOffRedirect('/security/changepin')}  />
-      <MenuItem key={'default_2'}  primaryText="Edit Security Questions" onTouchTap={() => turnAppOffRedirect('/security/changequestions')} />
+      <MenuItem key={'default_1'} primaryText="Change Pin" containerElement={<Link to='/main/changepin' />}   />
+      <MenuItem key={'default_2'}  primaryText="Edit Security Questions" containerElement={<Link to='/main/changequestions' />}  />
       <MenuItem key={'default_3'}  primaryText="Sign Out" onTouchTap={() => turnAppOffRedirect('/')} />
     </IconMenu>)
   }

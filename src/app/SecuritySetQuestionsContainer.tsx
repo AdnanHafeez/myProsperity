@@ -7,13 +7,9 @@ import MenuItem from 'material-ui/MenuItem';
 import {ChangeQuestionsWithPinInterface, changeSecurityQuestions} from './actions/security';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Link } from 'react-router';
+import { goBack, push } from 'react-router-redux';
 import {subMenuFlexContainerStyle,selectTagStyle} from './commonStyles'
-const styles = {
-  video: {
-    width: '100%',
-    height: 'auto'
-  }
-};
+
 const validateForm = (values: ChangeQuestionsWithPinInterface): any => {
   let fields = Object.keys(values).reduce((accum,current) => {
                                                accum[current] = '';
@@ -55,6 +51,7 @@ interface MyProps {
   appBarTitle(title:string): any;
   questions: any[];
   submitData(any): any;
+  cancel(): any;
 }
 
 interface MyState {
@@ -124,7 +121,7 @@ class SecuritySetQuestionsContainer extends React.Component<MyProps, MyState> {
     event.preventDefault();
   }
   render () {
-    const {questions} = this.props;
+    const {questions, cancel} = this.props;
 
     return (
       <form onSubmit={this.handleSubmit}>
@@ -190,7 +187,7 @@ class SecuritySetQuestionsContainer extends React.Component<MyProps, MyState> {
             <RaisedButton primary={true} label="Submit" type="submit" />
           </div>
           <div>
-            <RaisedButton label="Cancel" containerElement={<Link to={'/'} />} />
+            <RaisedButton label="Cancel" onTouchTap={() => cancel()} />
           </div>
         </div>
 
@@ -208,7 +205,12 @@ const stateToProps = (state) => {
 const dispatchToProps = (dispatch, ownProps) => {
   return {
     submitData: (data: ChangeQuestionsWithPinInterface) => {
-      dispatch(changeSecurityQuestions(data));
+      dispatch(changeSecurityQuestions(data)).then(() => {
+          dispatch(push('/'));
+      })
+    },
+    cancel: () => {
+      dispatch(goBack());
     }
   }
 }

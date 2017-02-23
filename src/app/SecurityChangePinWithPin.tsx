@@ -6,7 +6,7 @@ import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Link } from 'react-router';
-
+import { goBack, push } from 'react-router-redux';
 import {ChangePinWithPinFormInterface, changePinWithPin} from './actions/security';
 import {subMenuFlexContainerStyle} from './commonStyles'
 
@@ -50,6 +50,8 @@ const validateForm = (values: ChangePinWithPinFormInterface): any => {
 
 interface MyProps {
   submitData(any): any;
+  cancel(): any;
+  appBarTitle(title: string): any;
 }
 
 interface MyState {
@@ -70,6 +72,14 @@ class SecurityChangePinWithPin extends React.Component<MyProps, MyState>{
       errors: fields
     };
   }
+
+  componentWillMount () {
+    this.props.appBarTitle("Change Pin");
+  }
+  componentWillUpdate(nextProps) {
+    this.props.appBarTitle("Change Pin");
+  }
+
   handleChange = (event) => {
     console.log("Change event");
     const target = event.target;
@@ -95,7 +105,7 @@ class SecurityChangePinWithPin extends React.Component<MyProps, MyState>{
       event.preventDefault();
   }
   render(){
-    
+    const {cancel} = this.props;
     return (
      <div>
        <div>
@@ -132,7 +142,7 @@ class SecurityChangePinWithPin extends React.Component<MyProps, MyState>{
               <RaisedButton primary={true} label="Change" type="submit" />
              </div>
              <div>
-               <RaisedButton label="Cancel" containerElement={<Link to={'/'} />} />
+               <RaisedButton label="Cancel" onTouchTap={() => cancel()}  />
              </div>
             </div>
          </form>
@@ -150,7 +160,12 @@ const stateToProps = () => {
 const dispatchToProps = (dispatch) => {
   return {
     submitData: (data: ChangePinWithPinFormInterface) => {
-      dispatch(changePinWithPin(data));
+      dispatch(changePinWithPin(data)).then(() => {
+          dispatch(push('/'));
+      })
+    },
+    cancel: () => {
+      dispatch(goBack());
     }
   }
 }

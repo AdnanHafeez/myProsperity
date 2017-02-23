@@ -32,7 +32,8 @@ class SecurityHome extends React.Component<MyProps, MyState> {
     super(props);
   }
   componentWillMount () {
-    this.props.appBarTitle && this.props.appBarTitle('Enter Pin');
+    const {mode} = this.props;
+    this.props.appBarTitle && this.props.appBarTitle(mode === 1 ? 'Intro' :'Enter Pin');
   }
 
   render () {
