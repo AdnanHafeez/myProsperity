@@ -41,8 +41,9 @@ export default class NoteForm extends React.Component<MyProps, MyState> {
       text: value
     } as any);
   }
-  componentDidMount(){
-   
+  componentWillUnmount(){
+
+    (this as any).textInput.blur();
   }
   render(){
     const {handleSubmit,note,handleClose,noteDelete} = this.props;

@@ -84654,6 +84654,9 @@
 	exports.listItemSubTitle = {
 	    marginTop: 0
 	};
+	exports.selectTagStyle = {
+	    maxWidth: '200px'
+	};
 
 
 /***/ },
@@ -86692,7 +86695,7 @@
 	            React.createElement("div", { style: commonStyles_1.fieldRowStyle },
 	                React.createElement("div", null,
 	                    React.createElement("label", null, "Question 1")),
-	                React.createElement("select", { value: this.state.values.question1, onChange: this.questionSelectChange('question1'), name: 'question1' },
+	                React.createElement("select", { value: this.state.values.question1, onChange: this.questionSelectChange('question1'), name: 'question1', style: commonStyles_1.selectTagStyle },
 	                    React.createElement("option", { key: 'q1_none' }, "Select a question"),
 	                    questions.map(function (question) {
 	                        return React.createElement("option", { key: 'q1_' + question.id, value: question.id }, question.title);
@@ -86706,7 +86709,7 @@
 	            React.createElement("div", { style: commonStyles_1.fieldRowStyle },
 	                React.createElement("div", null,
 	                    React.createElement("label", null, "Question 2")),
-	                React.createElement("select", { value: this.state.values.question2, onChange: this.questionSelectChange('question2'), name: 'question2' },
+	                React.createElement("select", { value: this.state.values.question2, onChange: this.questionSelectChange('question2'), name: 'question2', style: commonStyles_1.selectTagStyle },
 	                    React.createElement("option", { key: 'q2_none' }, "Select a question"),
 	                    questions.map(function (question) {
 	                        return React.createElement("option", { key: 'q2_' + question.id, value: question.id }, question.title);
@@ -87265,7 +87268,7 @@
 	                React.createElement("div", null,
 	                    React.createElement("label", null, "Question 1")),
 	                React.createElement("div", null, this.state.errors.question1),
-	                React.createElement("select", { value: this.state.values.question1, onChange: this.questionSelectChange('question1'), name: 'question1' },
+	                React.createElement("select", { value: this.state.values.question1, onChange: this.questionSelectChange('question1'), name: 'question1', style: commonStyles_1.selectTagStyle },
 	                    React.createElement("option", { key: 'q1_none' }, "Select a question"),
 	                    questions.map(function (question) {
 	                        return React.createElement("option", { key: 'q1_' + question.id, value: question.id }, question.title);
@@ -87276,7 +87279,7 @@
 	                React.createElement("div", null,
 	                    React.createElement("label", null, "Question 2")),
 	                React.createElement("div", null, this.state.errors.question2),
-	                React.createElement("select", { value: this.state.values.question2, onChange: this.questionSelectChange('question2'), name: 'question2' },
+	                React.createElement("select", { value: this.state.values.question2, onChange: this.questionSelectChange('question2'), name: 'question2', style: commonStyles_1.selectTagStyle },
 	                    React.createElement("option", { key: 'q2_none' }, "Select a question"),
 	                    questions.map(function (question) {
 	                        return React.createElement("option", { key: 'q2_' + question.id, value: question.id }, question.title);
@@ -94741,6 +94744,9 @@
 	            });
 	            event.preventDefault();
 	        };
+	        _this.excuseKeyboard = function (event) {
+	            event.target.focus();
+	        };
 	        console.log(props.goal);
 	        _this.state = {
 	            errors: { title: '', dueDate: '' },
@@ -94748,8 +94754,8 @@
 	        };
 	        return _this;
 	    }
-	    GoalForm.prototype.componentDidMount = function () {
-	        //(this as any).textInput.focus(); doesn't work
+	    GoalForm.prototype.componentWillUnmount = function () {
+	        this.textInput.blur();
 	    };
 	    GoalForm.prototype.render = function () {
 	        var _this = this;
@@ -94764,7 +94770,7 @@
 	                    React.createElement(TextField_1.default, { floatingLabelText: 'Goal', hintText: 'Enter Text Here', multiLine: true, rows: 1, rowsMax: 2, name: 'title', value: this.state.values.title, fullWidth: true, onChange: this.handleChange, ref: function (input) { _this.textInput = input; }, errorText: this.state.errors.title })),
 	                React.createElement("div", null,
 	                    React.createElement("div", null,
-	                        React.createElement(DatePicker_1.default, { value: helpers_1.Transforms.msToDate(this.state.values.dueDate), floatingLabelText: 'Due Date', locale: 'en-US', firstDayOfWeek: 0, errorText: this.state.errors.dueDate, onChange: this.handleDateChange('dueDate'), name: 'dueDate', autoOk: false }))),
+	                        React.createElement(DatePicker_1.default, { value: helpers_1.Transforms.msToDate(this.state.values.dueDate), floatingLabelText: 'Due Date', locale: 'en-US', firstDayOfWeek: 0, errorText: this.state.errors.dueDate, onChange: this.handleDateChange('dueDate'), onTouchTap: this.excuseKeyboard, name: 'dueDate', autoOk: false }))),
 	                React.createElement("div", { style: commonStyles_1.subMenuFlexContainerStyle },
 	                    React.createElement("div", null,
 	                        React.createElement(RaisedButton_1.default, { primary: true, type: "submit", label: "Save" })),
@@ -99307,7 +99313,8 @@
 	        };
 	        return _this;
 	    }
-	    NoteForm.prototype.componentDidMount = function () {
+	    NoteForm.prototype.componentWillUnmount = function () {
+	        this.textInput.blur();
 	    };
 	    NoteForm.prototype.render = function () {
 	        var _this = this;

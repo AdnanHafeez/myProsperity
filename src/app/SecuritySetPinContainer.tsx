@@ -7,7 +7,7 @@ import MenuItem from 'material-ui/MenuItem';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import {SetPinFormInterface} from './actions/security';
-import {labelStyle,fieldErrorStyle,fieldRowStyle} from './commonStyles';
+import {labelStyle,fieldErrorStyle,fieldRowStyle,selectTagStyle} from './commonStyles';
 
 interface FormErrors {
   isValid: boolean;
@@ -150,6 +150,7 @@ export default class SecuritySetQuestionsContainer extends React.Component<MyPro
               value={this.state.values.question1} 
               onChange={this.questionSelectChange('question1') as any}
               name='question1'
+              style={selectTagStyle}
             >
               <option key='q1_none'>Select a question</option>
               {questions.map((question) => {
@@ -173,6 +174,7 @@ export default class SecuritySetQuestionsContainer extends React.Component<MyPro
               value={this.state.values.question2} 
               onChange={this.questionSelectChange('question2') as any}
               name='question2'
+              style={selectTagStyle}
             >
               <option key='q2_none'>Select a question</option>
               {questions.map((question) => {
