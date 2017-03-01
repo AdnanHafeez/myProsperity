@@ -1,10 +1,10 @@
-import Intro from '../Intro.tsx';
+import SecurityHome from '../SecurityHome.tsx';
 
 export default {
   path: '/',
   name: 'default',
 
   getComponent (nextState, cb) {
-    cb(null, Intro);
+    cb(null, SecurityHome);
   }
 };

@@ -102,10 +102,14 @@ export default class PromisePeristerTransform {
             return new Promise((res,rej) => {
                 let inboundString =  JSON.stringify(inboundState);
                 if(!this.allowIncomming(field)){
-                  console.log('!!!!!not allowIncomming for ' + field);
+                  if(this.debug){
+                      console.log('!!!!!not allowIncomming for ' + field);
+                  }
                   res(); // return undefined means persistor should ignore it
                 } else if(this.shouldEncrypt(field)) {
-                   console.log('!!!!!shouldEncrypt ' + field);
+                   if(this.debug){
+                     console.log('!!!!!shouldEncrypt ' + field);
+                   }
                    let dataJSON = {
                                 "KEY_PIN": this.key,
                                 "KEY_INPUT": inboundString
@@ -120,7 +124,9 @@ export default class PromisePeristerTransform {
                     });
 
                 } else {
-                  console.log('!!!!!!should be plain ' + field);
+                  if(this.debug){
+                    console.log('!!!!!!should be plain ' + field);
+                  }
                   res(inboundString);
                 }
             });

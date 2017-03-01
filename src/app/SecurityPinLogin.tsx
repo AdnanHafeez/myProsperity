@@ -104,7 +104,7 @@ class SecurityLoginPin extends React.Component<MyProps, MyState>{
                 <RaisedButton primary={true} label="Login" type="submit" />
               </div>
              <div>
-                  <RaisedButton type="button" label="Forgot Pin" containerElement={<Link to={'security/forgotpin'} />} />
+                  <RaisedButton type="button" label="Forgot Pin" containerElement={<Link to={'main/forgotpin'} />} />
              </div>
             </div>
 

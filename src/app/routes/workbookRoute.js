@@ -1,12 +1,9 @@
 import WorbookContainer from '../WorkbookContainer.tsx';
 
-const workbookPage = {
+export default {
   path: 'workbook/:id',
 
-  getComponent(nextState, callback) {
-      callback(null, WorbookContainer);
+  getComponent (nextState, callback) {
+    callback(null, WorbookContainer);
   }
 };
-
-
-export default workbookPage;

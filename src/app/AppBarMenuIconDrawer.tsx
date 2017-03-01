@@ -23,7 +23,7 @@ interface MyProps {
   submenu: any;
   parent: any;
   workbooks: any;
-  navigateTo(path:string): any
+  navigateTo(path:string): any;
 }
 
 interface MyState {

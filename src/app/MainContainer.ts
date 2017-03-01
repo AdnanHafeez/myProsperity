@@ -5,7 +5,8 @@ import {push} from 'react-router-redux';
 
 export default connect(
   (state) => ({
-    flash: state.view.flash
+    flash: state.view.flash,
+    mode: state.mode
   }),
   (dispatch, ownProps) => {
     return {

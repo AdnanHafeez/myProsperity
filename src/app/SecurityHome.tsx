@@ -7,15 +7,10 @@ import FlatButton from 'material-ui/FlatButton';
 import { Link } from 'react-router';
 import {cordovaLoginWithPin, SetPinFormInterface, cordovaInitLogin} from './actions/security';
 import {sendErrorMessage} from './actions'
-
+import Intro from './Intro';
 import SecurityPinLogin from './SecurityPinLogin';
 import SecuritySetPinContainer from './SecuritySetPinContainer';
-const styles = {
-  video: {
-    width: '100%',
-    height: 'auto'
-  }
-};
+
 
 interface MyProps {
   appBarTitle(title: string): any;
@@ -25,6 +20,7 @@ interface MyProps {
   question1: any,
   question2: any,
   questions: any[];
+  mode: number;
 }
 
 interface MyState {
@@ -36,14 +32,18 @@ class SecurityHome extends React.Component<MyProps, MyState> {
     super(props);
   }
   componentWillMount () {
-    this.props.appBarTitle && this.props.appBarTitle('Enter Pin');
+    const {mode} = this.props;
+    this.props.appBarTitle && this.props.appBarTitle(mode === 1 ? 'Intro' :'Enter Pin');
   }
 
   render () {
-    const {submitPin,fipsIsSetUp,initPin,questions} = this.props;
+    const {submitPin,fipsIsSetUp,initPin,questions,mode} = this.props;
+    if (mode === 1) {
+      return <Intro />
+    }
 
-    if(fipsIsSetUp){
-      return (<SecurityPinLogin submitForm={submitPin} />)
+    if (fipsIsSetUp){
+      return <SecurityPinLogin submitForm={submitPin} />;
     }
     return (
       <SecuritySetPinContainer 
@@ -55,6 +55,7 @@ class SecurityHome extends React.Component<MyProps, MyState> {
 
 const stateToProps = (state) => {
   return {
+    mode: state.mode,
     fipsIsSetUp: state.user.fipsIsSetUp,
     question1: {},
     question2: {},
@@ -69,8 +70,6 @@ const dispatchToProps = (dispatch,ownProps) => {
       dispatch(cordovaLoginWithPin(data.pin));
     }, 
     initPin: (data: SetPinFormInterface) => {
-      console.log(data);
-      console.log('cordovaInitLogin');
       dispatch(cordovaInitLogin(data));
     }
   }
