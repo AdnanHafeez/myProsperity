@@ -19,19 +19,21 @@ Developers working on this app should be familiar with the following framewords/
 
 # Version Controll Branches
 
-## dev
-The git dev branch of this app is currently deployed as Beta on Android and iOS app stores.
+## Current Repo: git clone ssh://<yourusername>@git.t2.local/git/mobile/crossplatform/myProsperity.git
+# branch dev
+The dev branch of this git repo is currently deployed as Beta on Android and iOS app stores.
 
-## feature-unified-cryptostore
-This branch will be the upcomming version to be merged into dev. It features a simpler
-architecture based on lessons learned from the current dev branch. It is 90% complete
-but has not been through QA.
+## New repo: git clone ssh://<yourusername>@git.t2.local/git/mobile/crossplatform/my-prosperity.git
+# branch master
+This repo and branch is inteneded to be the new version of the prosperity app. It features a simpler
+architecture based on lessons learned from the the first repp. It is 90% complete
+but has not been through QA. 
 
-## Which Branch to USE?
+## Which Repo to USE?
 If you're intention is to quickly patch an issue on the currently deployed app
-you should probably use the dev branch.
+you should probably use the myProsperity.git repo dev branch.
 
-If you are working on a new release and have more than a couple days it will probably take less effort to get feature-unified-cryptostore up and running.
+If you are working on a new release and have more than a couple days it will probably take less effort to get my-prosperity.git repo up and running on the master branch.
 
 # Starting Points
 
@@ -41,23 +43,24 @@ This could be called the nexus of the app. It handles:
 + Initialization of t2crypto and data persistence.
 + Loads the UI
 + Listens for cordova device events
++ Routing
 
 # Storage
-The following information is with respect to the dev branch and assumes you are familiar
+The following information is with respect to the current myProsperity.git dev branch and assumes you are familiar
 with redux and redux-persist.
 
 Because of the nature of how redux and redux-persist work it was difficult in incorporate t2crypto
 with this project. This is because redux "expects" all of the data stored by redux-persist to be loaded 
 when the app is loaded/restarted. The problem is we don't want the encrypted data to be decrypted on app 
-load but rather after the user has entered the their pin. 
+load but rather only after the user has entered the their pin. 
 The solution was to create two "databases" corresponding to two different state trees:
-+ One to handle authentication (pin setup, security questions, etc) which is not encrypted
-+ The other "database" is for containing all the data we want encrypted.
++ One data store is to handle authentication (pin setup, security questions, etc) which is not encrypted
++ The other data store is for containing all the data we want encrypted.
 How it works is the 2nd Encrypted database is not loaded until the user has authenticate themselves.
 
 While this approach makes sense it violates a best practice of redux which states that there should only
 be one state tree per app. Consequently the app is less organized and more costly to maintain.
-That is why the feature-unified-cryptostore branch was created. 
+That is why the new repo (see above) was created. The new repo features a single store.
 
 
 
