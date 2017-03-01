@@ -37,6 +37,7 @@ var asyncTransform = createAsyncEncryptor({secretKey: 'adadaei8f9s'});
  * Apply migrations that have yet to be run.
  */
 
+//manifest not currently in use
 const manifest = {
   '1006': (state) => (objectAssign(state, {workbooks: undefined}))
 };
@@ -45,7 +46,7 @@ const manifest = {
  * Saga is an alternative to "thunks". It is used to handle asychronous
  * tasks.
  * @see https://github.com/yelouafi/redux-saga
- * For this app it is used to check internet connectivity status every X seconds
+ * For this app it was used to check internet connectivity status every X seconds
  */
 const sagaMiddleware = createSagaMiddleware();
 
@@ -55,16 +56,14 @@ const sagaMiddleware = createSagaMiddleware();
  * @see  https://github.com/wildlifela/redux-persist-migrate
  */
 let reducerKey = 'migrations'; // name of the migration
-
+//manifest not currently in use
 const migration = createMigration(manifest, reducerKey);
 // const persistEnhancer = compose(migration, autoRehydrate());
 
-/*
-const encryptorTransform = createEncryptor({
-  secretKey: 'my-super-secret-key',
-  whitelist: ['goals']
-});
-*/
+/**
+ * [description]
+ * @return {[type]} [description]
+ */
 const getRiPin = () => {
    const fullKey =  (securityStore as any).getState().rikey
    return fullKey.substring(0,30);
