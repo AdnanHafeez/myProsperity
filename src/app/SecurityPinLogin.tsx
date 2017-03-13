@@ -7,7 +7,12 @@ import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Link } from 'react-router';
 import {switchToAppProvider, PinLoginFormInterface} from './actions/security';
-import {subMenuFlexContainerStyle} from './commonStyles'
+import {subMenuFlexContainerStyle} from './commonStyles';
+const dhaIcon = require('../assets/icons/icon-60@3x.png');
+const dhaIconStyles = {
+  margin: '20px 10px 10px 10px',
+  textAlign: 'center'
+}
 const validateForm = (values: PinLoginFormInterface): any => {
   let fields = Object.keys(values).reduce((accum,current) => {
                                                accum[current] = '';
@@ -109,6 +114,9 @@ class SecurityLoginPin extends React.Component<MyProps, MyState>{
             </div>
 
          </form>
+       </div>
+       <div style={dhaIconStyles}>
+         <img src={dhaIcon} alt="DHA" />
        </div>
     </div>);
   }

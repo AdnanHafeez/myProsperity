@@ -69,7 +69,7 @@ class AppBarMenuIconDrawer extends React.Component<MyProps, MyState> {
             >
              <Divider />
               <MenuItem key={'static_directors_message'} primaryText="Director's Message" onTouchTap={this.handleClose('/main/message')}   />
-             
+              <MenuItem key={'static_dir_goals'} primaryText={'Director\'s Goals'} onTouchTap={this.handleClose('/main/goals')} />
               <MenuItem key={'static_smart_goals'} primaryText={'S.M.A.R.T. Goals'} onTouchTap={this.handleClose('/main/home')} />
                <Divider />
               {workbooks.map((item) => (

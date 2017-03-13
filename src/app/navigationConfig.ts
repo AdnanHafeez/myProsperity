@@ -18,6 +18,15 @@ export default {
     childrenIds: ['4','5','6'],
     display: true
   },
+  '7': {
+    id: '7',
+    name: 'Director\'s Goals',
+    routes: ['/main/goals'],
+    level: 1,
+    pathname: '/main/goals',
+    childrenIds: [],
+    display: true
+  },
   '4': {
     id: '4',
     name: 'Message From The Director',
