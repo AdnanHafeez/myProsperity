@@ -132,9 +132,11 @@ const rootReducer = (state, action) => {
       console.log(action.storedState);
       console.log(state);
     }
-
-    return objectAssign({},state,action.storedState,{mode: 1});
+    //examples is static so we can reset it just incase there are migrations
+    return objectAssign({},state,action.storedState,{mode: 1, examples: undefined});
   }
+    
+   
 
   return appHub(state, action)
 }
