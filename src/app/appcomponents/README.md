@@ -1,0 +1,1 @@
+New app components will go in this folder as apposed to where the older ones are now (src/app/). Eventually all components and containers should go in their own directory under src/app. Better organization.

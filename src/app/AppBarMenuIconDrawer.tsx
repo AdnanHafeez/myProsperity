@@ -3,6 +3,7 @@ import * as ReactDOM from "react-dom";
 import { connect } from 'react-redux';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
+import RaisedButton from 'material-ui/RaisedButton';
 import IconButton from 'material-ui/IconButton';
 import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 import ArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
@@ -10,7 +11,7 @@ import { Link } from 'react-router';
 import Divider from 'material-ui/Divider';
 import Drawer from 'material-ui/Drawer';
 import {push} from 'react-router-redux';
-
+import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
 /**
  * AppBarMenuIcon provides the left icon in the top navigation bar
  * @param  {[type]} options.paths   [description]
@@ -77,6 +78,17 @@ class AppBarMenuIconDrawer extends React.Component<MyProps, MyState> {
                    <MenuItem key={'workbook_' + item.id} primaryText={item.title} onTouchTap={this.handleClose('/main/workbook/'+item.id)}  />
 
               ))}
+              <Divider />
+              <MenuItem key={'resources_main'} menuItems={[
+                  <MenuItem key={'resources_webinar'} primaryText="Webinars" onTouchTap={this.handleClose('/main/res-webinars')}  />,
+                  <MenuItem key={'resources_personal'} primaryText="Personal" onTouchTap={this.handleClose('/main/res-personal')}  />,
+                  <MenuItem key={'resources_professional'} primaryText="Professional" onTouchTap={this.handleClose('/main/res-professional')}  />,
+                  <MenuItem key={'resources_relationships'} primaryText="Relationships" onTouchTap={this.handleClose('/main/res-relationships')}  />,
+                  <MenuItem key={'resources_spiritual'} primaryText="Spiritual" onTouchTap={this.handleClose('/main/res-spiritual')}  />
+
+                ]} primaryText="Resources" rightIcon={<ArrowDropRight />}  />
+
+
               <Divider />
               <MenuItem key={'notes_landing'} primaryText="Notes" onTouchTap={this.handleClose('/main/notes')}  />
             </Drawer>

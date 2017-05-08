@@ -38,7 +38,7 @@ export default class DirectorsGoals extends React.Component<MyProps, MyState> {
   }
 
   componentWillMount () {
-    this.props.appBarTitle && this.props.appBarTitle("Director's Goal");
+    this.props.appBarTitle && this.props.appBarTitle("DHA Director's Goals");
   }
 
   render () {
@@ -46,7 +46,7 @@ export default class DirectorsGoals extends React.Component<MyProps, MyState> {
 
     return (
     <div style={styles.container as any}>
-      <h1>Director's Goals</h1>
+      <h1>DHA Director's Goals</h1>
       <ul>
         <li>Fortify our Relationship with the Services</li>
         <li>Strengthen our role as a Combat Support Agency</li>

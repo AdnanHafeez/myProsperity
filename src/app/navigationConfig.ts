@@ -53,5 +53,23 @@ export default {
     pathname: '/main/notes',
     childrenIds: [],
     display: false
+  },
+  '8': {
+    id: '8',
+    name: 'Personal Resources',
+    routes: ['/main/res-personal'],
+    level: 1,
+    pathname: '/main/res-personal',
+    childrenIds: [],
+    display: false
+  },
+  '9': {
+    id: '9',
+    name: 'Professional Resources',
+    routes: ['/main/res-professional'],
+    level: 1,
+    pathname: '/main/res-professional',
+    childrenIds: [],
+    display: false
   }
 };
