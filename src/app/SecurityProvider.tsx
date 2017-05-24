@@ -25,7 +25,7 @@ import securityReducer from './reducerSecurity';
 import * as objectAssign from 'object-assign';
 import createEncryptor from 'redux-persist-transform-encrypt';
 import {userLogout,encryptedDbPaused} from './actions';
-import localForage from 'localForage';
+import * as localForage from 'localforage';
 
 
 const sagaMiddleware = createSagaMiddleware();
