@@ -61,11 +61,11 @@ export interface NoteReducerInterface {
 export const wbData: WorkbookRawInterface[] = [
         { id:1, title: 'Relationships', examples: [
             {id: 1,title: 'Community', desc: '(Lead, Organize, Support Agencies, Volunteer, Cultural Arts)'},
-            {id: 2,title: 'Leisure', desc: '("Down Time," Activities, Sports, Vacations)"'},
+            {id: 2,title: 'Leisure', desc: '("Down Time", Activities, Sports, Vacations)'},
             {id: 3,title: 'Family',desc: '(Prioritize, Quality Time, Special/Important Events)'},
             {id: 4,title: 'Friendships',desc: '(Birthdays, Events, Interaction/Nurture)'},
             {id: 5,title: 'Diversity',desc: '(Cultural Events, Exchanges, Tours)'},
-            {id: 6,title: 'Marital',desc: '(Anniversaries, Couples’ Retreats, Dating)'},
+            {id: 6,title: 'Marital',desc: '(Anniversaries, Couples\' Retreats, Dating)'},
             {id: 7, title: 'Work',desc: '(SAY THANK YOU, Challenge, Communicate, Support, Compassion)'}
           ],
           goals: []
@@ -73,7 +73,7 @@ export const wbData: WorkbookRawInterface[] = [
         { id:2, title: 'Professional', examples: [
             {id: 8, title: 'Achievments & Awards', desc: '(Civilian and Military Awards)'},
             {id: 9, title: 'Advancement & Promotion', desc: '(Professional Development, Leader Development)'},
-            {id: 10, title: 'Career Requirements', desc: '(Continuing Education, Certifica- tions, Licenses, Supervisory Training)'},
+            {id: 10, title: 'Career Requirements', desc: '(Continuing Education, Certifications, Licenses, Supervisory Training)'},
             {id: 11, title: 'Education', desc: '(College, Graduate Degree, Correspondence Courses, Leadership Training, PMP)'},
             {id: 12, title: 'Nominations', desc: '(Civilian of the Quarter and Year, Volunteer of Year)'},
             {id: 13, title: 'Social Development', desc: '(Lunch with colleagues; potlucks)'},
@@ -98,7 +98,7 @@ export const wbData: WorkbookRawInterface[] = [
         { id:4, title: 'Spiritual', examples: [
             {id: 25, title: 'Growth', desc: '(Connect Actions and Goals to Values)'},
             {id: 26, title: 'Ceremonies', desc: '(Religious, Marriage, Naming)'},
-            {id: 27, title: 'Participation', desc: '(Chapel Programs, Spiritual Fitness, Train- ing Events)'},
+            {id: 27, title: 'Participation', desc: '(Chapel Programs, Spiritual Fitness, Training Events)'},
             {id: 28, title: 'Holidays', desc: '(Observances, Meals, Fasting, etc.)'},
             {id: 29, title: 'Study', desc: '(Tours, Reading, Classes)'},
             {id: 30, title: 'Support', desc: '(Donations, Helping, Volunteerism)'}

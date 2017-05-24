@@ -4,7 +4,8 @@ export const foatingButtonStyle = {
       right: 20,
       bottom: 20,
       left: 'auto',
-      position: 'fixed'
+      position: 'fixed',
+      zIndex: 100
 };
 
 export const topRightButtonStyle = {
@@ -54,3 +55,10 @@ export const listItemTitle = { //intended for h3
 export const listItemSubTitle = { //intended for h3
   marginTop: 0
 }
+
+export const selectTagStyle = {
+  maxWidth: '200px'
+}
+
+
+

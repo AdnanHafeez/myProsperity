@@ -5,8 +5,9 @@ import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 import MenuItem from 'material-ui/MenuItem';
 import {ChangeQuestionsWithPinInterface, changeSecurityQuestions} from './actions/security';
-import FlatButton from 'material-ui/FlatButton';
-
+import RaisedButton from 'material-ui/RaisedButton';
+import { Link } from 'react-router';
+import {subMenuFlexContainerStyle,selectTagStyle} from './commonStyles'
 const styles = {
   video: {
     width: '100%',
@@ -143,6 +144,7 @@ class SecuritySetQuestionsContainer extends React.Component<MyProps, MyState> {
               value={this.state.values.question1} 
               onChange={this.questionSelectChange('question1') as any}
               name='question1'
+              style={selectTagStyle}
             >
               <option key='q1_none'>Select a question</option>
               {questions.map((question) => {
@@ -166,6 +168,7 @@ class SecuritySetQuestionsContainer extends React.Component<MyProps, MyState> {
               value={this.state.values.question2} 
               onChange={this.questionSelectChange('question2') as any}
               name='question2'
+              style={selectTagStyle}
             >
               <option key='q2_none'>Select a question</option>
               {questions.map((question) => {
@@ -182,9 +185,15 @@ class SecuritySetQuestionsContainer extends React.Component<MyProps, MyState> {
               errorText={this.state.errors.answer2}
               value={this.state.values.answer2} onChange={this.handleChange} />
         </div>
-        <div>
-          <FlatButton label="Submit" type="submit" />
+        <div style={subMenuFlexContainerStyle as any}>
+          <div>
+            <RaisedButton primary={true} label="Submit" type="submit" />
+          </div>
+          <div>
+            <RaisedButton label="Cancel" containerElement={<Link to={'/'} />} />
+          </div>
         </div>
+
       </form>
     );
   }

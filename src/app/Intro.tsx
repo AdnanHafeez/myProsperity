@@ -34,9 +34,9 @@ export default class HomePage extends React.Component<MyProps, MyState> {
           <CardTitle title="Message From the Director" subtitle="My Prosperity Plan Workbook" />
           <CardText>
           <div style={styles.container as any}>
-<h2>Message from Director of Healthcare Operations</h2>
+<h2>Message from Director of J3 Operations</h2>
         <p>The individual and collective well being of OUR PEOPLE (Service Members, Civilians, Contract Employees) and our Families is our foundation.</p>
-    <h3> –Challenge is Good – </h3>
+    <h3> – Challenge is Good – </h3>
         <p>This Prosperity Plan Workbook is a tool to help you specify goals and to develop a 
         plan to reach those goals—you decide. The objective is to maximize your potential 
         personally, professionally, spiritually, and in your relationships. We all have 
@@ -54,12 +54,20 @@ export default class HomePage extends React.Component<MyProps, MyState> {
         <p>Leaders may use the Prosperity Plan Workbook to assist those they are privileged to lead in developing, specifying, pursuing and achieving their goals. Our Workbook can be a teaching/coaching/mentoring tool to challenge and guide each of us to prosper personally, professionally, spiritually, and in our relationships.</p>
 
         <p>Accomplish our mission/Take care of each other/Take care of our Families are interrelated and inseparable.</p>
+    
+
+
+
     <p>
     <img src={clarkSignature} alt="Major General Clark Signature" />
     </p>
     <p>JEFFREY B. CLARK </p>
     <p>Major General,</p>
     <p>Medical Corps United States Army</p>
+
+
+
+
           </div>
           </CardText>
           <CardActions>

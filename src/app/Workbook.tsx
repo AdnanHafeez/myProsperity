@@ -93,6 +93,15 @@ class Workbook extends React.Component<MyProps, MyState> {
       }
     }
 
+    const goalOpenNewClick = (event) => {
+        if(__DEVTOOLS__){
+          console.log('goal new click triggered');
+        }
+        goalOpenNew();
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
     const makeTitle = (item) => {
 
       return item.dueDate && item.dueDate > 0 ? item.title + ' - ' + Formats.msToString(item.dueDate) : item.title;
@@ -112,7 +121,7 @@ class Workbook extends React.Component<MyProps, MyState> {
                               rightIcon={<EditIcon  />}  />)
           });
     }else{
-      createNewGoalButton = <FloatingActionButton  onTouchTap={goalOpenNew} style={foatingButtonStyle as any}>
+      createNewGoalButton = <FloatingActionButton onTouchTap={goalOpenNewClick} style={foatingButtonStyle as any}>
                               <ContentAdd />
                             </FloatingActionButton>;
 

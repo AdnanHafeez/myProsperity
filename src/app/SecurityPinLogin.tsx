@@ -7,7 +7,12 @@ import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Link } from 'react-router';
 import {switchToAppProvider, PinLoginFormInterface} from './actions/security';
-//   <RaisedButton label="Test Error Message" onTouchTap={testSnackBar} />
+import {subMenuFlexContainerStyle} from './commonStyles';
+const dhaIcon = require('../assets/icons/icon-60@3x.png');
+const dhaIconStyles = {
+  margin: '20px 10px 10px 10px',
+  textAlign: 'center'
+}
 const validateForm = (values: PinLoginFormInterface): any => {
   let fields = Object.keys(values).reduce((accum,current) => {
                                                accum[current] = '';
@@ -99,14 +104,19 @@ class SecurityLoginPin extends React.Component<MyProps, MyState>{
                 value={this.state.values.pin} 
                 onChange={this.handleChange} />
             </div>
-            <div>
-              <RaisedButton primary={true} label="Login" type="submit" />
-                
+            <div style={subMenuFlexContainerStyle as any}>
+              <div>
+                <RaisedButton primary={true} label="Login" type="submit" />
+              </div>
+             <div>
+                  <RaisedButton type="button" label="Forgot Pin" containerElement={<Link to={'security/forgotpin'} />} />
+             </div>
             </div>
+
          </form>
        </div>
-       <div style={{float: 'right'}}>
-         <FlatButton label="Forgot Pin" containerElement={<Link to={'security/forgotpin'} />} />
+       <div style={dhaIconStyles}>
+         <img src={dhaIcon} alt="DHA" />
        </div>
     </div>);
   }

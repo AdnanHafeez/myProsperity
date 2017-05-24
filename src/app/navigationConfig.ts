@@ -18,6 +18,15 @@ export default {
     childrenIds: ['4','5','6'],
     display: true
   },
+  '7': {
+    id: '7',
+    name: 'Director\'s Goals',
+    routes: ['/main/goals'],
+    level: 1,
+    pathname: '/main/goals',
+    childrenIds: [],
+    display: true
+  },
   '4': {
     id: '4',
     name: 'Message From The Director',
@@ -42,6 +51,24 @@ export default {
     routes: ['/main/notes'],
     level: 2,
     pathname: '/main/notes',
+    childrenIds: [],
+    display: false
+  },
+  '8': {
+    id: '8',
+    name: 'Personal Resources',
+    routes: ['/main/res-personal'],
+    level: 1,
+    pathname: '/main/res-personal',
+    childrenIds: [],
+    display: false
+  },
+  '9': {
+    id: '9',
+    name: 'Professional Resources',
+    routes: ['/main/res-professional'],
+    level: 1,
+    pathname: '/main/res-professional',
     childrenIds: [],
     display: false
   }

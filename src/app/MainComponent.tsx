@@ -30,6 +30,7 @@ const styles = {
   },
   content: {
     paddingTop: '10px',
+    padding: '5px',
     display: 'flex',
     flexFlow: 'row wrap',
     justifyContent: 'center'
@@ -95,7 +96,9 @@ export default class MainComponent extends React.Component<MyProps, MyState>{
                 iconElementLeft={<IconButton containerElement={<Link to="/" />}><HomeIcon /></IconButton>}
                
                  />
+                <div style={{'padding': '5px'} as any}>
                 <div style={styles.content as any}>{React.cloneElement(this.props.children, { appBarTitle: this.handleTitle })}</div>
+                </div>
                 <Eula />
                 <SnackBarNotice flash={flash} />
         </div>
