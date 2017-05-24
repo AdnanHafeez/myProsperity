@@ -13,6 +13,13 @@ import RaisedButton from 'material-ui/RaisedButton';
 import NoteEditComponent from './NoteEditComponent';
 import {foatingButtonStyle,topRightButtonStyle, subMenuFlexContainerStyle} from './commonStyles';
 
+
+declare module 'react' { //See https://github.com/zilverline/react-tap-event-plugin/issues/58
+    interface HTMLProps<T> {
+        onTouchTap?: React.EventHandler<React.TouchEvent<T>>;
+    }
+}
+
 const styles = {
   video: {
     width: '100%',
@@ -53,7 +60,7 @@ class Workbook extends React.Component<MyProps, MyState> {
                                />)
           })}
         </List>
-          <FloatingActionButton  onTouchTap={() => noteLoad()} style={foatingButtonStyle}>
+          <FloatingActionButton  onTouchTap={() => noteLoad()} style={foatingButtonStyle as any}>
             <ContentAdd />
           </FloatingActionButton>
       </div>

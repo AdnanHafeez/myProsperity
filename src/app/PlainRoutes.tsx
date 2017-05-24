@@ -25,7 +25,7 @@ import appReducer from './reducers';
 import {switchToAppProvider,switchToSecurityProvider,cordovaDeviceReady as deviceReady} from './actions/security';
 import * as objectAssign from 'object-assign';
 //import createEncryptor from 'redux-persist-transform-encrypt';
-import localForage from 'localForage';
+import * as localForage from 'localforage';
 import createAsyncEncryptor from 'redux-persist-transform-encrypt/async';
 import {userLogout,encryptedDbPaused,loadAppState,turnAppOff} from './actions';
 

@@ -132,7 +132,7 @@ export default class SecuritySetQuestionsContainer extends React.Component<MyPro
       <form onSubmit={this.handleSubmit}>
         <div style={fieldRowStyle}>
           <label>
-            <div style={labelStyle}>Pin</div>
+            <div style={labelStyle as any}>Pin</div>
             <input type="text" name='pin' value={this.state.values.pin} onChange={this.handleChange}  />
 
           </label>
@@ -140,7 +140,7 @@ export default class SecuritySetQuestionsContainer extends React.Component<MyPro
         </div>
         <div style={fieldRowStyle}>
           <label>
-            <div style={labelStyle}>Confirm Pin</div>
+            <div style={labelStyle as any}>Confirm Pin</div>
             <input type="text" name='pinConfirm' value={this.state.values.pinConfirm} onChange={this.handleChange}  />
 
           </label>
@@ -163,7 +163,7 @@ export default class SecuritySetQuestionsContainer extends React.Component<MyPro
         </div>
         <div style={fieldRowStyle}>
           <label>
-            <div style={labelStyle}>Answer</div>
+            <div style={labelStyle as any}>Answer</div>
             <input type="text" name='answer1' value={this.state.values.answer1} onChange={this.handleChange}  />
 
           </label>
@@ -187,7 +187,7 @@ export default class SecuritySetQuestionsContainer extends React.Component<MyPro
         </div>
         <div style={fieldRowStyle}>
           <label>
-            <div style={labelStyle}>Answer</div>
+            <div style={labelStyle as any}>Answer</div>
             <input type="text" name='answer2' value={this.state.values.answer2} onChange={this.handleChange}  />
 
           </label>

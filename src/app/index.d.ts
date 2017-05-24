@@ -35,9 +35,6 @@ declare const __CORDOVA_TEST_ONLY__: boolean;
 declare const t2crypto: any;
 declare const cordova: any;
 
-declare interface Navigator {
-  serviceWorker: any;
-}
 
 
 

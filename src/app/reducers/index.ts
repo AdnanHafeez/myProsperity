@@ -1,6 +1,5 @@
 import {combineReducers} from 'redux';
 import {view} from './view';
-import {reducer as formReducer} from 'redux-form';
 import {routerReducer} from 'react-router-redux';
 import {REHYDRATE} from 'redux-persist/constants';
 
@@ -102,7 +101,6 @@ export const nextId = (array) => {
 const appHub = combineReducers({
   app: appReducer,
   migrations,
-  form: formReducer,
   routing: routerReducer,
   user,
   view,
