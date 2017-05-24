@@ -146,7 +146,7 @@ class Workbook extends React.Component<MyProps, MyState> {
             <BasicDialog title={'Examples'} items={examples} />
           </div>
           <div>
-          {actionToggleButton}
+          {goals.length > 0 && actionToggleButton}
           </div>
         </div>
         <div>
