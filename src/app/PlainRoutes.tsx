@@ -270,13 +270,23 @@ export const onCordovaDeviceReady = () => {
 }
 
 
-
+let _pauseTimeout = null;
 function onPause() {
-    console.log('cordova pause');
-    appStore.dispatch(turnAppOff('/'));
+  
+    const timeout = 1000 * 60 * 1;
+    if(_pauseTimeout){
+      window.clearTimeout(_pauseTimeout);
+    }
+    _pauseTimeout = window.setTimeout(() =>{
+        appStore.dispatch(turnAppOff('/'));
+    },timeout);
+    
 }
 
 function onResume() {
+    if(_pauseTimeout){
+      window.clearTimeout(_pauseTimeout);
+    }
    // console.log('cordova resume');
    // securityStore.dispatch(push('/'));
 }
