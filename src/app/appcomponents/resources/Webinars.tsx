@@ -47,16 +47,19 @@ export default class Webinars extends React.Component<Props, State> {
             <a target="_blank" href="http://dcoe.adobeconnect.com/p18q3afo3sn/">Making Time for Enjoyable Activities</a>
           </div>
           <div style={styles.linkItem}>
-            <a target="_blank" href="http://dcoe.adobeconnect.com/p3r437gwrkl/">Harnessing the Power of Your Mind</a>
+            <a target="_blank" href="http://dcoe.adobeconnect.com/p168qz8ddxp/">Managing Failure of Behavior Change Goals</a>
+          </div>
+          <div style={styles.linkItem}>
+            <a target="_blank" href="http://dcoe.adobeconnect.com/pju7dwflgawd/">Harnessing the Power of Your Mind</a>
           </div>
           <div style={styles.linkItem}>
             <a target="_blank" href="http://dcoe.adobeconnect.com/p6hnn48yeu4/">Simple Strategies for Weight Maintenance</a>
           </div>
           <div style={styles.linkItem}>
-            <a target="_blank" href="http://dcoe.adobeconnect.com/p1eqzd8c6zb/">Simple Strategies for Better Sleep</a>
+            <a target="_blank" href="http://dcoe.adobeconnect.com/plmg9d2yxzfb/">Simple Strategies for Better Sleep</a>
           </div>
           <div style={styles.linkItem}>
-            <a target="_blank" href="http://dcoe.adobeconnect.com/p1pdvdvuukg/">Be Kind to Yourself</a>
+            <a target="_blank" href="http://dcoe.adobeconnect.com/p1igblryy5y8/">Be Kind to Yourself</a>
           </div>
           <div style={styles.linkItem}>
             <a target="_blank" href="http://dcoe.adobeconnect.com/p66bbvuguj2/">Tobacco: Breaking the Habit</a>
