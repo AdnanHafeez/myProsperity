@@ -17,14 +17,13 @@ const styles = {
 };
 
 interface MyProps {
-  appBarTitle(title: string): any;
-  submitPin(data: SetPinFormInterface): any;
-  initPin(data: SetPinFormInterface): any;
-  fipsIsSetUp: boolean;
-  question1: any,
-  question2: any,
-  questions: any[];
-  testSnackBar(): any;
+  appBarTitle?(title: string): any;
+  submitPin?(data: SetPinFormInterface): any;
+  initPin?(data: SetPinFormInterface): any;
+  fipsIsSetUp?: boolean;
+  question1?: any;
+  question2?: any;
+  questions?: any[];
 }
 
 interface MyState {
@@ -40,10 +39,10 @@ class SecurityHome extends React.Component<MyProps, MyState> {
   }
 
   render () {
-    const {submitPin,fipsIsSetUp,initPin,questions,testSnackBar} = this.props;
+    const {submitPin,fipsIsSetUp,initPin,questions} = this.props;
 
     if(fipsIsSetUp){
-      return (<SecurityPinLogin submitForm={submitPin} testSnackBar={testSnackBar} />)
+      return (<SecurityPinLogin submitForm={submitPin} />)
     }
     return (
       <SecuritySetPinContainer 
@@ -72,11 +71,6 @@ const dispatchToProps = (dispatch,ownProps) => {
       console.log(data);
       console.log('cordovaInitLogin');
       dispatch(cordovaInitLogin(data));
-    },
-    testSnackBar: () => {
-        console.log("test test");
-        dispatch(sendErrorMessage("Here is error message " + errCount, 777));
-        errCount++;
     }
   }
 }

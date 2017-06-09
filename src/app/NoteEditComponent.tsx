@@ -12,11 +12,11 @@ import {noteFactory} from './reducers/note'
 import {foatingButtonStyle, fullWidthDialagStyle} from './commonStyles';
 
 interface MyProps {
-  editNote(note: NoteReducerInterface): any;
-  noteDelete(noteId: number): any;
-  open: boolean;
-  handleClose(): any
-  note: NoteReducerInterface;
+  editNote?(note: NoteReducerInterface): any;
+  noteDelete?(noteId: number): any;
+  open?: boolean;
+  handleClose?(): any
+  note?: NoteReducerInterface;
 }
 
 interface MyState {

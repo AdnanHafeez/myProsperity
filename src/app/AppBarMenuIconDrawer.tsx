@@ -21,11 +21,11 @@ import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
  */
 
 interface MyProps {
-  paths: any;
-  submenu: any;
-  parent: any;
-  workbooks: any;
-  navigateTo(path:string): any
+  paths?: any;
+  submenu?: any;
+  parent?: any;
+  workbooks?: any;
+  navigateTo?(path:string): any
 }
 
 interface MyState {

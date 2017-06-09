@@ -37,12 +37,11 @@ const styles = {
   }
 };
 interface MyProps {
-  dispatch(arg: any): any;
+  dispatch?(arg: any): any;
   appBarTitle?(any): any;
-  isAuthed: boolean;
-  children: any;
-  authToggle(isAuthed: boolean): any;
-  flash: FlashMessageInterface;
+  isAuthed?: boolean;
+  authToggle?(isAuthed: boolean): any;
+  flash?: FlashMessageInterface;
 }
 
 interface MyState {
@@ -97,7 +96,7 @@ export default class MainComponent extends React.Component<MyProps, MyState>{
                
                  />
                 <div style={{'padding': '5px'} as any}>
-                <div style={styles.content as any}>{React.cloneElement(this.props.children, { appBarTitle: this.handleTitle })}</div>
+                <div style={styles.content as any}>{React.cloneElement((this.props as any).children, { appBarTitle: this.handleTitle })}</div>
                 </div>
                 <Eula />
                 <SnackBarNotice flash={flash} />

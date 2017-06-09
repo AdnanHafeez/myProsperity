@@ -103,10 +103,10 @@ class SecurityPinRecoveryContainer extends React.Component<MyProps, MyState> {
   }
 
   render () {
-    var {submitFormValues, question1, question2} = this.props;
+    var {submitFormValues, question1, question2 ,appBarTitle} = this.props;
 
     if(!question1 || !question2){ //if questions aren't established then load home page
-      return <SecurityHome />;
+      return <SecurityHome appBarTitle={appBarTitle} />;
     }
     return (
       <div style={{maxWidth: 400,width: '90%'} as any}>
