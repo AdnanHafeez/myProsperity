@@ -68,33 +68,35 @@ This command builds and bundles the web js files used by both cordova platform b
  cd cordova/
  #you are now in cordova land
  
+  ____       _    __                             ___     ____  _             _           
+ |  _ \ __ _| |_ / _| ___  _ __ _ __ ___  ___   ( _ )   |  _ \| |_   _  __ _(_)_ __  ___ 
+ | |_) / _` | __| |_ / _ \| '__| '_ ` _ \/ __|  / _ \/\ | |_) | | | | |/ _` | | '_ \/ __|
+ |  __/ (_| | |_|  _| (_) | |  | | | | | \__ \ | (_>  < |  __/| | |_| | (_| | | | | \__ \
+ |_|   \__,_|\__|_|  \___/|_|  |_| |_| |_|___/  \___/\/ |_|   |_|\__,_|\__, |_|_| |_|___/
+                                                                       |___/   
+# This project uses one custom plugin called "cordova-plugin-t2crypto" so there are some "non-standard" steps to take
+before we install our platforms and plugins
 
-    _           _         _    _     _     _  ___  ___ 
-   /_\  _ _  __| |_ _ ___(_)__| |  _| |_  (_)/ _ \/ __|
-  / _ \| ' \/ _` | '_/ _ \ / _` | |_   _| | | (_) \__ \
- /_/ \_\_||_\__,_|_| \___/_\__,_|   |_|   |_|\___/|___/
- # if you haven't done so add the android and iOS platforms
- cordova platform add android
- cordova platform add ios
 
-    _      _    _   ___ _           _         
-   /_\  __| |__| | | _ \ |_  _ __ _(_)_ _  ___
-  / _ \/ _` / _` | |  _/ | || / _` | | ' \(_-<
- /_/ \_\__,_\__,_| |_| |_|\_,_\__, |_|_||_/__/
-                              |___/           
-# in a directory outside this project clone t2crypto plugin and checkout Encryption2.0
+# Please clone cordova-plugin-t2crypto it to a location outside this project:
+git clone ssh://<username>@git.t2.local/git/mobile/crossplatform/cordova-plugin-t2crypto.git
 # Please confirm with Bradden C which branch to to checkout.
-git clone ssh://<username>@git.t2.local/git/mobile/crossplatform/cordova-plugin-t2crypto.gi
-# For reference I used the dev branch with the last commit was 5e77ed83d4fbb1b853bdee901bdac5a476356994
-# Now add crypto to the project like so
-cordova plugin rm org.t2crypto
-cordova plugin add /path/to/cloned/cordova-plugin-t2crypto
+# I used the dev branch with the last commit as 5e77ed83d4fbb1b853bdee901bdac5a476356994
 
-#add the splash screen plugin
-cordova plugin add cordova-plugin-splashscreen
+# now edit cordova/package.json and change this line:
+"org.t2crypto": "file:///Users/jack.lightfoot/Documents/projects/js/cordova-plugin-t2crypto"
+# to point to wherever you cloned the fips plugin.
 
-#add device info plugin
-cordova plugin add cordova-plugin-device
+# now do the same thing with the path in in cordova/config.xml
+<plugin name="org.t2crypto" spec="file:///Users/jack.lightfoot/Documents/projects/js/cordova-plugin-t2crypto" />
+
+# The cordova/platforms and cordova/plugins directories are empty on a fresh clone.
+# to install all platforms and plugins mentioned in cordova/config.xml run the command below
+
+cordova prepare
+
+# If cordova prepare doesn't there is probably something that needs to be fixed but you can also manually install platforms and plugins listed in package.json and config.xml
+
  
  #Android Build
  

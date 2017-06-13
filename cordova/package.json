@@ -1,0 +1,27 @@
+{
+    "name": "mil.dcoe.t2.myprosperity",
+    "version": "1.0.22",
+    "displayName": "My Prosperity Workbook",
+    "cordova": {
+        "platforms": [
+            "android",
+            "ios"
+        ],
+        "plugins": {
+            "cordova-plugin-splashscreen": {},
+            "cordova-plugin-device": {},
+            "cordova-plugin-console": {},
+            "cordova-plugin-whitelist": {},
+            "org.t2crypto": {}
+        }
+    },
+    "dependencies": {
+        "cordova-android": "~6.2.3",
+        "cordova-ios": "~4.4.0",
+        "cordova-plugin-console": "^1.0.7",
+        "cordova-plugin-device": "^1.1.6",
+        "cordova-plugin-splashscreen": "^4.0.3",
+        "cordova-plugin-whitelist": "^1.3.2",
+        "org.t2crypto": "file:///Users/jack.lightfoot/Documents/projects/js/cordova-plugin-t2crypto"
+    }
+}

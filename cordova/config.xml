@@ -8,7 +8,6 @@
         T2
     </author>
     <content src="index.html" />
-    <plugin name="cordova-plugin-whitelist" spec="1" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -19,59 +18,44 @@
     <icon src="res/icon.png" />
     <platform name="android">
         <allow-intent href="market:*" />
-        <splash src="res/screen/android/drawable-land-hdpi/screen.png" density="land-hdpi"/>
-        <splash src="res/screen/android/drawable-land-ldpi/screen.png" density="land-ldpi"/>
-        <splash src="res/screen/android/drawable-land-mdpi/screen.png" density="land-mdpi"/>
-        <splash src="res/screen/android/drawable-land-xhdpi/screen.png" density="land-xhdpi"/>
-
-        <splash src="res/screen/android/drawable-port-hdpi/screen.png" density="port-hdpi"/>
-        <splash src="res/screen/android/drawable-port-ldpi/screen.png" density="port-ldpi"/>
-        <splash src="res/screen/android/drawable-port-mdpi/screen.png" density="port-mdpi"/>
-        <splash src="res/screen/android/drawable-port-xhdpi/screen.png" density="port-xhdpi"/>
+        <splash density="land-hdpi" src="res/screen/android/drawable-land-hdpi/screen.png" />
+        <splash density="land-ldpi" src="res/screen/android/drawable-land-ldpi/screen.png" />
+        <splash density="land-mdpi" src="res/screen/android/drawable-land-mdpi/screen.png" />
+        <splash density="land-xhdpi" src="res/screen/android/drawable-land-xhdpi/screen.png" />
+        <splash density="port-hdpi" src="res/screen/android/drawable-port-hdpi/screen.png" />
+        <splash density="port-ldpi" src="res/screen/android/drawable-port-ldpi/screen.png" />
+        <splash density="port-mdpi" src="res/screen/android/drawable-port-mdpi/screen.png" />
+        <splash density="port-xhdpi" src="res/screen/android/drawable-port-xhdpi/screen.png" />
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
-        <splash src="res/screen/ios/Default~iphone.png" width="320" height="480"/>
-        <splash src="res/screen/ios/Default@2x~iphone.png" width="640" height="960"/>
-        <splash src="res/screen/ios/Default-Portrait~ipad.png" width="768" height="1024"/>
-        <splash src="res/screen/ios/Default-Portrait@2x~ipad.png" width="1536" height="2048"/>
-        <splash src="res/screen/ios/Default-Landscape~ipad.png" width="1024" height="768"/>
-        <splash src="res/screen/ios/Default-Landscape@2x~ipad.png" width="2048" height="1536"/>
-        <splash src="res/screen/ios/Default-568h@2x~iphone.png" width="640" height="1136"/>
-        <splash src="res/screen/ios/Default-667h.png" width="750" height="1334"/>
-        <splash src="res/screen/ios/Default-736h.png" width="1242" height="2208"/>
-        <splash src="res/screen/ios/Default-Landscape-736h.png" width="2208" height="1242"/>
-        <!-- iOS 8.0+ -->
-        <!-- iPhone 6 Plus  -->
-        <icon src="res/ios/icon-60@3x.png" width="180" height="180" />
-        <!-- iOS 7.0+ -->
-        <!-- iPhone / iPod Touch  -->
-        <!-- missing res/ios/icon-60.png 60x60 -->
-        <icon src="res/ios/icon-60@2x.png" width="120" height="120" />
-        <!-- iPad -->
-        <icon src="res/ios/icon-76.png" width="76" height="76" />
-        <icon src="res/ios/icon-76@2x.png" width="152" height="152" />
-        <!-- Spotlight Icon -->
-        <icon src="res/ios/icon-small-40.png" width="40" height="40" />
-        <icon src="res/ios/icon-small-40@2x.png" width="80" height="80" />
-        <icon src="res/ios/icon-small-40@3x.png" width="120" height="120" />
-        <!-- iOS 6.1 -->
-        <!-- iPhone / iPod Touch -->
-        <!-- missing res/ios/icon.png 57x57 -->
-        <!-- missing res/ios/icon@2x.png 114x114 -->
-        <!-- iPad -->
-        <!-- missing res/ios/icon-72.png 72x72 -->
-        <!-- missing res/ios/icon-72@2x.png 144x144 -->
-        <!-- iPhone Spotlight and Settings Icon -->
-        <icon src="res/ios/icon-small.png" width="29" height="29" />
-        <icon src="res/ios/icon-small@2x.png" width="58" height="58" />
-        <icon src="res/ios/icon-small@2x.png" width="87" height="87" />
-        <!-- iPad Spotlight and Settings Icon -->
-        <!-- missing res/ios/icon-50.png 50x50 -->
-        <!-- missing res/ios/icon-50@2x.png 100x100 -->
-        <!-- iPad Pro -->
-        <!-- missing src="res/ios/icon-83.5@2x.png" 167x167 -->
+        <splash height="480" src="res/screen/ios/Default~iphone.png" width="320" />
+        <splash height="960" src="res/screen/ios/Default@2x~iphone.png" width="640" />
+        <splash height="1024" src="res/screen/ios/Default-Portrait~ipad.png" width="768" />
+        <splash height="2048" src="res/screen/ios/Default-Portrait@2x~ipad.png" width="1536" />
+        <splash height="768" src="res/screen/ios/Default-Landscape~ipad.png" width="1024" />
+        <splash height="1536" src="res/screen/ios/Default-Landscape@2x~ipad.png" width="2048" />
+        <splash height="1136" src="res/screen/ios/Default-568h@2x~iphone.png" width="640" />
+        <splash height="1334" src="res/screen/ios/Default-667h.png" width="750" />
+        <splash height="2208" src="res/screen/ios/Default-736h.png" width="1242" />
+        <splash height="1242" src="res/screen/ios/Default-Landscape-736h.png" width="2208" />
+        <icon height="180" src="res/ios/icon-60@3x.png" width="180" />
+        <icon height="120" src="res/ios/icon-60@2x.png" width="120" />
+        <icon height="76" src="res/ios/icon-76.png" width="76" />
+        <icon height="152" src="res/ios/icon-76@2x.png" width="152" />
+        <icon height="40" src="res/ios/icon-small-40.png" width="40" />
+        <icon height="80" src="res/ios/icon-small-40@2x.png" width="80" />
+        <icon height="120" src="res/ios/icon-small-40@3x.png" width="120" />
+        <icon height="29" src="res/ios/icon-small.png" width="29" />
+        <icon height="58" src="res/ios/icon-small@2x.png" width="58" />
+        <icon height="87" src="res/ios/icon-small@2x.png" width="87" />
     </platform>
-    <engine name="android" spec="~6.1.1" />
+    <engine name="android" spec="~6.2.3" />
+    <engine name="ios" spec="~4.4.0" />
+    <plugin name="cordova-plugin-console" spec="^1.0.7" />
+    <plugin name="cordova-plugin-device" spec="^1.1.6" />
+    <plugin name="cordova-plugin-splashscreen" spec="^4.0.3" />
+    <plugin name="cordova-plugin-whitelist" spec="^1.3.2" />
+    <plugin name="org.t2crypto" spec="file:///Users/jack.lightfoot/Documents/projects/js/cordova-plugin-t2crypto" />
 </widget>
