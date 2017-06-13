@@ -13,9 +13,9 @@ import {foatingButtonStyle, fullWidthDialagStyle} from './commonStyles';
 import {Transforms,Validators} from './lib/helpers';
 
 interface MyProps {
-  editGoal(goal: GoalReducerInterface): any;
-  handleClose(): any;
-  goal: GoalReducerInterface;
+  editGoal?(goal: GoalReducerInterface): any;
+  handleClose?(): any;
+  goal?: GoalReducerInterface;
   workbook: WorkbookReducerInterface;
   goalDelete(workbookId:number,goalId:number): any;
 }

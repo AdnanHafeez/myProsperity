@@ -73,12 +73,10 @@ class SettingMenuComponent extends React.Component<SettingsMenuProps, SettingsMe
 
 interface MyProps {
   appBarTitle?(title: string): any;
-  dispatch(arg: any): any;
-  device: any;
-  children: any;
-
-  turnAppOffRedirect(path: string): any;
-  flash: FlashMessageInterface
+  dispatch?(arg: any): any;
+  device?: any;
+  turnAppOffRedirect?(path: string): any;
+  flash?: FlashMessageInterface
 }
 
 interface MyState {
@@ -132,10 +130,10 @@ class Main extends React.Component<MyProps, MyState>{
             <AppBar
                 title={this.state.title}
                 titleStyle={{textAlign: 'center'}}
-                iconElementLeft={<AppBarMenuIcon/>}
+                iconElementLeft={<AppBarMenuIcon />}
                 iconElementRight={<SettingMenuComponent   turnAppOffRedirect={turnAppOffRedirect} />}
                  />
-                <div style={styles.content as any}>{React.cloneElement(this.props.children, { 
+                <div style={styles.content as any}>{React.cloneElement((this.props as any).children, { 
                                                                                               appBarTitle: this.handleTitle
                                                                                             })}</div>
 

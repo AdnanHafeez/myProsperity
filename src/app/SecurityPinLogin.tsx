@@ -45,7 +45,6 @@ const validateForm = (values: PinLoginFormInterface): any => {
 
 interface MyProps {
   submitForm(any): any;
-  testSnackBar(): any;
 }
 
 interface MyState {
@@ -76,7 +75,7 @@ class SecurityLoginPin extends React.Component<MyProps, MyState>{
   }
 
   handleSubmit = (event) => {
-      const {submitForm,testSnackBar} = this.props;
+      const {submitForm} = this.props;
       console.log(this.state.values);
       const result = validateForm(this.state.values);
       if(result.isValid){
@@ -89,7 +88,7 @@ class SecurityLoginPin extends React.Component<MyProps, MyState>{
       event.preventDefault();
   }
   render(){
-    const {testSnackBar} = this.props;
+
     return (
      <div>
        <div>
