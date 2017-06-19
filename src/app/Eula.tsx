@@ -8,10 +8,10 @@ import {eula} from './data/settings'
 import { connect } from 'react-redux';
 import { eulaAccepted, eulaRejected } from './actions/security';
 interface MyProps {
-  eulaAccepted?: boolean;
-  accept?(): any;
-  reject?(): any;
-  hideRejectButton?: boolean;
+  eulaAccepted: boolean;
+  accept(): any;
+  reject(): any;
+  hideRejectButton: boolean;
 }
 
 interface MyState {

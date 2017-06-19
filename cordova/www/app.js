@@ -28994,6 +28994,36 @@
 	/**
 	 * Apply migrations that have yet to be run.
 	 */
+	var allEncFields = ['app',
+	    'migrations',
+	    'routing',
+	    'user',
+	    'view',
+	    'device',
+	    'navigation',
+	    'workbooks',
+	    'workbookIds',
+	    'examples',
+	    'goals',
+	    'loadedGoalId',
+	    'notes',
+	    'noteIds',
+	    'loadedNoteId',
+	    'mode',
+	    'onLogout', 'bacon_beef']; //TODO remove bacon_beef
+	var allDecFields = [
+	    'sMigrations',
+	    'sUser',
+	    'pinQuestionIds',
+	    'pinQuestions',
+	    'selectedPinQuestionIds',
+	    'questionAnswers',
+	    'mode',
+	    'routing',
+	    'cordova',
+	    'rikey',
+	    'view'
+	];
 	//manifest not currently in use
 	var manifest = {
 	    '1006': function (state) { return (objectAssign(state, { workbooks: undefined })); }
@@ -29087,6 +29117,8 @@
 	        });
 	    });
 	}
+	///<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	var tmpIsOldDb = false;
 	// State of app is persisted and made availabe via the call below
 	var appStore = redux_1.createStore(reducers_1.default, // app reducer // TODO remove "as any"
 	undefined, redux_1.compose(redux_1.applyMiddleware(redux_thunk_1.default, sagaMiddleware, react_router_redux_1.routerMiddleware(react_router_1.hashHistory), local_t2_navigation_redux_1.navigationCreateMiddleware(navigationConfig_1.default)) /*,
@@ -29155,7 +29187,6 @@
 	    document.addEventListener("pause", onPause, false);
 	    document.addEventListener("resume", onResume, false);
 	    document.addEventListener("menubutton", onMenuKeyDown, false);
-	    //securityStore.dispatch(cordovaDeviceReady());
 	    if (true) {
 	        var error = function (message) { console.log("!! FAILED !! API returned: " + message); };
 	        var success = function (echoValue) { console.log("--SUCCESS-- API returned: " + echoValue); };
@@ -29206,12 +29237,28 @@
 	    // Handle the menubutton event
 	}
 	var persistEncryptedConfig = {
-	    keyPrefix: 't2encryptedPersist',
+	    keyPrefix: 't2encryptedPersistlf',
 	    blacklist: ['mode', 'cordova', 'view', 'onLogout'],
 	    storage: localForage,
 	    inboundTransform: transformEncryptTransform
 	};
-	var appStorePersistor = persistStoreAdapter_1.default(appStore, persistEncryptedConfig);
+	//Below is storage config for release 1.0.22 
+	//If user is updating from this version we need to migrate data from the old location
+	//to the new location established by  var persistEncryptedConfig;
+	//                                                                   
+	var persistEncryptedConfig_old = {
+	    keyPrefix: 't2encryptedPersist',
+	    blacklist: ['mode', 'cordova', 'view', 'onLogout'],
+	    storage: null,
+	    inboundTransform: transformEncryptTransform
+	};
+	//////////////////////////////////////////////////////////////////////
+	if (tmpIsOldDb) {
+	    var appStorePersistor = persistStoreAdapter_1.default(appStore, persistEncryptedConfig_old);
+	}
+	else {
+	    var appStorePersistor = persistStoreAdapter_1.default(appStore, persistEncryptedConfig);
+	}
 	appStorePersistor.pause();
 	var AppProvider = (function (_super) {
 	    __extends(AppProvider, _super);
@@ -29229,20 +29276,59 @@
 	         */
 	        var _this = this;
 	        console.log(window.t2crypto);
-	        var securityPersist = redux_persist_1.persistStore(SecurityProvider_1.securityStore, {
-	            keyPrefix: 'decryptedpersistor',
+	        var persistDecryptedConfig = {
+	            keyPrefix: 'decryptedpersistorlf',
 	            storage: localForage,
 	            blacklist: ['mode', 'cordova', 'rikey', 'view'],
-	        }, function () {
-	            _this.setState({ rehydrated: true });
-	        });
+	        };
+	        //Below is storage config for release 1.0.22 
+	        //If user is updating from this version we need to migrate data from the old storage location
+	        //to the new location established by  var persistDecryptedConfig;
+	        var persistDecryptedConfig_old = {
+	            keyPrefix: 'decryptedpersistor',
+	            storage: null,
+	            blacklist: ['mode', 'cordova', 'rikey', 'view'],
+	        };
+	        //////////////////////////////////////////////////////////
+	        if (tmpIsOldDb) {
+	            var securityPersist = redux_persist_1.persistStore(SecurityProvider_1.securityStore, persistDecryptedConfig_old, function () {
+	                _this.setState({ rehydrated: true });
+	            });
+	        }
+	        else {
+	            var securityPersist_1 = redux_persist_1.persistStore(SecurityProvider_1.securityStore, persistDecryptedConfig, function () {
+	                _this.setState({ rehydrated: true });
+	            });
+	            //TODO migrate old db
+	            redux_persist_1.getStoredState(persistDecryptedConfig_old, function (err, state) {
+	                if (!err && state && typeof state['sUser'] !== 'undefined') {
+	                    securityPersist_1.rehydrate(state, { serial: false }); //move data to new persistor
+	                    redux_persist_1.purgeStoredState({ storage: localStorage, keyPrefix: 'decryptedpersistor' }, allDecFields); //delete old data
+	                }
+	            });
+	        }
 	        var appIsActive = false;
 	        SecurityProvider_1.securityStore.subscribe(function () {
 	            if (SecurityProvider_1.securityStore.getState().mode === 0 && !appIsActive) {
 	                if (false) {
 	                    console.log('----------LOADING APP STORE---------');
 	                }
-	                redux_persist_1.getStoredState(persistEncryptedConfig).then(function (storedState) {
+	                //(persistDecryptedConfig)
+	                var tmp_persistEConfigTmp_1 = tmpIsOldDb ? persistEncryptedConfig_old : persistEncryptedConfig;
+	                //we want to retrieve the old db when new db is active
+	                redux_persist_1.getStoredState(persistEncryptedConfig_old).then(function (storedEncryptedState_old) {
+	                    if (!tmpIsOldDb) {
+	                        console.log(storedEncryptedState_old);
+	                        if (storedEncryptedState_old && typeof storedEncryptedState_old['notes'] !== 'undefined') {
+	                            //this is were we 
+	                            console.log('migrating data base');
+	                            //delete the old data base
+	                            redux_persist_1.purgeStoredState({ storage: window.localStorage, keyPrefix: 't2encryptedPersist' }, allEncFields);
+	                            return storedEncryptedState_old;
+	                        }
+	                    }
+	                    return redux_persist_1.getStoredState(tmp_persistEConfigTmp_1);
+	                }).then(function (storedState) {
 	                    appIsActive = true;
 	                    var hydratePromises = [];
 	                    var isStateEmpty = Object.keys(storedState).length === 0;
@@ -68957,9 +69043,9 @@
 	        this.props.appBarTitle && this.props.appBarTitle('Enter Pin');
 	    };
 	    SecurityHome.prototype.render = function () {
-	        var _a = this.props, submitPin = _a.submitPin, fipsIsSetUp = _a.fipsIsSetUp, initPin = _a.initPin, questions = _a.questions, testSnackBar = _a.testSnackBar;
+	        var _a = this.props, submitPin = _a.submitPin, fipsIsSetUp = _a.fipsIsSetUp, initPin = _a.initPin, questions = _a.questions;
 	        if (fipsIsSetUp) {
-	            return (React.createElement(SecurityPinLogin_1.default, { submitForm: submitPin, testSnackBar: testSnackBar }));
+	            return (React.createElement(SecurityPinLogin_1.default, { submitForm: submitPin }));
 	        }
 	        return (React.createElement(SecuritySetPinContainer_1.default, { questions: questions, submitForm: initPin }));
 	    };
@@ -68984,11 +69070,6 @@
 	            console.log(data);
 	            console.log('cordovaInitLogin');
 	            dispatch(security_1.cordovaInitLogin(data));
-	        },
-	        testSnackBar: function () {
-	            console.log("test test");
-	            dispatch(security_1.sendErrorMessage("Here is error message " + errCount, 777));
-	            errCount++;
 	        }
 	    };
 	};
@@ -69071,7 +69152,7 @@
 	            var _a, _b;
 	        };
 	        _this.handleSubmit = function (event) {
-	            var _a = _this.props, submitForm = _a.submitForm, testSnackBar = _a.testSnackBar;
+	            var submitForm = _this.props.submitForm;
 	            console.log(_this.state.values);
 	            var result = validateForm(_this.state.values);
 	            if (result.isValid) {
@@ -69092,7 +69173,6 @@
 	        return _this;
 	    }
 	    SecurityLoginPin.prototype.render = function () {
-	        var testSnackBar = this.props.testSnackBar;
 	        return (React.createElement("div", null,
 	            React.createElement("div", null,
 	                React.createElement("form", { onSubmit: this.handleSubmit },
@@ -71142,9 +71222,9 @@
 	        this.props.appBarTitle && this.props.appBarTitle('New Pin');
 	    };
 	    SecurityPinRecoveryContainer.prototype.render = function () {
-	        var _a = this.props, submitFormValues = _a.submitFormValues, question1 = _a.question1, question2 = _a.question2;
+	        var _a = this.props, submitFormValues = _a.submitFormValues, question1 = _a.question1, question2 = _a.question2, appBarTitle = _a.appBarTitle;
 	        if (!question1 || !question2) {
-	            return React.createElement(SecurityHome_1.default, null);
+	            return React.createElement(SecurityHome_1.default, { appBarTitle: appBarTitle });
 	        }
 	        return (React.createElement("div", { style: { maxWidth: 400, width: '90%' } },
 	            React.createElement("form", { onSubmit: this.handleSubmit },

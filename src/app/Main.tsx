@@ -72,11 +72,11 @@ class SettingMenuComponent extends React.Component<SettingsMenuProps, SettingsMe
 
 
 interface MyProps {
-  appBarTitle?(title: string): any;
-  dispatch?(arg: any): any;
-  device?: any;
-  turnAppOffRedirect?(path: string): any;
-  flash?: FlashMessageInterface
+  appBarTitle(title: string): any;
+  dispatch(arg: any): any;
+  device: any;
+  turnAppOffRedirect(path: string): any;
+  flash: FlashMessageInterface
 }
 
 interface MyState {
@@ -143,7 +143,7 @@ class Main extends React.Component<MyProps, MyState>{
   }
 }
  
-export default connect(
+export default connect<{},null,null>(
   (state) => ({
     device: state.device,
     flash: state.view.flash

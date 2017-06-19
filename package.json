@@ -1,7 +1,7 @@
 {
-  "name": "ad-anger-module",
+  "name": "my-prosperity-module",
   "version": "0.0.1",
-  "description": "Sample project that uses Material-UI, Redux",
+  "description": "My Prosperity - Cordova",
   "scripts": {
     "start": "webpack-dev-server --display-error-details --config webpack-dev-server.config.js --progress --inline --colors ",
     "build": "webpack --display-error-details --config webpack-production.config.js --progress --colors",
@@ -48,7 +48,7 @@
     "transfer-webpack-plugin": "^0.1.4",
     "ts-jest": "^18.0.3",
     "ts-loader": "^1.3.3",
-    "typescript": "^2.1.5",
+    "typescript": "^2.3.4",
     "url-loader": "^0.5.7",
     "webpack": "^1.12.9",
     "webpack-cleanup-plugin": "^0.4.0",

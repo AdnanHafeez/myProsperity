@@ -345,9 +345,11 @@ var persistEncryptedConfig_old = { //the storage config for release 1.0.22 if ex
                                     };
 
 //////////////////////////////////////////////////////////////////////
-
-var appStorePersistor = createPersistorAdapter(appStore, persistEncryptedConfig);
-
+if(tmpIsOldDb){
+  var appStorePersistor = createPersistorAdapter(appStore, persistEncryptedConfig_old);
+}else{
+  var appStorePersistor = createPersistorAdapter(appStore, persistEncryptedConfig);
+}
 
 appStorePersistor.pause();
 /**
@@ -403,6 +405,16 @@ class AppProvider extends React.Component<MyProps, MyState> {
 
 
 //////////////////////////////////////////////////////////
+  if(tmpIsOldDb){
+    const securityPersist = persistStore(
+                        securityStore, 
+                        persistDecryptedConfig_old, 
+                        () => {
+                           this.setState({ rehydrated: true } as any);
+                        }
+                  );
+  } else {
+
 
     const securityPersist = persistStore(
                         securityStore, 
@@ -411,14 +423,14 @@ class AppProvider extends React.Component<MyProps, MyState> {
                            this.setState({ rehydrated: true } as any);
                         }
                   );
-       
+       //TODO migrate old db
     getStoredState(persistDecryptedConfig_old, (err, state) => {
        if(!err && state && typeof state['sUser'] !== 'undefined'){ //we have data from old db
           securityPersist.rehydrate(state,{serial: false}); //move data to new persistor
           purgeStoredState({storage: localStorage as any, keyPrefix: 'decryptedpersistor'},allDecFields); //delete old data
        }
     }); 
-  
+  }
 
 
       var appIsActive = false;
@@ -431,17 +443,20 @@ class AppProvider extends React.Component<MyProps, MyState> {
               console.log('----------LOADING APP STORE---------');
             }
             //(persistDecryptedConfig)
+            const tmp_persistEConfigTmp = tmpIsOldDb ? persistEncryptedConfig_old : persistEncryptedConfig;
               //we want to retrieve the old db when new db is active
               (getStoredState(persistEncryptedConfig_old) as any).then((storedEncryptedState_old) => {
-
-                  if(storedEncryptedState_old && typeof storedEncryptedState_old['notes'] !== 'undefined'){ //see if we have data to migrate
-                    //this is were we 
-                    //delete the old data base
-                      purgeStoredState({storage: (window.localStorage as any),keyPrefix: 't2encryptedPersist'},allEncFields);
-                      return storedEncryptedState_old;
+                  if(!tmpIsOldDb ){
+                    console.log(storedEncryptedState_old);
+                    if(storedEncryptedState_old && typeof storedEncryptedState_old['notes'] !== 'undefined'){ //see if we have data to migrate
+                      //this is were we 
+                        console.log('migrating data base');
+                        //delete the old data base
+                        purgeStoredState({storage: (window.localStorage as any),keyPrefix: 't2encryptedPersist'},allEncFields);
+                        return storedEncryptedState_old;
+                    }
                   }
-  
-                  return (getStoredState(persistEncryptedConfig) as any)
+                  return (getStoredState(tmp_persistEConfigTmp) as any)
               }).then((storedState) => {
                 appIsActive = true;
                let hydratePromises = [];

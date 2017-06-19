@@ -7,24 +7,33 @@ did go through QA and other manual testing it is consider to be a Beta stage.
 As this is the first iteration using this particular stack a dev might find the organization of the app may be confusing hence the creating of this supplemental
 document.
 
-# Prerequisites
+### Prerequisites
+
 Developers working on this app should be familiar with the following framewords/libs
-## Typescrypt 2.x
-## ES6
-## React js
-## Redux http://redux.js.org/
-## Redux Persist https://github.com/rt2zz/redux-persist
-## Cordova 6.x
-## Webpack version 1.x
 
-# Version Controll Branches
++ Typescrypt 2.x
++ ES6
++ React js
++ Redux http://redux.js.org/
++ Redux Persist https://github.com/rt2zz/redux-persist
++ Cordova 6.x
++ Webpack version 1.x
 
-## Current Repo: git clone ssh://<yourusername>@git.t2.local/git/mobile/crossplatform/myProsperity.git
-# branch dev
+### Version Controll Branches
+
+### Current Repo
+`git clone ssh://<yourusername>@git.t2.local/git/mobile/crossplatform/myProsperity.git`
+
+branch dev
+
 The dev branch of this git repo is currently deployed as Beta on Android and iOS app stores.
 
-## New repo: git clone ssh://<yourusername>@git.t2.local/git/mobile/crossplatform/my-prosperity.git
-# branch master
+### New repo: 
+
+`git clone ssh://<yourusername>@git.t2.local/git/mobile/crossplatform/my-prosperity.git`
+
+### branch master
+
 This repo and branch is inteneded to be the new version of the prosperity app. It features a simpler
 architecture based on lessons learned from the the first repp. It is 90% complete
 but has not been through QA. 
@@ -37,7 +46,8 @@ If you are working on a new release and have more than a couple days it will pro
 
 # Starting Points
 
-## PlainRoutes - src/app/PlainRoutes.tsx
+### PlainRoutes - src/app/PlainRoutes.tsx
+
 This could be called the nexus of the app. It handles:
 
 + Initialization of t2crypto and data persistence.
@@ -45,14 +55,11 @@ This could be called the nexus of the app. It handles:
 + Listens for cordova device events
 + Routing
 
-# Storage
-The following information is with respect to the current myProsperity.git dev branch and assumes you are familiar
-with redux and redux-persist.
+### Storage
+The following information is with respect to the current myProsperity.git dev branch and assumes you are familiar with redux and redux-persist.
 
 Because of the nature of how redux and redux-persist work it was difficult in incorporate t2crypto
-with this project. This is because redux "expects" all of the data stored by redux-persist to be loaded 
-when the app is loaded/restarted. The problem is we don't want the encrypted data to be decrypted on app 
-load but rather only after the user has entered the their pin. 
+with this project. This is because redux "expects" all of the data stored by redux-persist to be loaded when the app is loaded/restarted. The problem is we don't want the encrypted data to be decrypted on app load but rather only after the user has entered the their pin. 
 The solution was to create two "databases" corresponding to two different state trees:
 + One data store is to handle authentication (pin setup, security questions, etc) which is not encrypted
 + The other data store is for containing all the data we want encrypted.
