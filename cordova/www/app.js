@@ -29118,7 +29118,6 @@
 	    });
 	}
 	///<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-	var tmpIsOldDb = false;
 	// State of app is persisted and made availabe via the call below
 	var appStore = redux_1.createStore(reducers_1.default, // app reducer // TODO remove "as any"
 	undefined, redux_1.compose(redux_1.applyMiddleware(redux_thunk_1.default, sagaMiddleware, react_router_redux_1.routerMiddleware(react_router_1.hashHistory), local_t2_navigation_redux_1.navigationCreateMiddleware(navigationConfig_1.default)) /*,
@@ -29253,12 +29252,7 @@
 	    inboundTransform: transformEncryptTransform
 	};
 	//////////////////////////////////////////////////////////////////////
-	if (tmpIsOldDb) {
-	    var appStorePersistor = persistStoreAdapter_1.default(appStore, persistEncryptedConfig_old);
-	}
-	else {
-	    var appStorePersistor = persistStoreAdapter_1.default(appStore, persistEncryptedConfig);
-	}
+	var appStorePersistor = persistStoreAdapter_1.default(appStore, persistEncryptedConfig);
 	appStorePersistor.pause();
 	var AppProvider = (function (_super) {
 	    __extends(AppProvider, _super);
@@ -29290,23 +29284,15 @@
 	            blacklist: ['mode', 'cordova', 'rikey', 'view'],
 	        };
 	        //////////////////////////////////////////////////////////
-	        if (tmpIsOldDb) {
-	            var securityPersist = redux_persist_1.persistStore(SecurityProvider_1.securityStore, persistDecryptedConfig_old, function () {
-	                _this.setState({ rehydrated: true });
-	            });
-	        }
-	        else {
-	            var securityPersist_1 = redux_persist_1.persistStore(SecurityProvider_1.securityStore, persistDecryptedConfig, function () {
-	                _this.setState({ rehydrated: true });
-	            });
-	            //TODO migrate old db
-	            redux_persist_1.getStoredState(persistDecryptedConfig_old, function (err, state) {
-	                if (!err && state && typeof state['sUser'] !== 'undefined') {
-	                    securityPersist_1.rehydrate(state, { serial: false }); //move data to new persistor
-	                    redux_persist_1.purgeStoredState({ storage: localStorage, keyPrefix: 'decryptedpersistor' }, allDecFields); //delete old data
-	                }
-	            });
-	        }
+	        var securityPersist = redux_persist_1.persistStore(SecurityProvider_1.securityStore, persistDecryptedConfig, function () {
+	            _this.setState({ rehydrated: true });
+	        });
+	        redux_persist_1.getStoredState(persistDecryptedConfig_old, function (err, state) {
+	            if (!err && state && typeof state['sUser'] !== 'undefined') {
+	                securityPersist.rehydrate(state, { serial: false }); //move data to new persistor
+	                redux_persist_1.purgeStoredState({ storage: localStorage, keyPrefix: 'decryptedpersistor' }, allDecFields); //delete old data
+	            }
+	        });
 	        var appIsActive = false;
 	        SecurityProvider_1.securityStore.subscribe(function () {
 	            if (SecurityProvider_1.securityStore.getState().mode === 0 && !appIsActive) {
@@ -29314,20 +29300,15 @@
 	                    console.log('----------LOADING APP STORE---------');
 	                }
 	                //(persistDecryptedConfig)
-	                var tmp_persistEConfigTmp_1 = tmpIsOldDb ? persistEncryptedConfig_old : persistEncryptedConfig;
 	                //we want to retrieve the old db when new db is active
 	                redux_persist_1.getStoredState(persistEncryptedConfig_old).then(function (storedEncryptedState_old) {
-	                    if (!tmpIsOldDb) {
-	                        console.log(storedEncryptedState_old);
-	                        if (storedEncryptedState_old && typeof storedEncryptedState_old['notes'] !== 'undefined') {
-	                            //this is were we 
-	                            console.log('migrating data base');
-	                            //delete the old data base
-	                            redux_persist_1.purgeStoredState({ storage: window.localStorage, keyPrefix: 't2encryptedPersist' }, allEncFields);
-	                            return storedEncryptedState_old;
-	                        }
+	                    if (storedEncryptedState_old && typeof storedEncryptedState_old['notes'] !== 'undefined') {
+	                        //this is were we 
+	                        //delete the old data base
+	                        redux_persist_1.purgeStoredState({ storage: window.localStorage, keyPrefix: 't2encryptedPersist' }, allEncFields);
+	                        return storedEncryptedState_old;
 	                    }
-	                    return redux_persist_1.getStoredState(tmp_persistEConfigTmp_1);
+	                    return redux_persist_1.getStoredState(persistEncryptedConfig);
 	                }).then(function (storedState) {
 	                    appIsActive = true;
 	                    var hydratePromises = [];

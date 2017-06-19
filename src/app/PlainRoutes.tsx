@@ -172,7 +172,7 @@ var transformEncryptTransform = createPromiseTransform(
   );
 }
 ///<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-var tmpIsOldDb = false;
+
 // State of app is persisted and made availabe via the call below
 
 
